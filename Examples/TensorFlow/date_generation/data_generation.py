@@ -73,7 +73,7 @@ class ProgramGen:
 
 def main(args):
     tmp = ProgramGen()
-    myProgram = tmp.createRndProgramm(25, 15)
+    myProgram = tmp.createRndProgramm(50, 15)
     count = 1
     for item in myProgram:
         tmpfile = open("data/unchecked/" + str(count) + ".txt", 'w')
