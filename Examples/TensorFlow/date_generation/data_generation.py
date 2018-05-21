@@ -79,7 +79,6 @@ def main(args):
         tmpfile = open("data/unchecked/" + str(count) + ".txt", 'w')
         tmpfile.write("%s\n" % item)
         count = count + 1
-        # print item
 
 
 if __name__ == '__main__':
