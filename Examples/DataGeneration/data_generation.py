@@ -1,5 +1,6 @@
 import random
-
+import argparse
+import os
 
 class ProgramGen:
     def __init__(self):
@@ -88,11 +89,29 @@ class ProgramGen:
         return True
 
 
-def main(args):
-    nrOfValidPrograms = 10
-    nrOfInvalidPrograms = 5
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--valid', required=True,
+                        help='number of valid programs')
+    parser.add_argument('--nvalid', required=True,
+                        help='number of invalid programs')
+    parser.add_argument('--out', required=True,
+                        help='outputfolder for generated programs')
+    return parser.parse_args()
+
+def main():
+    args=get_args()
+
+    nrOfValidPrograms = int(args.valid)
+    nrOfInvalidPrograms = int(args.nvalid)
     countOfValidPrograms = 0
     countOfInvalidPrograms = 0
+
+    if not os.path.isdir(args.out+"/valid"):
+	os.makedirs(args.out+"/valid")
+    if not os.path.isdir(args.out+"/not_valid"):
+	os.makedirs(args.out+"/not_valid")
 
     while (countOfValidPrograms < nrOfValidPrograms or countOfInvalidPrograms < nrOfInvalidPrograms):
         tmp = ProgramGen()
@@ -101,14 +120,14 @@ def main(args):
             if tmp.isValidCode(item):
                 countOfValidPrograms += 1
                 if countOfValidPrograms <= nrOfValidPrograms:
-                    tmpfile = open("data/valid/" + str(countOfValidPrograms) + ".txt", 'w')
+                    tmpfile = open(args.out+"/valid/" + str(countOfValidPrograms) + ".txt", 'w')
                     tmpfile.write("%s\n" % item)
             else:
                 countOfInvalidPrograms += 1
                 if countOfInvalidPrograms <= nrOfInvalidPrograms:
-                    tmpfile = open("data/not_valid/" + str(countOfInvalidPrograms) + ".txt", 'w')
+                    tmpfile = open(args.out+"/not_valid/" + str(countOfInvalidPrograms) + ".txt", 'w')
                     tmpfile.write("%s\n" % item)
 
 
 if __name__ == '__main__':
-    main("test")
+    main()
