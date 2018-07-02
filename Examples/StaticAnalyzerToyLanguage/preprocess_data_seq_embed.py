@@ -74,4 +74,4 @@ if __name__ == "__main__":
 
     print("Saving data...")
 
-    np.savez(sys.argv[3], x_valid=np.array(valid), x_not_valid=np.array(not_valid), y_not_valid=np.array(not_valid_y), y_valid=np.array(valid_y))
+    np.savez(sys.argv[3], x_valid=np.array(valid), x_not_valid=np.array(not_valid), y_not_valid=np.array(not_valid_y), y_valid=np.array(valid_y), max_length=np.array([max_length]))

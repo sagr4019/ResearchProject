@@ -59,6 +59,7 @@ if __name__ == "__main__":
     train_x_not_valid = data["x_not_valid"]
     train_y_valid = data["y_valid"]
     train_y_not_valid = data["y_not_valid"]
+    max_length = data["max_length"][0]
 
     #split data, make sure test data contains all types of samples (valid and not valid ones)
     train_x_valid, test_x_valid, train_y_valid, test_y_valid = split_dataset(train_x_valid, train_y_valid, 5)

@@ -58,6 +58,7 @@ if __name__ == "__main__":
     train_x_not_valid = data["x_not_valid"]
     train_y_valid = data["y_valid"]
     train_y_not_valid = data["y_not_valid"]
+    max_length = data["max_length"][0]
 
     print(train_x_valid)
 
