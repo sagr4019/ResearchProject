@@ -94,7 +94,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--valid', required=True,
                         help='number of valid programs')
-    parser.add_argument('--nvalid', required=True,
+    parser.add_argument('--invalid', required=True,
                         help='number of invalid programs')
     parser.add_argument('--out', required=True,
                         help='outputfolder for generated programs')
@@ -104,14 +104,14 @@ def main():
     args=get_args()
 
     nrOfValidPrograms = int(args.valid)
-    nrOfInvalidPrograms = int(args.nvalid)
+    nrOfInvalidPrograms = int(args.invalid)
     countOfValidPrograms = 0
     countOfInvalidPrograms = 0
 
     if not os.path.isdir(args.out+"/valid"):
-	os.makedirs(args.out+"/valid")
-    if not os.path.isdir(args.out+"/not_valid"):
-	os.makedirs(args.out+"/not_valid")
+        os.makedirs(args.out+"/valid")
+    if not os.path.isdir(args.out+"/invalid"):
+        os.makedirs(args.out+"/invalid")
 
     while (countOfValidPrograms < nrOfValidPrograms or countOfInvalidPrograms < nrOfInvalidPrograms):
         tmp = ProgramGen()
@@ -125,7 +125,7 @@ def main():
             else:
                 countOfInvalidPrograms += 1
                 if countOfInvalidPrograms <= nrOfInvalidPrograms:
-                    tmpfile = open(args.out+"/not_valid/" + str(countOfInvalidPrograms) + ".txt", 'w')
+                    tmpfile = open(args.out+"/invalid/" + str(countOfInvalidPrograms) + ".txt", 'w')
                     tmpfile.write("%s\n" % item)
 
 
