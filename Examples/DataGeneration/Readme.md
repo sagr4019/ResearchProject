@@ -13,4 +13,4 @@ At last we iterate all variables and check if it appears in a general sense in t
 To generate training or testdata examples use data_generation.py as follows:
 
 
-python data_generation.py --valid NR_OF_VALID_PROGRAMS --nvalid NR_OF_INVALID_PROGRAMS <br/>--out OUTPUT_DIR
+`python data_generation.py --valid VALID_PROGRAMS --invalid INVALID_PROGRAMS --out OUTPUT_DIR`
