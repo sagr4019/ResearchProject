@@ -3,7 +3,7 @@ import argparse
 import os
 
 class ProgramGen:
-    def __init__(self):
+    def __init__(self, _seed):
         self.params = {
             "variables": ["v1", "v2", "v3", "v4"],
             "numbers": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
@@ -20,6 +20,7 @@ class ProgramGen:
             "decl": ('{varnr} {operator} {varnr2}')
         }
         self.end = ('return {};')
+        random.seed(_seed)
 
     def generateHelper(self, _batchsize=100):  # creates 100 combinations of expr. and decl.
         declarations = []
@@ -98,6 +99,8 @@ def get_args():
                         help='number of invalid programs')
     parser.add_argument('--out', required=True,
                         help='outputfolder for generated programs')
+    parser.add_argument('--seed', required=False,
+                        help='outputfolder for generated programs')
     return parser.parse_args()
 
 def main():
@@ -105,6 +108,7 @@ def main():
 
     nrOfValidPrograms = int(args.valid)
     nrOfInvalidPrograms = int(args.invalid)
+    seed = int(args.seed) if args.seed is not None else None
     countOfValidPrograms = 0
     countOfInvalidPrograms = 0
 
@@ -114,7 +118,7 @@ def main():
         os.makedirs(args.out+"/invalid")
 
     while (countOfValidPrograms < nrOfValidPrograms or countOfInvalidPrograms < nrOfInvalidPrograms):
-        tmp = ProgramGen()
+        tmp = ProgramGen(seed)
         myProgram = tmp.createRndProgramm(100, 15)
         for item in myProgram:
             if tmp.isValidCode(item):
