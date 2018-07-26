@@ -3,9 +3,7 @@ import keras
 from keras.layers import Dense, LSTM, Activation
 import numpy as np
 from keras.utils import to_categorical
-
-valid_sample = "v1 = 2;\nv2 = v1;\nwhile( v2 == 2){\nv2 = 5;}\nreturn true;\n"
-invalid_sample = "v1 = 2;\nv2 = v3;\nwhile( v2 == 2){\nv2 = 5;}\nreturn true;\n"
+from keras.callbacks import ModelCheckpoint
 
 def split_dataset(x, y, factor):
     data_len = len(x)
@@ -46,8 +44,8 @@ if __name__ == "__main__":
         sys.exit(-1)
 
     max_length = 600
-    symbol_count = 32
-    num_hidden = 128
+    symbol_count = 19
+    num_hidden = 256
     batch_size = 64
     epochs = 100
 
@@ -71,8 +69,8 @@ if __name__ == "__main__":
     test_y = np.concatenate((test_y_valid, test_y_not_valid))
 
 
-    train_x, train_y = shuffle(train_x, train_y)
-    test_x, test_y = shuffle(test_x, test_y)
+    #train_x, train_y = shuffle(train_x, train_y)
+    #test_x, test_y = shuffle(test_x, test_y)
 
     #convert y to one-hot encoding
     train_y = to_categorical(train_y, 2)
@@ -86,15 +84,18 @@ if __name__ == "__main__":
     print("Setting up network...")
 
     model = keras.Sequential()
-    model.add(keras.layers.LSTM(num_hidden, input_shape=(max_length, symbol_count)))
-    #model.add(keras.layers.LSTM(num_hidden))
-    model.add(keras.layers.Dense(2))
-    model.add(keras.layers.Activation('softmax'))
+    model.add(keras.layers.LSTM(num_hidden, input_shape=(max_length, symbol_count), return_sequences=True))
+    model.add(keras.layers.LSTM(num_hidden))
+    model.add(keras.layers.Dense(2, activation="softmax"))
 
-    optimizer = keras.optimizers.RMSprop(0.1)
-    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['categorical_accuracy'])
+    optimizer = keras.optimizers.RMSprop(0.001)
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
-    model.fit(train_x, train_y, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(test_x, test_y))
+    filepath = "weights\weights-improvement-{epoch:02d}--{val_acc:.4f}.hdf5"
+    checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+    callbacks_list = [checkpoint]
+
+    model.fit(train_x, train_y, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(test_x, test_y), callbacks=callbacks_list)
 
     score = model.evaluate(test_x, test_y, verbose=0)
 
