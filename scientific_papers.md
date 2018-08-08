@@ -25,3 +25,7 @@ A short summary of this paper could be found [here](https://github.com/sagr4019/
 ### Building Program Vector Representations for Deep Learning
 
 [arxiv.com](https://arxiv.org/pdf/1409.3358.pdf)
+
+### Supervised Deep Features for Software Functional Clone Detection by Exploiting Lexical and Syntactical Information in Source Code
+
+[ijcai.org](http://static.ijcai.org/proceedings-2017/0423.pdf)
