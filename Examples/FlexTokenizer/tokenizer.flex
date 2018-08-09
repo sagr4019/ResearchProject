@@ -12,11 +12,11 @@ IDENTIFIER	{ALPHA}{ALPHANUMERIC}*
 ASSIGNMENT	{WHITESPACE}"="{WHITESPACE}
 MATHOPERATION	"+"|"-"|"*"|"/"
 CONDITION	"=="|">="|"<="|">"|"<"
-
+RETURN		"return"
+BOOLEAN		"true"|"false"
+CONDITIONAL	"if"|"while"
 %%
-{LINEBREAK}
-{WHITESPACE}{IDENTIFIER}{WHITESPACE}	printf("1\n");					/* Variables */
-{WHITESPACE}{DIGIT}{WHITESPACE}		printf("2\n");					/* Digit */
+{LINEBREAK}										/* remove linebreaks */
 {WHITESPACE}{CONDITION}{WHITESPACE}	printf("4\n");					/* Condition */
 {ASSIGNMENT}				printf("8\n");					/* Assigment (=) */
 {MATHOPERATION}				printf("16\n");					/* Math operation */		
@@ -25,5 +25,11 @@ CONDITION	"=="|">="|"<="|">"|"<"
 ")"					printf("128\n");				/* Closing bracket */
 "{"					printf("256\n");				/* Opening curly bracket */
 "}"					printf("512\n");				/* Closing curly bracket */
+{RETURN}				printf("1024\n");				/* Return Statement */
+{BOOLEAN}				printf("2048\n");				/* Boolean */
+{CONDITIONAL}				printf("4096\n");				/* Conditional like 'if' or 'while' */
+{WHITESPACE}{IDENTIFIER}{WHITESPACE}	printf("1\n");
+{WHITESPACE}{DIGIT}+{WHITESPACE}	printf("2\n");					/* Digit */
+{WHITESPACE}										/* remove whitespaces */
 .					printf("0\n");	                                /* Unknown Token */
 %%
