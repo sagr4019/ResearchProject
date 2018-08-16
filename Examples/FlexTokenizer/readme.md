@@ -26,7 +26,7 @@ E.g. ```flex -o tokenizer.yy.c tokenizer.flex``` generates a "tokenizer.yy.c"-fi
 ## Build the executable
 You can build the executables by using a C-compiler of your choice. The following example, uses ```cc``` as the compiler.
 
- ```cc lex.yy.c -o tokenizer-lfl```
+ ```cc lex.yy.c -o tokenizer -lfl```
 
 "-o" defines the name of the output file (the executable)
 "-lfl" defines a library which is needed
