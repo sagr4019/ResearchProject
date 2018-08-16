@@ -4,28 +4,7 @@ from keras.layers import Dense, LSTM, Activation
 import numpy as np
 from keras.utils import to_categorical
 from keras.callbacks import ModelCheckpoint
-
-def split_dataset(x, y, factor):
-    data_len = len(x)
-
-    test_len = int(data_len / factor)
-
-    train_x, test_x = (x[:data_len - test_len], x[data_len - test_len:])
-    train_y, test_y = (y[:data_len - test_len], y[data_len - test_len:])
-    return train_x, test_x, train_y, test_y
-
-def shuffle(x, y):
-    randomize = np.arange(len(x))
-    np.random.shuffle(randomize)
-
-    result_x = []
-    result_y = []
-
-    for i in range(len(randomize)):
-        result_x.append(x[randomize[i]])
-        result_y.append(y[randomize[i]])
-
-    return np.array(result_x), np.array(result_y)
+from lib import split_dataset, shuffle
 
 # converts training and test data into one hot vectors
 def sequences_to_onehot(array, max_length, symbol_count):
@@ -34,8 +13,6 @@ def sequences_to_onehot(array, max_length, symbol_count):
         for j in range(max_length):
             result[i][j][array[i][j]] = 1
     return result
-
-
 
 if __name__ == "__main__":
 

@@ -1,18 +1,7 @@
 import os, io, sys
 import compile, asm
 import numpy as np
-
-#load all files from the two specified directories
-def load_data_from_dirs(valid_dir, not_valid_dir):
-    valid = []
-    for file in os.listdir(valid_dir):
-        with io.open(os.path.join(valid_dir, file)) as f:
-            valid.append(f.read())
-    not_valid = []
-    for file in os.listdir(not_valid_dir):
-        with io.open(os.path.join(not_valid_dir, file)) as f:
-            not_valid.append(f.read())
-    return valid, not_valid
+from lib import load_data_from_dirs, transform_arrays, pad_array
 
 def process_string(str, max_length):
     str = str.replace(" ", "").replace("\n", "")
@@ -28,19 +17,6 @@ def process_string(str, max_length):
 def process_strings(array, max_length):
     for i in range(len(array)):
         array[i] = process_string(array[i], max_length)
-
-def pad_array(array, length, value):
-    return array + (length * [value])
-
-#merge both arrays into one, provide labels (0 = invalid, 1 = valid)
-def transform_arrays(valid, not_valid):
-    y_valid=[]
-    y_not_valid=[]
-    for v in valid:
-        y_valid.append(1)
-    for nv in not_valid:
-        y_not_valid.append(0)
-    return valid, not_valid, y_valid, y_not_valid
 
 #compiles string to byte code array
 def compile_string(str, max_length):

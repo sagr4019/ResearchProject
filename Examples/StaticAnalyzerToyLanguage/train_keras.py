@@ -4,33 +4,7 @@ import keras
 import keras.layers as layers
 import keras.callbacks
 from keras.utils import to_categorical
-
-valid_sample = "v1 = 2;\nv2 = v1;\nwhile( v2 == 2){\nv2 = 5;}\nreturn true;\n"
-invalid_sample = "v1 = 2;\nv2 = v3;\nwhile( v2 == 2){\nv2 = 5;}\nreturn true;\n"
-
-def split_dataset(x, y, factor):
-    data_len = len(x)
-
-    test_len = int(data_len / factor)
-
-    train_x, test_x = (x[:data_len - test_len], x[data_len - test_len:])
-    train_y, test_y = (y[:data_len - test_len], y[data_len - test_len:])
-    return train_x, test_x, train_y, test_y
-
-def shuffle(x, y):
-    randomize = numpy.arange(len(x))
-    numpy.random.shuffle(randomize)
-
-    result_x = []
-    result_y = []
-
-    for i in range(len(randomize)):
-        result_x.append(x[randomize[i]])
-        result_y.append(y[randomize[i]])
-
-    return numpy.array(result_x), numpy.array(result_y)
-
-
+from lib import split_dataset, shuffle
 
 if __name__ == "__main__":
 
@@ -42,15 +16,6 @@ if __name__ == "__main__":
     num_hidden = 128
     batch_size = 64
     epochs = 200
-
-    valid_sample = numpy.array(preprocess_data.compile_string(valid_sample, max_length))
-    invalid_sample = numpy.array(preprocess_data.compile_string(invalid_sample, max_length))
-    valid_sample = numpy.expand_dims(valid_sample, axis=0)
-    invalid_sample = numpy.expand_dims(invalid_sample, axis=0)
-    valid_sample = numpy.expand_dims(valid_sample, axis=2)
-    invalid_sample = numpy.expand_dims(invalid_sample, axis=2)
-    valid_sample.astype("float32")
-    invalid_sample.astype("float32")
 
 
     print("Loading data...")

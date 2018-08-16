@@ -1,17 +1,7 @@
 import sys, io, os
 import numpy as np
 
-#load all files from the two specified directories
-def load_data_from_dirs(valid_dir, not_valid_dir):
-    valid = []
-    for file in os.listdir(valid_dir):
-        with io.open(os.path.join(valid_dir, file)) as f:
-            valid.append(f.read())
-    not_valid = []
-    for file in os.listdir(not_valid_dir):
-        with io.open(os.path.join(not_valid_dir, file)) as f:
-            not_valid.append(f.read())
-    return valid, not_valid
+from lib import load_data_from_dirs
 
 #converts a string into a sequence of symbol / word indices
 def string_to_sequence(str, symbols, symbols_to_index, ignore_symbols):
