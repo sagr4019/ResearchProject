@@ -17,19 +17,19 @@ BOOLEAN		"true"|"false"
 CONDITIONAL	"if"|"while"
 %%
 {LINEBREAK}										/* remove linebreaks */
-{WHITESPACE}{CONDITION}{WHITESPACE}	printf("4\n");					/* Condition */
-{ASSIGNMENT}				printf("8\n");					/* Assigment (=) */
-{MATHOPERATION}				printf("16\n");					/* Math operation */		
-";"					printf("32\n");					/* Semicolon */
-"("					printf("64\n");					/* Opening bracket */
-")"					printf("128\n");				/* Closing bracket */
-"{"					printf("256\n");				/* Opening curly bracket */
-"}"					printf("512\n");				/* Closing curly bracket */
-{RETURN}				printf("1024\n");				/* Return Statement */
-{BOOLEAN}				printf("2048\n");				/* Boolean */
-{CONDITIONAL}				printf("4096\n");				/* Conditional like 'if' or 'while' */
-{WHITESPACE}{IDENTIFIER}{WHITESPACE}	printf("1\n");
-{WHITESPACE}{DIGIT}+{WHITESPACE}	printf("2\n");					/* Digit */
+{WHITESPACE}{CONDITION}{WHITESPACE}	printf("CONDITION\n");					/* Condition */
+{ASSIGNMENT}				printf("ASSIGNMENT\n");				/* Assignment (=) */
+{MATHOPERATION}				printf("MATHOPERATION\n");			/* Math operation */		
+";"					printf("SEMICOLON\n");				/* Semicolon */
+"("					printf("OPENBRACKET\n");			/* Opening bracket */
+")"					printf("CLOSEBRACKET\n");			/* Closing bracket */
+"{"					printf("OPENCURLYBRACKET\n");			/* Opening curly bracket */
+"}"					printf("CLOSECURLYBRACKET\n");			/* Closing curly bracket */
+{RETURN}				printf("RETURN\n");				/* Return Statement */
+{BOOLEAN}				printf("BOOLEAN\n");				/* Boolean */
+{CONDITIONAL}				printf("CONDITIONAL\n");			/* Conditional like 'if' or 'while' */
+{WHITESPACE}{IDENTIFIER}{WHITESPACE}	printf("IDENTIFIER\n");
+{WHITESPACE}{DIGIT}+{WHITESPACE}	printf("DIGIT\n");				/* Digit */
 {WHITESPACE}										/* remove whitespaces */
-.					printf("0\n");	                                /* Unknown Token */
+.					printf("UNKNOWN\n");	                        /* Unknown Token */
 %%

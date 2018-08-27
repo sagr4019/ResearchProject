@@ -795,67 +795,67 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 20 "tokenizer.flex"
-printf("4\n");					/* Condition */
+printf("CONDITION\n");					/* Condition */
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 21 "tokenizer.flex"
-printf("8\n");					/* Assigment (=) */
+printf("ASSIGNMENT\n");				/* Assignment (=) */
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 22 "tokenizer.flex"
-printf("16\n");					/* Math operation */		
+printf("MATHOPERATION\n");			/* Math operation */		
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 23 "tokenizer.flex"
-printf("32\n");					/* Semicolon */
+printf("SEMICOLON\n");				/* Semicolon */
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 24 "tokenizer.flex"
-printf("64\n");					/* Opening bracket */
+printf("OPENBRACKET\n");			/* Opening bracket */
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 25 "tokenizer.flex"
-printf("128\n");				/* Closing bracket */
+printf("CLOSEBRACKET\n");			/* Closing bracket */
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 26 "tokenizer.flex"
-printf("256\n");				/* Opening curly bracket */
+printf("OPENCURLYBRACKET\n");			/* Opening curly bracket */
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 27 "tokenizer.flex"
-printf("512\n");				/* Closing curly bracket */
+printf("CLOSECURLYBRACKET\n");			/* Closing curly bracket */
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 28 "tokenizer.flex"
-printf("1024\n");				/* Return Statement */
+printf("RETURN\n");				/* Return Statement */
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 29 "tokenizer.flex"
-printf("2048\n");				/* Boolean */
+printf("BOOLEAN\n");				/* Boolean */
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 30 "tokenizer.flex"
-printf("4096\n");				/* Conditional like 'if' or 'while' */
+printf("CONDITIONAL\n");			/* Conditional like 'if' or 'while' */
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 31 "tokenizer.flex"
-printf("1\n");
+printf("IDENTIFIER\n");
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 32 "tokenizer.flex"
-printf("2\n");					/* Digit */
+printf("DIGIT\n");				/* Digit */
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
@@ -865,7 +865,7 @@ YY_RULE_SETUP
 case 16:
 YY_RULE_SETUP
 #line 34 "tokenizer.flex"
-printf("0\n");	                                /* Unknown Token */
+printf("UNKNOWN\n");	                        /* Unknown Token */
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
