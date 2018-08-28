@@ -1,0 +1,48 @@
+##################################################################
+All right reserved. (C) MOU Lili
+
+
+The package can be freely used for non-commercial purposes.
+If you would like to use for researches, please cite:
+
+Lili Mou, et al., Learning Real-Valued Program Representations for Deep Learning, XXX, 2014
+
+
+
+
+##################################################################
+
+This package contrains the following contents.
+
+1. nn/
+
+The is the infrastucture of feed-forward neural networks (FFNN), including forward propagation, and back propagtaion.
+
+You can construct any FFNN you like based on it. What you should do is 
+
+1) Specify the connections,
+2) Specify the cost function,
+3) Forward propagate and back propagate!
+
+See train/ for the detailed usages.
+
+
+2. train/
+
+This is the network for program representation learning. Run 
+
+$ python train.py
+
+
+
+3. parameter/
+
+This folder contains the learned representations and the codes for empirical study. Run
+
+$ python testVector.py
+
+
+4. data/
+
+This folder contains the dataset. Do NOT open the directory with graphical interfaces.
+
