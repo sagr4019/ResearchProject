@@ -29,3 +29,7 @@ A short summary of this paper could be found [here](https://github.com/sagr4019/
 ### Supervised Deep Features for Software Functional Clone Detection by Exploiting Lexical and Syntactical Information in Source Code
 
 [ijcai.org](http://static.ijcai.org/proceedings-2017/0423.pdf)
+
+### A Sound Type System for Secure Flow Analysis
+
+[calhoun.nps.edu](https://calhoun.nps.edu/bitstream/handle/10945/7179/96paper_jcs.pdf%3Bjsessionid%3D0C21954A46AEA7D8D15420351BD7F54A?sequence%3D1)
