@@ -1,0 +1,55 @@
+if -99 then h := 98 else x := 31; K := 117
+[{'CMD': {'Concat': [[{'CMD': {'If': [{'Condition': [{'EXPR': {'Literal': ['-99']}}]},
+                                      {'ThenBody': [{'CMD': {'Assign': [[{'EXPR': {'Literal': ['h']}}],
+                                                                        [{'EXPR': {'Literal': ['98']}}]]}}]},
+                                      {'ElseBody': [{'CMD': {'Assign': [[{'EXPR': {'Literal': ['x']}}],
+                                                                        [{'EXPR': {'Literal': ['31']}}]]}}]}]}}],
+                     [{'CMD': {'Assign': [[{'EXPR': {'Literal': ['K']}}],
+                                          [{'EXPR': {'Literal': ['11']}}]]}}]]}}]
+
+
+
+while -20 do while 83 do if 68 then 75 := 56 else q := 66
+[{'CMD': {'While': [{'Condition': [{'EXPR': {'Literal': ['-20']}}]},
+                    {'Body': [{'CMD': {'While': [{'Condition': [{'EXPR': {'Literal': ['83']}}]},
+                                                 {'Body': [{'CMD': {'If': [{'Condition': [{'EXPR': {'Literal': ['68']}}]},
+                                                                           {'ThenBody': [{'CMD': {'Assign': [[{'EXPR': {'Literal': ['75']}}],
+                                                                                                             [{'EXPR': {'Literal': ['56']}}]]}}]},
+                                                                           {'ElseBody': [{'CMD': {'Assign': [[{'EXPR': {'Literal': ['q']}}],
+                                                                                                             [{'EXPR': {'Literal': ['66']}}]]}}]}]}}]}]}}]}]}}]
+
+                                                                                            
+
+n < l < M - C := -5
+>>> [{'CMD': {'Assign': [[{'EXPR': {'Less': [[{'EXPR': {'Literal': ['n']}}],
+                                         [{'EXPR': {'Less': [[{'EXPR': {'Literal': ['l']}}],
+                                                             [{'EXPR': {'Sub': [[{'EXPR': {'Literal': ['M']}}],
+                                                                                [{'EXPR': {'Literal': ['C']}}]]}}]]}}]]}}],
+                     [{'EXPR': {'Literal': ['-5']}}]]}}]
+
+
+
+89 - -2 < N
+[{'EXPR': {'Less': [[{'EXPR': {'Sub': [[{'EXPR': {'Literal': ['89']}}],
+                                       [{'EXPR': {'Literal': ['-2']}}]]}}],
+                    [{'EXPR': {'Literal': ['N']}}]]}}]
+
+
+if 74 then while 83 do if t then if U < 25 then if 97 then 44 := 20 else while K do 39 := 50 else w := -94 else 80 := 59 else e := v
+[{'CMD': {'If': [{'Condition': [{'EXPR': {'Literal': ['74']}}]},
+                 {'ThenBody': [{'CMD': {'While': [{'Condition': [{'EXPR': {'Literal': ['83']}}]},
+                                                  {'Body': [{'CMD': {'If': [{'Condition': [{'EXPR': {'Literal': ['t']}}]},
+                                                                            {'ThenBody': [{'CMD': {'If': [{'Condition': [{'EXPR': {'Less': [[{'EXPR': {'Literal': ['U']}}],
+                                                                                                                                            [{'EXPR': {'Literal': ['25']}}]]}}]},
+                                                                                                          {'ThenBody': [{'CMD': {'If': [{'Condition': [{'EXPR': {'Literal': ['97']}}]},
+                                                                                                                                        {'ThenBody': [{'CMD': {'Assign': [[{'EXPR': {'Literal': ['44']}}],
+                                                                                                                                                                          [{'EXPR': {'Literal': ['20']}}]]}}]},
+                                                                                                                                        {'ElseBody': [{'CMD': {'While': [{'Condition': [{'EXPR': {'Literal': ['K']}}]},
+                                                                                                                                                                         {'Body': [{'CMD': {'Assign': [[{'EXPR': {'Literal': ['39']}}],
+                                                                                                                                                                                                       [{'EXPR': {'Literal': ['50']}}]]}}]}]}}]}]}}]},
+                                                                                                          {'ElseBody': [{'CMD': {'Assign': [[{'EXPR': {'Literal': ['w']}}],
+                                                                                                                                            [{'EXPR': {'Literal': ['-94']}}]]}}]}]}}]},
+                                                                            {'ElseBody': [{'CMD': {'Assign': [[{'EXPR': {'Literal': ['80']}}],
+                                                                                                              [{'EXPR': {'Literal': ['59']}}]]}}]}]}}]}]}}]},
+                 {'ElseBody': [{'CMD': {'Assign': [[{'EXPR': {'Literal': ['e']}}],
+                                                   [{'EXPR': {'Literal': ['v']}}]]}}]}]}}]
