@@ -1,135 +1,77 @@
-Generating phrase (choosing between expression and command)
-Generating Command as phrase
+{'Condition': {'Kind': 'Str', 'Value': 'I'},
+ 'Else': {'Kind': 'Assign',
+          'Operand1': {'Kind': 'Int', 'Value': 255328},
+          'Operand2': {'Kind': 'Str', 'Value': 'r'},
+          'Operator': ':='},
+ 'Kind': 'If',
+ 'Then': {'Kind': 'Assign',
+          'Operand1': {'Kind': 'Str', 'Value': 'L'},
+          'Operand2': {'Kind': 'Str', 'Value': 'Y'},
+          'Operator': ':='}}
 
-Q := -94
-[{'AssignCMD': [[{'LiteralStr': 'Q'}], {'LiteralInt': '-94'}]}]
-
-
-
-Generating 10 programs...
-
-while y < 49 do R := -73
-[{'WhileCMD': [{'Condition': 'y < 49'},
-               {'Do': [{'AssignCMD': [[{'LiteralStr': 'R'}],
-                                      {'LiteralInt': '-73'}]}]}]}]
+if (I) then {(L:=Y)} else {(255328:=r)}
 
 
 
-if O < L then w := R else G := 81
-[{'IfCMD': [{'Condition': 'O < L'},
-            {'Then': [{'AssignCMD': [[{'LiteralStr': 'w'}],
-                                     {'LiteralStr': 'R'}]}]},
-            {'Else': [{'AssignCMD': [[{'LiteralStr': 'G'}],
-                                     {'LiteralInt': '81'}]}]}]}]
+
+{'Condition': {'Kind': 'Int', 'Value': -783381},
+ 'Do': {'Condition': {'Kind': 'Str', 'Value': 'N'},
+        'Else': {'Kind': 'Assign',
+                 'Operand1': {'Kind': 'Int', 'Value': -57327},
+                 'Operand2': {'Kind': 'Int', 'Value': -716330},
+                 'Operator': ':='},
+        'Kind': 'If',
+        'Then': {'Condition': {'Kind': 'Str', 'Value': 'W'},
+                 'Else': {'Kind': 'Assign',
+                          'Operand1': {'Kind': 'Int', 'Value': 767835},
+                          'Operand2': {'Kind': 'Str', 'Value': 'a'},
+                          'Operator': ':='},
+                 'Kind': 'If',
+                 'Then': {'Condition': {'Kind': 'Str', 'Value': 'Y'},
+                          'Do': {'Kind': 'Assign',
+                                 'Operand1': {'Kind': 'Str', 'Value': 'R'},
+                                 'Operand2': {'Kind': 'Int', 'Value': -213521},
+                                 'Operator': ':='},
+                          'Kind': 'While'}}},
+ 'Kind': 'While'}
+
+while (-783381) do {if (N) then {if (W) then {while (Y) do {(R:=-213521)}} else {(767835:=a)}} else {(-57327:=-716330)}}
 
 
 
-if U == -47 then Z := 25 else r := 74
-[{'IfCMD': [{'Condition': 'U == -47'},
-            {'Then': [{'AssignCMD': [[{'LiteralStr': 'Z'}],
-                                     {'LiteralInt': '25'}]}]},
-            {'Else': [{'AssignCMD': [[{'LiteralStr': 'r'}],
-                                     {'LiteralInt': '74'}]}]}]}]
+{'Kind': 'Int', 'Value': 220898}
+
+220898
 
 
 
-while p < j do while N < w do if y < -69 then a := 49 else B := 44; F := 76; e := 48
-[{'ConcatCMD': [[{'WhileCMD': [{'Condition': 'p < j'},
-                               {'Do': [{'ConcatCMD': [[{'WhileCMD': [{'Condition': 'N '
-                                                                                   '< '
-                                                                                   'w'},
-                                                                     {'Do': [{'IfCMD': [{'Condition': 'y '
-                                                                                                      '< '
-                                                                                                      '-69'},
-                                                                                        {'Then': [{'AssignCMD': [[{'LiteralStr': 'a'}],
-                                                                                                                 {'LiteralInt': '49'}]}]},
-                                                                                        {'Else': [{'AssignCMD': [[{'LiteralStr': 'B'}],
-                                                                                                                 {'LiteralInt': '44'}]}]}]}]}]}],
-                                                      {'AssignCMD': [[{'LiteralStr': 'F'}],
-                                                                     {'LiteralInt': '76'}]}]}]}]}],
-                {'AssignCMD': [[{'LiteralStr': 'e'}], {'LiteralInt': '48'}]}]}]
 
+{'Kind': 'Equal',
+ 'Operand1': {'Kind': 'Str', 'Value': 'U'},
+ 'Operand2': {'Kind': 'Add',
+              'Operand1': {'Kind': 'Less',
+                           'Operand1': {'Kind': 'Add',
+                                        'Operand1': {'Kind': 'Equal',
+                                                     'Operand1': {'Kind': 'Sub',
+                                                                  'Operand1': {'Kind': 'Str',
+                                                                               'Value': 'e'},
+                                                                  'Operand2': {'Kind': 'Equal',
+                                                                               'Operand1': {'Kind': 'Str',
+                                                                                            'Value': 'Y'},
+                                                                               'Operand2': {'Kind': 'Str',
+                                                                                            'Value': 'c'},
+                                                                               'Operator': '=='},
+                                                                  'Operator': '-'},
+                                                     'Operand2': {'Kind': 'Int',
+                                                                  'Value': -115352},
+                                                     'Operator': '=='},
+                                        'Operand2': {'Kind': 'Str',
+                                                     'Value': 'e'},
+                                        'Operator': '+'},
+                           'Operand2': {'Kind': 'Int', 'Value': -40946},
+                           'Operator': '<'},
+              'Operand2': {'Kind': 'Int', 'Value': -804769},
+              'Operator': '+'},
+ 'Operator': '=='}
 
-
-if C < o then n := P; H := -61 else P := 48
-[{'IfCMD': [{'Condition': 'C < o'},
-            {'Then': [{'ConcatCMD': [[{'AssignCMD': [[{'LiteralStr': 'n'}],
-                                                     {'LiteralStr': 'P'}]}],
-                                     {'AssignCMD': [[{'LiteralStr': 'H'}],
-                                                    {'LiteralInt': '-61'}]}]}]},
-            {'Else': [{'AssignCMD': [[{'LiteralStr': 'P'}],
-                                     {'LiteralInt': '48'}]}]}]}]
-
-
-
-while n == V do if e < 35 then G := M else o := 32; J := 34
-[{'ConcatCMD': [[{'WhileCMD': [{'Condition': 'n == V'},
-                               {'Do': [{'IfCMD': [{'Condition': 'e < 35'},
-                                                  {'Then': [{'AssignCMD': [[{'LiteralStr': 'G'}],
-                                                                           {'LiteralStr': 'M'}]}]},
-                                                  {'Else': [{'AssignCMD': [[{'LiteralStr': 'o'}],
-                                                                           {'LiteralInt': '32'}]}]}]}]}]}],
-                {'AssignCMD': [[{'LiteralStr': 'J'}], {'LiteralInt': '34'}]}]}]
-
-
-
-if U == 57 then A := 77 else k := -83
-[{'IfCMD': [{'Condition': 'U == 57'},
-            {'Then': [{'AssignCMD': [[{'LiteralStr': 'A'}],
-                                     {'LiteralInt': '77'}]}]},
-            {'Else': [{'AssignCMD': [[{'LiteralStr': 'k'}],
-                                     {'LiteralInt': '-83'}]}]}]}]
-
-
-
-if b < k then if c < A then i := -12 else K := -24; A := 33 else W := -85
-[{'IfCMD': [{'Condition': 'b < k'},
-            {'Then': [{'ConcatCMD': [[{'IfCMD': [{'Condition': 'c < A'},
-                                                 {'Then': [{'AssignCMD': [[{'LiteralStr': 'i'}],
-                                                                          {'LiteralInt': '-12'}]}]},
-                                                 {'Else': [{'AssignCMD': [[{'LiteralStr': 'K'}],
-                                                                          {'LiteralInt': '-24'}]}]}]}],
-                                     {'AssignCMD': [[{'LiteralStr': 'A'}],
-                                                    {'LiteralInt': '33'}]}]}]},
-            {'Else': [{'AssignCMD': [[{'LiteralStr': 'W'}],
-                                     {'LiteralInt': '-85'}]}]}]}]
-
-
-
-if s == i then if j == T then if o == q then while w < Y do if Y == s then o := O else I := 36; j := 16 else p := 37; H := 75; d := 30 else B := -26 else a := -32
-[{'IfCMD': [{'Condition': 's == i'},
-            {'Then': [{'IfCMD': [{'Condition': 'j == T'},
-                                 {'Then': [{'ConcatCMD': [[{'ConcatCMD': [[{'IfCMD': [{'Condition': 'o '
-                                                                                                    '== '
-                                                                                                    'q'},
-                                                                                      {'Then': [{'ConcatCMD': [[{'WhileCMD': [{'Condition': 'w '
-                                                                                                                                            '< '
-                                                                                                                                            'Y'},
-                                                                                                                              {'Do': [{'IfCMD': [{'Condition': 'Y '
-                                                                                                                                                               '== '
-                                                                                                                                                               's'},
-                                                                                                                                                 {'Then': [{'AssignCMD': [[{'LiteralStr': 'o'}],
-                                                                                                                                                                          {'LiteralStr': 'O'}]}]},
-                                                                                                                                                 {'Else': [{'AssignCMD': [[{'LiteralStr': 'I'}],
-                                                                                                                                                                          {'LiteralInt': '36'}]}]}]}]}]}],
-                                                                                                               {'AssignCMD': [[{'LiteralStr': 'j'}],
-                                                                                                                              {'LiteralInt': '16'}]}]}]},
-                                                                                      {'Else': [{'AssignCMD': [[{'LiteralStr': 'p'}],
-                                                                                                               {'LiteralInt': '37'}]}]}]}],
-                                                                          {'AssignCMD': [[{'LiteralStr': 'H'}],
-                                                                                         {'LiteralInt': '75'}]}]}],
-                                                          {'AssignCMD': [[{'LiteralStr': 'd'}],
-                                                                         {'LiteralInt': '30'}]}]}]},
-                                 {'Else': [{'AssignCMD': [[{'LiteralStr': 'B'}],
-                                                          {'LiteralInt': '-26'}]}]}]}]},
-            {'Else': [{'AssignCMD': [[{'LiteralStr': 'a'}],
-                                     {'LiteralInt': '-32'}]}]}]}]
-
-
-
-R := g
-[{'AssignCMD': [[{'LiteralStr': 'R'}], {'LiteralStr': 'g'}]}]
-
-
-
->>> 
+(U==(((((e-(Y==c))==-115352)+e)<-40946)+-804769))

@@ -4,162 +4,257 @@ from random import randint
 from pprint import pprint
 
 
-class Expression:
+IDENTIFIER_LENGTH = 1
+INT_START_RANGE = -999999
+INT_END_RANGE = 999999
 
-    IDENTIFIER_LENGTH = 1
+MAX_DEPTH_EXPRESSION = 10
+MAX_DEPTH_COMMAND = 10
 
-    def __init__(self, which=None):
-        self.code = self.generate_literal(which)
+depth_expression = 0  # global expression depth counter
+depth_command = 0  # global command depth counter
 
-    def generate_literal(self, which=None):
-        if which is not None:
-            if which == 'LiteralStr':
-                c = self._random_word(self.IDENTIFIER_LENGTH)
-            else:  # LiteralInt
-                c = str(randint(-99, 99))
-            self.ast = [{which: c}]
-            return c
 
-        rnd = randint(0, 1)
-        if rnd <= 0:
-            ast_key = 'LiteralStr'
-            c = self._random_word(self.IDENTIFIER_LENGTH)
-        else:
-            ast_key = 'LiteralInt'
-            c = str(randint(-99, 99))
-        self.ast = [{ast_key: c}]
-        return c
+class Expr:
+    kind = None
+
+    def __init__(self, kind):
+        self.kind = kind
+
+
+class TypeExpr(Expr):
+    _value = None
+
+    def __init__(self, kind, value):
+        Expr.kind = kind
+        self._value = value
 
     def get(self):
-        return {'code': self.code, 'ast': self.ast}
-
-    def _random_word(self, n):
-        return ''.join(random.choice(string.ascii_letters) for _ in range(n))
-
-    def add(self, e):
-        ast_key = 'AddExpr'
-        self.code = self.code + ' + ' + e.get()['code']
-        self.ast = add_to_ast(e.get()['ast'], self.ast, ast_key)
-        return self.get()
-
-    def sub(self, e):
-        ast_key = 'SubExpr'
-        self.code = self.code + ' - ' + e.get()['code']
-        self.ast = add_to_ast(e.get()['ast'], self.ast, ast_key)
-        return self.get()
-
-    def less(self, e):
-        ast_key = 'LessExpr'
-        self.code = self.code + ' < ' + e.get()['code']
-        self.ast = add_to_ast(e.get()['ast'], self.ast, ast_key)
-        return self.get()
-
-    def equal(self, e):
-        ast_key = 'EqualExpr'
-        self.code = self.code + ' == ' + e.get()['code']
-        self.ast = add_to_ast(e.get()['ast'], self.ast, ast_key)
-        return self.get()
+        return {'Kind': Expr.kind,
+                'Value': self._value
+                }
 
 
-class Command:
+class OpExpr(Expr):
+    _operator = None
+    _operand = None
+    _operand2 = None
+
+    def __init__(self, kind, operator, operand, operand2):
+        Expr.kind = kind
+        self._operator = operator
+        self._operand = operand
+        self._operand2 = operand2
+
+    def get(self):
+        return {'Kind': Expr.kind,
+                'Operator': self._operator,
+                'Operand1': self._operand,
+                'Operand2': self._operand2,
+                }
+
+
+class ExpressionGenerator:
+
+    ast = {}
 
     def __init__(self):
-        # default is an assignment of two expressions
-        self.assign(Expression('LiteralStr'), Expression('LiteralInt'))
+        rnd = randint(0, 1)
+        if rnd == 0:
+            self.ast = self.int().get()
+        else:
+            self.ast = self.str().get()
 
     def get(self):
-        return {'code': self.code, 'ast': self.ast}
+        return self.ast
+
+    def int(self):
+        self.ast = TypeExpr('Int', randint(INT_START_RANGE, INT_END_RANGE)).get()
+        return self
+
+    def str(self):
+        self.ast = TypeExpr('Str', self._random_word()).get()
+        return self
+
+    def add(self, e, e2):
+        self.ast = OpExpr('Add', '+', e.get(), e2.get()).get()
+        return self
+
+    def sub(self, e, e2):
+        self.ast = OpExpr('Sub', '-', e.get(), e2.get()).get()
+        return self
+
+    def equal(self, e, e2):
+        self.ast = OpExpr('Equal', '==', e.get(), e2.get()).get()
+        return self
+
+    def less(self, e, e2):
+        self.ast = OpExpr('Less', '<', e.get(), e2.get()).get()
+        return self
+
+    def _random_word(self, n=IDENTIFIER_LENGTH):
+        return ''.join(random.choice(string.ascii_letters) for _ in range(n))
+
+
+def gen_expr(expr):
+    global depth_expression
+    depth_expression += 1
+    if depth_expression >= MAX_DEPTH_EXPRESSION:
+        return expr
+
+    rnd = randint(0, 5)
+    if rnd == 0:  # int
+        if depth_expression == 1:  # set int expr
+            expr.int()
+        else:  # generate new int expression
+            return ExpressionGenerator().int()
+    elif rnd == 1:  # str
+        if depth_expression == 1:  # set str expr
+            expr.str()
+        else:  # generate new str expression
+            return ExpressionGenerator().str()
+    elif rnd == 2:
+        e = gen_expr(ExpressionGenerator())
+        e2 = gen_expr(ExpressionGenerator())
+        expr.add(e, e2)
+    elif rnd == 3:
+        e = gen_expr(ExpressionGenerator())
+        e2 = gen_expr(ExpressionGenerator())
+        expr.sub(e, e2)
+    elif rnd == 4:
+        e = gen_expr(ExpressionGenerator())
+        e2 = gen_expr(ExpressionGenerator())
+        expr.equal(e, e2)
+    else:
+        e = gen_expr(ExpressionGenerator())
+        e2 = gen_expr(ExpressionGenerator())
+        expr.less(e, e2)
+    return expr
+
+
+def generate_expression():
+    depth_expression = 0  # set start depth
+    return gen_expr(ExpressionGenerator()).get()
+
+
+class Cmd:
+    kind = None
+
+    def __init__(self, kind):
+        self.kind = kind
+
+
+class IfCmd(Cmd):
+    _condition = None
+    _then = None
+    _else = None
+
+    def __init__(self, e, c, c2=None):
+        Cmd.kind = 'If'
+        self._condition = e
+        self._then = c
+        self._else = c2
+
+    def get(self):
+        return {'Kind': Cmd.kind,
+                'Condition': self._condition,
+                'Then': self._then,
+                'Else': self._else
+                }
+
+
+class WhileCmd(Cmd):
+    _condition = None
+    _do = None
+
+    def __init__(self, e, c):
+        Cmd.kind = 'While'
+        self._condition = e
+        self._do = c
+
+    def get(self):
+        return {'Kind': Cmd.kind,
+                'Condition': self._condition,
+                'Do': self._do
+                }
+
+
+class OpCmd(Cmd):
+    _operator = None
+    _operand = None
+    _operand2 = None
+
+    def __init__(self, kind, operator, operand, operand2):
+        Cmd.kind = kind
+        self._operator = operator
+        self._operand = operand
+        self._operand2 = operand2
+
+    def get(self):
+        return {'Kind': Cmd.kind,
+                'Operator': self._operator,
+                'Operand1': self._operand,
+                'Operand2': self._operand2,
+                }
+
+
+class CommandGenerator:
+
+    ast = {}
+
+    def __init__(self):
+        # default cmd is an assignment of two expressions
+        e = generate_expression()
+        e2 = generate_expression()
+        self.assign(e, e2)
+
+    def get(self):
+        return self.ast
 
     def assign(self, e, e2):
-        # ensure to assign literal only
-        if list(e.get()['ast'][0].keys())[0] != 'LiteralStr':
-            e = Expression('LiteralStr')
-        if list(e2.get()['ast'][0].keys())[0] != 'LiteralInt' and \
-                list(e2.get()['ast'][0].keys())[0] != 'LiteralStr':
-            e2 = Expression()
-        ast_key = 'AssignCMD'
-        self.code = e.get()['code'] + ' := ' + e2.get()['code']
-        self.ast = add_to_ast(e2.get()['ast'], e.get()['ast'], ast_key)
-        return self.get()
+        self.ast = OpCmd('Assign', ':=', e, e2).get()
+        return self
 
     def concat(self, c):
-        ast_key = 'ConcatCMD'
-        self.code = self.code + '; ' + c.get()['code']
-        self.ast = add_to_ast(c.get()['ast'], self.ast, ast_key)
-        return self.get()
+        self.ast = OpCmd('Concat', '; ', c.get(), self.ast).get()
+        return self
 
     def ifcmd(self, e, c):
-        ast_key = 'IfCMD'
-        self.code = 'if ' + e.get()['code'] \
-            + ' then ' + self.code + ' else ' + c.get()['code']
-        new_ast = [{'Condition': e.get()['code']},
-                   {'Then': self.ast},
-                   {'Else': c.get()['ast']}]
-        self.ast = add_to_ast(new_ast, self.ast, ast_key)
-        self.ast[0][list(self.ast[0].keys())[0]].pop(0)
-        return self.get()
+        self.ast = IfCmd(e, c.get(), self.ast).get()
+        return self
 
-    def whilecmd(self, e):
-        ast_key = 'WhileCMD'
-        self.code = 'while ' + e.get()['code'] + ' do ' + self.code
-        new_ast = [{'Condition': e.get()['code']}, {'Do': self.ast}]
-        self.ast = add_to_ast(new_ast, self.ast, ast_key)
-        self.ast[0][list(self.ast[0].keys())[0]].pop(0)
-        return self.get()
+    def whilecmd(self, e, c):
+        self.ast = WhileCmd(e, c.get()).get()
+        return self
 
 
-def add_to_ast(ast_new, ast_to_add, key):
-    ast_new.insert(0, ast_to_add)
-    return [{key: ast_new}]
+def gen_cmd(cmd):
+    global depth_command
+    depth_command += 1
+    if depth_command >= MAX_DEPTH_COMMAND:
+        return cmd
+
+    rnd = randint(0, 3)
+    if rnd == 0:  # assignment
+        if depth_command == 1:  # cmd is assignment by default
+            True
+        else:  # generate another assignment as cmd
+            return CommandGenerator()
+    elif rnd == 1:
+        cmd2 = gen_cmd(CommandGenerator())
+        cmd.concat(cmd2)
+    elif rnd == 2:
+        cmd2 = gen_cmd(CommandGenerator())
+        cmd.ifcmd(generate_expression(), cmd2)
+    else:
+        cmd2 = gen_cmd(CommandGenerator())
+        cmd.whilecmd(generate_expression(), cmd2)
+    return cmd
 
 
-def get_rnd_expression(condition=False, literal=False):
-    max_expr_sequence = 1
-    if not literal:
-        expr = Expression()
-        for i in range(max_expr_sequence):
-            e = Expression()
-            if not condition:
-                rnd = randint(0, 3)
-            else:
-                rnd = randint(2, 3)
-            if rnd == 0:
-                expr.add(e)
-            elif rnd == 1:
-                expr.sub(e)
-            elif rnd == 2:
-                if condition:
-                    # ensure identifier left
-                    if list(expr.get()['ast'][0].keys())[0] != 'LiteralStr':
-                        expr = Expression('LiteralStr')
-                expr.less(e)
-            else:
-                if condition:
-                    # ensure identifier left
-                    if list(expr.get()['ast'][0].keys())[0] != 'LiteralStr':
-                        expr = Expression('LiteralStr')
-                expr.equal(e)
-        return expr
-    return Expression()
-
-
-def gen_rnd_cmd(max_commands_per_program=10):
-    cmd = Command()
-    for i in range(max_commands_per_program):
-        rnd = randint(0, 3)
-        if rnd == 0:
-            expr = get_rnd_expression(False, True)
-            expr2 = get_rnd_expression(False, True)
-            cmd.assign(expr, expr2)
-        elif rnd == 1:
-            cmd.concat(Command())
-        elif rnd == 2:
-            cmd.ifcmd(get_rnd_expression(True), Command())
-        else:
-            cmd.whilecmd(get_rnd_expression(True))
-    print(cmd.get()['code'])
-    pprint(cmd.get()['ast'])
-    print('\n\n')
+def generate_command():
+    depth_command = 0  # set start depth
+    return gen_cmd(CommandGenerator()).get()
 
 
 class Phrase:
@@ -168,23 +263,54 @@ class Phrase:
         rnd = randint(0, 1)
         if rnd == 0:
             print('Generating Expression as phrase\n')
-            c = Expression()
+            return generate_expression()
         else:
             print('Generating Command as phrase\n')
-            c = Command()
-        print(c.get()['code'])
-        pprint(c.get()['ast'])
-        print('\n\n')
+            return generate_command()
+
+
+def prettyprinter(ast):
+    """Convert AST to human readable code with bracketing"""
+    code = ''
+    if 'Kind' in ast:
+        if ast['Kind'] == 'If':
+            code += 'if ('
+            new_code = prettyprinter(ast['Condition'])
+            code += new_code
+            code += ') then {'
+            new_code = prettyprinter(ast['Then'])
+            code += new_code
+            code += '} else {'
+            new_code = prettyprinter(ast['Else'])
+            code += new_code
+            code += '}'
+        elif ast['Kind'] == 'While':
+            code += 'while ('
+            new_code = prettyprinter(ast['Condition'])
+            code += new_code
+            code += ') do {'
+            new_code = prettyprinter(ast['Do'])
+            code += new_code
+            code += '}'
+        else:
+            if 'Value' in ast:
+                code += str(ast['Value'])
+            else:
+                code += '('
+                new_code = prettyprinter(ast['Operand1'])
+                code += new_code
+                code += ast['Operator']
+                new_code = prettyprinter(ast['Operand2'])
+                code += new_code
+                code += ')'
+    return code
 
 
 def main():
-    print('Generating phrase (choosing between expression and command)')
-    Phrase().generate()
-
-    no_of_programs = 10
-    print('Generating ' + str(no_of_programs) + ' programs...\n')
-    for p in range(no_of_programs):
-        gen_rnd_cmd()
+    ast = Phrase().generate()
+    pprint(ast)
+    print('')
+    print(prettyprinter(ast))
 
 
 if __name__ == "__main__":
