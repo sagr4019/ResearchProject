@@ -1,9 +1,10 @@
 
-CLASSES = {"N" : 0, "L" : 1, "H" : 2} #None (N), Low (L), High (H)
+CLASSES = {"L" : 0, "H" : 1} #Low (L), High (H)
 
 def get_class(cls): #converts a string of a security class into an int
-    if cls in CLASSES.keys():
-        return CLASSES[cls]
+    print(cls)
+    if cls == "H":
+        return 1
     else:
         return 0
 
