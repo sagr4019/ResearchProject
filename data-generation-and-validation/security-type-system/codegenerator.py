@@ -36,21 +36,18 @@ class TypeExpr(Expr):
 
 
 class OpExpr(Expr):
-    _operator = None
-    _operand = None
-    _operand2 = None
+    _left = None
+    _right = None
 
-    def __init__(self, kind, operator, operand, operand2):
+    def __init__(self, kind, left, right):
         Expr.kind = kind
-        self._operator = operator
-        self._operand = operand
-        self._operand2 = operand2
+        self._left = left
+        self._right = right
 
     def get(self):
         return {'Kind': Expr.kind,
-                'Operator': self._operator,
-                'Operand1': self._operand,
-                'Operand2': self._operand2,
+                'Left': self._left,
+                'Right': self._right,
                 }
 
 
@@ -73,23 +70,23 @@ class ExpressionGenerator:
         return self
 
     def str(self):
-        self.ast = TypeExpr('Str', self._random_word()).get()
+        self.ast = TypeExpr('Var', self._random_word()).get()
         return self
 
     def add(self, e, e2):
-        self.ast = OpExpr('Add', '+', e.get(), e2.get()).get()
+        self.ast = OpExpr('Add', e.get(), e2.get()).get()
         return self
 
     def sub(self, e, e2):
-        self.ast = OpExpr('Sub', '-', e.get(), e2.get()).get()
+        self.ast = OpExpr('Sub', e.get(), e2.get()).get()
         return self
 
     def equal(self, e, e2):
-        self.ast = OpExpr('Equal', '==', e.get(), e2.get()).get()
+        self.ast = OpExpr('Equal', e.get(), e2.get()).get()
         return self
 
     def less(self, e, e2):
-        self.ast = OpExpr('Less', '<', e.get(), e2.get()).get()
+        self.ast = OpExpr('Less', e.get(), e2.get()).get()
         return self
 
     def _random_word(self, n=IDENTIFIER_LENGTH):
@@ -113,22 +110,17 @@ def gen_expr(expr):
             expr.str()
         else:  # generate new str expression
             return ExpressionGenerator().str()
-    elif rnd == 2:
-        e = gen_expr(ExpressionGenerator())
-        e2 = gen_expr(ExpressionGenerator())
-        expr.add(e, e2)
-    elif rnd == 3:
-        e = gen_expr(ExpressionGenerator())
-        e2 = gen_expr(ExpressionGenerator())
-        expr.sub(e, e2)
-    elif rnd == 4:
-        e = gen_expr(ExpressionGenerator())
-        e2 = gen_expr(ExpressionGenerator())
-        expr.equal(e, e2)
     else:
         e = gen_expr(ExpressionGenerator())
         e2 = gen_expr(ExpressionGenerator())
-        expr.less(e, e2)
+        if rnd == 2:
+            expr.add(e, e2)
+        elif rnd == 3:
+            expr.sub(e, e2)
+        elif rnd == 4:
+            expr.equal(e, e2)
+        else:
+            expr.less(e, e2)
     return expr
 
 
@@ -179,22 +171,19 @@ class WhileCmd(Cmd):
                 }
 
 
-class OpCmd(Cmd):
-    _operator = None
-    _operand = None
-    _operand2 = None
+class SomeCmd(Cmd):
+    _left = None
+    _right = None
 
-    def __init__(self, kind, operator, operand, operand2):
+    def __init__(self, kind, left, right):
         Cmd.kind = kind
-        self._operator = operator
-        self._operand = operand
-        self._operand2 = operand2
+        self._left = left
+        self._right = right
 
     def get(self):
         return {'Kind': Cmd.kind,
-                'Operator': self._operator,
-                'Operand1': self._operand,
-                'Operand2': self._operand2,
+                'Left': self._left,
+                'Right': self._right
                 }
 
 
@@ -203,8 +192,8 @@ class CommandGenerator:
     ast = {}
 
     def __init__(self):
-        # default cmd is an assignment of two expressions
-        e = generate_expression()
+        # default cmd is an assignment
+        e = ExpressionGenerator().str().get()
         e2 = generate_expression()
         self.assign(e, e2)
 
@@ -212,11 +201,11 @@ class CommandGenerator:
         return self.ast
 
     def assign(self, e, e2):
-        self.ast = OpCmd('Assign', ':=', e, e2).get()
+        self.ast = SomeCmd('Assign', e, e2).get()
         return self
 
     def concat(self, c):
-        self.ast = OpCmd('Concat', '; ', c.get(), self.ast).get()
+        self.ast = SomeCmd('Concat', c.get(), self.ast).get()
         return self
 
     def ifcmd(self, e, c):
@@ -240,15 +229,14 @@ def gen_cmd(cmd):
             True
         else:  # generate another assignment as cmd
             return CommandGenerator()
-    elif rnd == 1:
-        cmd2 = gen_cmd(CommandGenerator())
-        cmd.concat(cmd2)
-    elif rnd == 2:
-        cmd2 = gen_cmd(CommandGenerator())
-        cmd.ifcmd(generate_expression(), cmd2)
     else:
         cmd2 = gen_cmd(CommandGenerator())
-        cmd.whilecmd(generate_expression(), cmd2)
+        if rnd == 1:
+            cmd.concat(cmd2)
+        elif rnd == 2:
+            cmd.ifcmd(generate_expression(), cmd2)
+        else:
+            cmd.whilecmd(generate_expression(), cmd2)
     return cmd
 
 
@@ -274,36 +262,37 @@ def prettyprinter(ast):
     code = ''
     if 'Kind' in ast:
         if ast['Kind'] == 'If':
-            code += 'if ('
-            new_code = prettyprinter(ast['Condition'])
-            code += new_code
-            code += ') then {'
-            new_code = prettyprinter(ast['Then'])
-            code += new_code
-            code += '} else {'
-            new_code = prettyprinter(ast['Else'])
-            code += new_code
-            code += '}'
+            code += "if ({}) then {{{}}} else {{{}}}".format(
+                prettyprinter(ast['Condition']),
+                prettyprinter(ast['Then']),
+                prettyprinter(ast['Else']))
         elif ast['Kind'] == 'While':
-            code += 'while ('
-            new_code = prettyprinter(ast['Condition'])
-            code += new_code
-            code += ') do {'
-            new_code = prettyprinter(ast['Do'])
-            code += new_code
-            code += '}'
+            code += "while ({}) do {{{}}}".format(
+                prettyprinter(ast['Condition']),
+                prettyprinter(ast['Do']))
+        elif 'Value' in ast:
+            code += str(ast['Value'])
         else:
-            if 'Value' in ast:
-                code += str(ast['Value'])
-            else:
-                code += '('
-                new_code = prettyprinter(ast['Operand1'])
-                code += new_code
-                code += ast['Operator']
-                new_code = prettyprinter(ast['Operand2'])
-                code += new_code
-                code += ')'
+            code += "({} {} {})".format(
+                prettyprinter(ast['Left']),
+                get_center(ast['Kind']),
+                prettyprinter(ast['Right']))
     return code
+
+
+def get_center(kind):
+    if kind == 'Assign':
+        return ':='
+    elif kind == 'Concat':
+        return '; '
+    elif kind == 'Add':
+        return '+'
+    elif kind == 'Sub':
+        return '-'
+    elif kind == 'Equal':
+        return '=='
+    else:
+        return '<'
 
 
 def main():
