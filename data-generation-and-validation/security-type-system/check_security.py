@@ -1,9 +1,4 @@
-# global storage for identifiers
-identifierStorage = []
-
-def get_class(identifier): #converts a string of a security class into an int
-    global identifierStorage
-
+def get_class(identifier, identifierStorage): #converts a string of a security class into an int
     securityClass = None
 
     for e in identifierStorage:
@@ -20,43 +15,39 @@ def get_class(identifier): #converts a string of a security class into an int
         return 0
 
 #returns if the given node is valid towards its security class and the security class itself
-def security(node):
-    global identifierStorage
-
+def security(node, identifierStorage):
     key = node.get("Kind") #get the type of the current node
 
     if key == "Concat":
-        valid1, class1 = security(node.get("Left"))
-        valid2, class2 = security(node.get("Right"))
+        valid1, class1 = security(node.get("Left"), identifierStorage)
+        valid2, class2 = security(node.get("Right"), identifierStorage)
         return (valid1 and valid2), max(class1, class2)
     elif key == "Assign":
-        _, id_class = security(node.get("Left"))
-        _, val_class = security(node.get("Right"))
+        _, id_class = security(node.get("Left"), identifierStorage)
+        _, val_class = security(node.get("Right"), identifierStorage)
         return (id_class >= val_class), max(id_class, val_class)
     elif key == "Var":
-        return True, get_class(node.get("Value"))
+        return True, get_class(node.get("Value"), identifierStorage)
     elif key == "While":
-        _, g_class = security(node.get("Condition"))
-        cmd_valid, cmd_class = security(node.get("Do"))
+        _, g_class = security(node.get("Condition"), identifierStorage)
+        cmd_valid, cmd_class = security(node.get("Do"), identifierStorage)
         return (cmd_valid and g_class >= cmd_class), max(g_class, cmd_class)
     elif key == "Int":
         return True, 0
     elif key == "If":
-        _, g_class = security(node.get("Condition"))
-        valid1, class1 = security(node.get("Then"))
-        valid2, class2 = security(node.get("Else"))
+        _, g_class = security(node.get("Condition"), identifierStorage)
+        valid1, class1 = security(node.get("Then"), identifierStorage)
+        valid2, class2 = security(node.get("Else"), identifierStorage)
         return (valid1 and valid2 and g_class >= class1 and g_class >= class2), max(g_class, class1, class2)
     elif key == "Equal" or key == "Less" or key == "Add" or key == "Sub":
-        _, class1 = security(node.get("Left"))
-        _, class2 = security(node.get("Right"))
+        _, class1 = security(node.get("Left"), identifierStorage)
+        _, class2 = security(node.get("Right"), identifierStorage)
         return True, max(class1, class2)
     else:
         return True, 0
 
 def main():
-    global identifierStorage
-
-    # predefine identifierStorage
+    # pre-define identifierStorage
     identifierStorage = [{"Identifier": "G", "Security": "L"}, {"Identifier": "X", "Security": "L"}, {"Identifier": "n", "Security": "L"}, {"Identifier": "J", "Security": "L"}, {"Identifier": "R", "Security": "L"}, {"Identifier": "i", "Security": "L"}, {"Identifier": "f", "Security": "L"}, {"Identifier": "v", "Security": "L"}, {"Identifier": "K", "Security": "L"}]
 
     # (((G := X) ;  (n := (-16782 < (((J < ((R + -314341) + -776311)) == i) + f)))) ;  (v := K))
@@ -89,7 +80,7 @@ def main():
      'Right': {'Kind': 'Assign',
                'Left': {'Kind': 'Var', 'Value': 'v'},
                'Right': {'Kind': 'Var', 'Value': 'K'}}}
-    print(security(newExample))
+    print(security(newExample, identifierStorage))
 
     # rewrite identifierStorage
     identifierStorage = [{"Identifier": "U", "Security": "L"}, {"Identifier": "Q", "Security": "L"}, {"Identifier": "Z", "Security": "L"}, {"Identifier": "N", "Security": "L"}, {"Identifier": "V", "Security": "L"}, {"Identifier": "v", "Security": "L"}, {"Identifier": "H", "Security": "L"}, {"Identifier": "d", "Security": "L"}, {"Identifier": "q", "Security": "L"}]
@@ -130,7 +121,7 @@ def main():
                                             "Right": {"Kind": "Int",
                                                       "Value": -73817}}},
                          "Right": {"Kind": "Var", "Value": "q"}}}}
-    print(security(testExample))
+    print(security(testExample, identifierStorage))
 
 if __name__ == "__main__":
     main()
