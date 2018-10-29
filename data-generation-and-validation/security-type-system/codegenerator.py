@@ -4,21 +4,22 @@ import sys
 from random import randint
 from pprint import pprint
 
-sys.setrecursionlimit(1500)
+sys.setrecursionlimit(5000)
 
-
-IDENTIFIER_LENGTH = 1
 INT_START_RANGE = -999999
 INT_END_RANGE = 999999
+IDENTIFIER_LENGTH = 1
 
-MAX_EXPRESSIONS_PER_EXPRESSION = 7
-MAX_COMMANDS_PER_COMMAND = 15  # successfully tested: 1000
+MAX_EXPRESSIONS_PER_EXPRESSION = 5
+MAX_COMMANDS_PER_COMMAND = 50
+
+TAB_SIZE = '    '
 
 ENABLE_SEED = True
 
 
 if ENABLE_SEED:
-    SEED = 3
+    SEED = 8
     random.seed(SEED)
     print('SEED: {}'.format(SEED))
 
@@ -26,6 +27,12 @@ if ENABLE_SEED:
 class IntExpr:
 
     def gen(self):
+        """
+        Return AST representation for integers.
+        The value for the key 'Value' is a randomly generated integer.
+        The value range is defined in the constants INT_START_RANGE and
+        INT_END_RANGE.
+        """
         return {'Kind': 'Int',
                 'Value': randint(INT_START_RANGE, INT_END_RANGE)
                 }
@@ -34,6 +41,11 @@ class IntExpr:
 class VarExpr:
 
     def gen(self):
+        """
+        Return AST representation for variables.
+        The value for key 'Name' is a randomly generated string with the
+        length as defined in the constant IDENTIFIER_LENGTH.
+        """
         return {'Kind': 'Var',
                 'Name': ''.join(random.choice(string.ascii_letters)
                                 for _ in range(IDENTIFIER_LENGTH))
@@ -119,8 +131,9 @@ class ExpressionGenerator():
             expr_count_max=randint(1, MAX_EXPRESSIONS_PER_EXPRESSION)):
         """
         Return an expression. Even count of expressions within an expression is
-        impossible. In this case the next higher odd count of expressions
-        within an expression is selected.
+        impossible according to the grammar used in the paper. In this case
+        the next higher odd count of expressions within an expression is
+        selected.
         """
         if expr_count >= expr_count_max:
             return expr, expr_count
@@ -164,6 +177,11 @@ class ExpressionGenerator():
         return expr, count
 
     def _gen_simpl_expr(self):
+        """
+        Return a non-recursive expression along with the count of
+        subexpressions, that is either a literal or an expression consisting of
+        two literals.
+        """
         rnd = randint(0, 5)
         if rnd == 0 or rnd == 1:
             return self._gen_literal()
@@ -195,22 +213,32 @@ class CommandGenerator():
             return cmd, cmd_count
 
         if cmd_count == 0:
-            expr, _ = ExpressionGenerator().gen()
+            # default arguments are evaluated once when the function is defined
+            # and not each time the function is called, which is a problem if
+            # we call a function as default argument that should generate a
+            # random int. So to get e. g. expressions with a random count of
+            # subexpressions inside, we have to randomly generate the count
+            # of subexpressions and pass it to gen() each time we call it
+            expr, _ = ExpressionGenerator().gen(
+                expr_count_max=randint(1, MAX_EXPRESSIONS_PER_EXPRESSION))
             cmd = AssignCmd().gen(VarExpr().gen(), expr)
             cmd_count += 1
         else:
             if (cmd_count + 1) == cmd_count_max:
-                expr, _ = ExpressionGenerator().gen()
+                expr, _ = ExpressionGenerator().gen(
+                    expr_count_max=randint(1, MAX_EXPRESSIONS_PER_EXPRESSION))
                 cmd = WhileCmd().gen(expr, cmd)
                 cmd_count += 1
             else:
                 rnd = randint(0, 2)
                 if rnd == 0:
-                    expr, _ = ExpressionGenerator().gen()
+                    expr, _ = ExpressionGenerator().gen(
+                        expr_count_max=randint(1, MAX_EXPRESSIONS_PER_EXPRESSION))
                     cmd = WhileCmd().gen(expr, cmd)
                     cmd_count += 1
                 elif rnd == 1:
-                    expr, _ = ExpressionGenerator().gen()
+                    expr, _ = ExpressionGenerator().gen(
+                        expr_count_max=randint(1, MAX_EXPRESSIONS_PER_EXPRESSION))
                     cmd_next, count = CommandGenerator().gen(None, 0,
                                                              cmd_count_max -
                                                              cmd_count - 1)
@@ -237,38 +265,108 @@ class PhraseGenerator:
     def gen(self):
         if randint(0, 1) == 0:
             ast, count = ExpressionGenerator().gen()
-            return 'expr', count, ast
+            return 'expression', count, ast
         else:
             ast, count = CommandGenerator().gen()
-            return 'cmd', count, ast
+            return 'command', count, ast
 
 
-def prettyprinter(ast):
-    """Convert AST to human readable code with bracketing"""
+def prettyprint_singleline(ast):
+    """Return AST as human readable single-line string with bracketing"""
     code = ''
     if 'Kind' in ast:
         if ast['Kind'] == 'If':
-            code += "if ({}) then {{{}}} else {{{}}}".format(
-                prettyprinter(ast['Condition']),
-                prettyprinter(ast['Then']),
-                prettyprinter(ast['Else']))
+            code += "if {} then {{{}}} else {{{}}}".format(
+                prettyprint_singleline(ast['Condition']),
+                prettyprint_singleline(ast['Then']),
+                prettyprint_singleline(ast['Else']))
         elif ast['Kind'] == 'While':
-            code += "while ({}) do {{{}}}".format(
-                prettyprinter(ast['Condition']),
-                prettyprinter(ast['Body']))
-        elif 'Value' in ast:
+            code += "while {} do {{{}}}".format(
+                prettyprint_singleline(ast['Condition']),
+                prettyprint_singleline(ast['Body']))
+        elif ast['Kind'] == 'Int':
             code += str(ast['Value'])
-        elif 'Name' in ast:
+        elif ast['Kind'] == 'Var':
             code += str(ast['Name'])
         else:
             code += "({} {} {})".format(
-                prettyprinter(ast['Left']),
+                prettyprint_singleline(ast['Left']),
                 get_center(ast['Kind']),
-                prettyprinter(ast['Right']))
+                prettyprint_singleline(ast['Right']))
     return code
 
 
+def prettyprint_multiline_indented(ast, level=0):
+    """
+    Return AST as human readable multi-line string with bracketing and
+    indentation
+    """
+    code = ''
+    if 'Kind' in ast:
+        if ast['Kind'] == 'If':
+            code += "{}if {} then {{\n{}\n{}}} else {{\n{}\n{}}}".format(
+                get_tabs(level),
+                prettyprint_multiline_indented(ast['Condition'], level),
+                prettyprint_multiline_indented(ast['Then'], level + 1),
+                get_tabs(level),
+                prettyprint_multiline_indented(ast['Else'], level + 1),
+                get_tabs(level))
+        elif ast['Kind'] == 'While':
+            code += "{}while {} do {{\n{}\n{}}}".format(
+                get_tabs(level),
+                prettyprint_multiline_indented(ast['Condition'], level),
+                prettyprint_multiline_indented(ast['Body'], level + 1),
+                get_tabs(level))
+        elif ast['Kind'] == 'Assign':
+            code += "{}{} {} {}".format(
+                get_tabs(level),
+                prettyprint_multiline_indented(ast['Left'], level),
+                get_center(ast['Kind']),
+                prettyprint_multiline_indented(ast['Right'], level))
+        elif ast['Kind'] == 'Seq':
+            code += "{}{}\n{}".format(
+                prettyprint_multiline_indented(ast['Left'], level),
+                get_center(ast['Kind']),
+                prettyprint_multiline_indented(ast['Right'], level))
+        elif ast['Kind'] == 'Add':
+            code += "({} {} {})".format(
+                prettyprint_multiline_indented(ast['Left'], level),
+                get_center(ast['Kind']),
+                prettyprint_multiline_indented(ast['Right'], level))
+        elif ast['Kind'] == 'Sub':
+            code += "({} {} {})".format(
+                prettyprint_multiline_indented(ast['Left'], level),
+                get_center(ast['Kind']),
+                prettyprint_multiline_indented(ast['Right'], level))
+        elif ast['Kind'] == 'Less':
+            code += "({} {} {})".format(
+                prettyprint_multiline_indented(ast['Left'], level),
+                get_center(ast['Kind']),
+                prettyprint_multiline_indented(ast['Right'], level))
+        elif ast['Kind'] == 'Equal':
+            code += "({} {} {})".format(
+                prettyprint_multiline_indented(ast['Left'], level),
+                get_center(ast['Kind']),
+                prettyprint_multiline_indented(ast['Right'], level))
+        elif ast['Kind'] == 'Int':
+            code += str(ast['Value'])
+        elif ast['Kind'] == 'Var':
+            code += str(ast['Name'])
+        else:
+            raise RuntimeError("Unknown kind {}".format(ast['Kind']))
+    return code
+
+
+def get_tabs(level):
+    """Return tab string for the given level"""
+    tabs = ''
+    for i in range(level):
+        tabs += TAB_SIZE
+    return tabs
+
+
 def get_center(kind):
+    """Return the symbol(s) associated with each kind"""
     if kind == 'Assign':
         return ':='
     elif kind == 'Seq':
@@ -279,16 +377,21 @@ def get_center(kind):
         return '-'
     elif kind == 'Equal':
         return '=='
-    else:
+    elif kind == 'Less':
         return '<'
+    else:
+        raise RuntimeError("Unknown kind {}".format(kind))
 
 
 def main():
     _type, count, ast = PhraseGenerator().gen()
-    print('Generated {} with count {}\n'.format(_type, count))
+    print('Generated {} with count {} (incl. sub {}s) as phrase\n'.format(
+        _type, count, _type,))
     pprint(ast)
-    print('')
-    print(prettyprinter(ast))
+    print('\n')
+    print(prettyprint_singleline(ast))
+    print('\n')
+    print(prettyprint_multiline_indented(ast))
 
 
 if __name__ == "__main__":
