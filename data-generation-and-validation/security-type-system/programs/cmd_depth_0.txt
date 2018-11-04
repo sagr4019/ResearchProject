@@ -2,10 +2,16 @@ SEED: 14
 Generating command with depth 0
 {'Kind': 'Assign',
  'Left': {'Kind': 'Var', 'Name': 'N'},
- 'Right': {'Kind': 'Int', 'Value': -431430}}
+ 'Right': {'Kind': 'Sub',
+           'Left': {'Kind': 'Equal',
+                    'Left': {'Kind': 'Var', 'Name': 'D'},
+                    'Right': {'Kind': 'Var', 'Name': 'z'}},
+           'Right': {'Kind': 'Add',
+                     'Left': {'Kind': 'Var', 'Name': 'w'},
+                     'Right': {'Kind': 'Var', 'Name': 'x'}}}}
 
 
-(N := -431430)
+(N := ((D == z) - (w + x)))
 
 
-N := -431430
+N := ((D == z) - (w + x))

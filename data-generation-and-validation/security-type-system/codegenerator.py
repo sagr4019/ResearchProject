@@ -10,7 +10,7 @@ INT_START_RANGE = -999999
 INT_END_RANGE = 999999
 IDENTIFIER_LENGTH = 1
 
-MAX_DEPTH_EXPRESSION = 3
+MAX_DEPTH_EXPRESSION = 2
 MAX_DEPTH_COMMAND = 5
 
 
@@ -21,7 +21,7 @@ ENABLE_SEED = True
 
 
 if ENABLE_SEED:
-    SEED = 19
+    SEED = 14
     random.seed(SEED)
     print('SEED: {}'.format(SEED))
 
@@ -144,7 +144,7 @@ class ExpressionGenerator:
 
     def gen(self):
         depth = randint(0, MAX_DEPTH_EXPRESSION)
-        print('Generating expression with depth {}'.format(depth))
+        # print('Generating expression with depth {}'.format(depth))
         return ExprGen().gen(depth)
 
 
@@ -152,7 +152,7 @@ class AssignCmd:
 
     def gen(self, depth):
         left, _ = VarExpr().gen()
-        right, _ = ExprGen().gen(depth)
+        right, _ = ExpressionGenerator().gen()
 
         return {'Kind': 'Assign',
                 'Left': left,
@@ -163,7 +163,7 @@ class AssignCmd:
 class WhileCmd:
 
     def gen(self, depth):
-        cond, _ = ExprGen().gen(randint(0, depth))
+        cond, _ = ExpressionGenerator().gen()
         body, depth_body = CmdGen().gen(depth - 1)
 
         return {'Kind': 'While',
@@ -175,7 +175,7 @@ class WhileCmd:
 class IfCmd:
 
     def gen(self, depth):
-        cond, _ = ExprGen().gen(randint(0, depth))
+        cond, _ = ExpressionGenerator().gen()
 
         depth_then, depth_else = get_rand_depth(depth - 1)
 
