@@ -1,0 +1,43 @@
+SEED: 5
+Generating command with depth 4
+{'Condition': {'Kind': 'Add',
+               'Left': {'Kind': 'Int', 'Value': 889326},
+               'Right': {'Kind': 'Sub',
+                         'Left': {'Kind': 'Var', 'Name': 'p'},
+                         'Right': {'Kind': 'Var', 'Name': 'I'}}},
+ 'Else': {'Body': {'Kind': 'Assign',
+                   'Left': {'Kind': 'Var', 'Name': 'S'},
+                   'Right': {'Kind': 'Int', 'Value': 874313}},
+          'Condition': {'Kind': 'Int', 'Value': 973370},
+          'Kind': 'While'},
+ 'Kind': 'If',
+ 'Then': {'Body': {'Kind': 'Seq',
+                   'Left': {'Kind': 'Assign',
+                            'Left': {'Kind': 'Var', 'Name': 'i'},
+                            'Right': {'Kind': 'Int', 'Value': 827469}},
+                   'Right': {'Body': {'Kind': 'Assign',
+                                      'Left': {'Kind': 'Var', 'Name': 'k'},
+                                      'Right': {'Kind': 'Var', 'Name': 'u'}},
+                             'Condition': {'Kind': 'Int', 'Value': -652173},
+                             'Kind': 'While'}},
+          'Condition': {'Kind': 'Less',
+                        'Left': {'Kind': 'Var', 'Name': 'k'},
+                        'Right': {'Kind': 'Int', 'Value': -708983}},
+          'Kind': 'While'}}
+
+
+if (889326 + (p - I)) then {while (k < -708983) do {((i := 827469) ;  while -652173 do {(k := u)})}} else {while 973370 do {(S := 874313)}}
+
+
+if (889326 + (p - I)) then {
+    while (k < -708983) do {
+        i := 827469; 
+        while -652173 do {
+            k := u
+        }
+    }
+} else {
+    while 973370 do {
+        S := 874313
+    }
+}

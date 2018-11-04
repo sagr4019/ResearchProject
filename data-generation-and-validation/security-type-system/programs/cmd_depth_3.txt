@@ -1,0 +1,30 @@
+SEED: 9
+Generating command with depth 3
+{'Kind': 'Seq',
+ 'Left': {'Body': {'Kind': 'Assign',
+                   'Left': {'Kind': 'Var', 'Name': 'G'},
+                   'Right': {'Kind': 'Var', 'Name': 'M'}},
+          'Condition': {'Kind': 'Int', 'Value': -290479},
+          'Kind': 'While'},
+ 'Right': {'Body': {'Body': {'Kind': 'Assign',
+                             'Left': {'Kind': 'Var', 'Name': 'i'},
+                             'Right': {'Kind': 'Int', 'Value': 623635}},
+                    'Condition': {'Kind': 'Int', 'Value': -767326},
+                    'Kind': 'While'},
+           'Condition': {'Kind': 'Add',
+                         'Left': {'Kind': 'Var', 'Name': 'U'},
+                         'Right': {'Kind': 'Var', 'Name': 'k'}},
+           'Kind': 'While'}}
+
+
+(while -290479 do {(G := M)} ;  while (U + k) do {while -767326 do {(i := 623635)}})
+
+
+while -290479 do {
+    G := M
+}; 
+while (U + k) do {
+    while -767326 do {
+        i := 623635
+    }
+}

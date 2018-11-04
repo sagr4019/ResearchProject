@@ -1,0 +1,22 @@
+SEED: 7
+Generating command with depth 2
+{'Body': {'Kind': 'Seq',
+          'Left': {'Kind': 'Assign',
+                   'Left': {'Kind': 'Var', 'Name': 'f'},
+                   'Right': {'Kind': 'Var', 'Name': 'A'}},
+          'Right': {'Kind': 'Assign',
+                    'Left': {'Kind': 'Var', 'Name': 'e'},
+                    'Right': {'Kind': 'Int', 'Value': -809761}}},
+ 'Condition': {'Kind': 'Add',
+               'Left': {'Kind': 'Var', 'Name': 'L'},
+               'Right': {'Kind': 'Int', 'Value': 907788}},
+ 'Kind': 'While'}
+
+
+while (L + 907788) do {((f := A) ;  (e := -809761))}
+
+
+while (L + 907788) do {
+    f := A; 
+    e := -809761
+}

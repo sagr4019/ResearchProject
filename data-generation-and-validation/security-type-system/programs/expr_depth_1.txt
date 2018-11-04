@@ -1,0 +1,11 @@
+SEED: 1
+Generating expression with depth 1
+{'Kind': 'Add',
+ 'Left': {'Kind': 'Var', 'Name': 'W'},
+ 'Right': {'Kind': 'Var', 'Name': 'E'}}
+
+
+(W + E)
+
+
+(W + E)

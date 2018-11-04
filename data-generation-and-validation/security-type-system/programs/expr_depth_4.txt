@@ -1,0 +1,19 @@
+SEED: 5
+Generating expression with depth 4
+{'Kind': 'Equal',
+ 'Left': {'Kind': 'Var', 'Name': 'X'},
+ 'Right': {'Kind': 'Sub',
+           'Left': {'Kind': 'Add',
+                    'Left': {'Kind': 'Sub',
+                             'Left': {'Kind': 'Int', 'Value': -972497},
+                             'Right': {'Kind': 'Int', 'Value': -144045}},
+                    'Right': {'Kind': 'Equal',
+                              'Left': {'Kind': 'Int', 'Value': 597874},
+                              'Right': {'Kind': 'Int', 'Value': -708983}}},
+           'Right': {'Kind': 'Var', 'Name': 'i'}}}
+
+
+(X == (((-972497 - -144045) + (597874 == -708983)) - i))
+
+
+(X == (((-972497 - -144045) + (597874 == -708983)) - i))

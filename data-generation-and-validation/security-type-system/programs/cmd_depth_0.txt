@@ -1,0 +1,11 @@
+SEED: 14
+Generating command with depth 0
+{'Kind': 'Assign',
+ 'Left': {'Kind': 'Var', 'Name': 'N'},
+ 'Right': {'Kind': 'Int', 'Value': -431430}}
+
+
+(N := -431430)
+
+
+N := -431430

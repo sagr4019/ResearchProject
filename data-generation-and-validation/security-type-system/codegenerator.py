@@ -10,16 +10,18 @@ INT_START_RANGE = -999999
 INT_END_RANGE = 999999
 IDENTIFIER_LENGTH = 1
 
-MAX_EXPRESSIONS_PER_EXPRESSION = 5
-MAX_COMMANDS_PER_COMMAND = 50
+MAX_DEPTH_EXPRESSION = 3
+MAX_DEPTH_COMMAND = 5
+
 
 TAB_SIZE = '    '
 
+# ENABLE_SEED = False
 ENABLE_SEED = True
 
 
 if ENABLE_SEED:
-    SEED = 8
+    SEED = 19
     random.seed(SEED)
     print('SEED: {}'.format(SEED))
 
@@ -35,7 +37,7 @@ class IntExpr:
         """
         return {'Kind': 'Int',
                 'Value': randint(INT_START_RANGE, INT_END_RANGE)
-                }
+                }, 1
 
 
 class VarExpr:
@@ -49,226 +51,188 @@ class VarExpr:
         return {'Kind': 'Var',
                 'Name': ''.join(random.choice(string.ascii_letters)
                                 for _ in range(IDENTIFIER_LENGTH))
-                }
+                }, 1
+
+
+class LiteralExpr:
+
+    def gen(self):
+        if randint(0, 1) == 0:
+            return IntExpr().gen()
+        else:
+            return VarExpr().gen()
 
 
 class AddExpr:
 
-    def gen(self, left, right):
+    def gen(self, depth):
+        depth_left, depth_right = get_rand_depth(depth - 1)
+
+        left, depth_left = ExprGen().gen(depth_left)
+        right, depth_right = ExprGen().gen(depth_right)
+        depth_ret = max(depth_left, depth_right)
+
         return {'Kind': 'Add',
                 'Left': left,
                 'Right': right,
-                }
+                }, depth_ret + 1
 
 
 class SubExpr:
 
-    def gen(self, left, right):
+    def gen(self, depth):
+        depth_left, depth_right = get_rand_depth(depth - 1)
+
+        left, depth_left = ExprGen().gen(depth_left)
+        right, depth_right = ExprGen().gen(depth_right)
+        depth_ret = max(depth_left, depth_right)
+
         return {'Kind': 'Sub',
                 'Left': left,
                 'Right': right,
-                }
-
-
-class LessExpr:
-
-    def gen(self, left, right):
-        return {'Kind': 'Less',
-                'Left': left,
-                'Right': right,
-                }
+                }, depth_ret + 1
 
 
 class EqualExpr:
 
-    def gen(self, left, right):
+    def gen(self, depth):
+        depth_left, depth_right = get_rand_depth(depth - 1)
+
+        left, depth_left = ExprGen().gen(depth_left)
+        right, depth_right = ExprGen().gen(depth_right)
+        depth_ret = max(depth_left, depth_right)
+
         return {'Kind': 'Equal',
                 'Left': left,
                 'Right': right,
-                }
+                }, depth_ret + 1
 
 
-class IfCmd:
+class LessExpr:
 
-    def gen(self, condition, then, _else):
-        return {'Kind': 'If',
-                'Condition': condition,
-                'Then': then,
-                'Else': _else
-                }
+    def gen(self, depth):
+        depth_left, depth_right = get_rand_depth(depth - 1)
+
+        left, depth_left = ExprGen().gen(depth_left)
+        right, depth_right = ExprGen().gen(depth_right)
+        depth_ret = max(depth_left, depth_right)
+
+        return {'Kind': 'Less',
+                'Left': left,
+                'Right': right,
+                }, depth_ret + 1
 
 
-class WhileCmd:
+class ExprGen:
 
-    def gen(self, condition, body):
-        return {'Kind': 'While',
-                'Condition': condition,
-                'Body': body
-                }
+    def gen(self, depth):
+        if depth == 0:
+            return LiteralExpr().gen()
+
+        rnd = randint(0, 3)
+        if rnd == 0:
+            return AddExpr().gen(depth)
+        elif rnd == 1:
+            return SubExpr().gen(depth)
+        elif rnd == 2:
+            return EqualExpr().gen(depth)
+        elif rnd == 3:
+            return LessExpr().gen(depth)
+
+
+class ExpressionGenerator:
+
+    def gen(self):
+        depth = randint(0, MAX_DEPTH_EXPRESSION)
+        print('Generating expression with depth {}'.format(depth))
+        return ExprGen().gen(depth)
 
 
 class AssignCmd:
 
-    def gen(self, var, right):
+    def gen(self, depth):
+        left, _ = VarExpr().gen()
+        right, _ = ExprGen().gen(depth)
+
         return {'Kind': 'Assign',
-                'Left': var,
-                'Right': right
-                }
+                'Left': left,
+                'Right': right,
+                }, 0
+
+
+class WhileCmd:
+
+    def gen(self, depth):
+        cond, _ = ExprGen().gen(randint(0, depth))
+        body, depth_body = CmdGen().gen(depth - 1)
+
+        return {'Kind': 'While',
+                'Condition': cond,
+                'Body': body,
+                }, depth_body + 1
+
+
+class IfCmd:
+
+    def gen(self, depth):
+        cond, _ = ExprGen().gen(randint(0, depth))
+
+        depth_then, depth_else = get_rand_depth(depth - 1)
+
+        then, depth_then = CmdGen().gen(depth_then)
+        _else, depth_else = CmdGen().gen(depth_else)
+        depth_ret = max(depth_then, depth_else)
+
+        return {'Kind': 'If',
+                'Condition': cond,
+                'Then': then,
+                'Else': _else,
+                }, depth_ret + 1
 
 
 class SeqCmd:
 
-    def gen(self, left, right):
+    def gen(self, depth):
+        depth_left, depth_right = get_rand_depth(depth - 1)
+
+        left, depth_left = CmdGen().gen(depth_left)
+        right, depth_right = CmdGen().gen(depth_right)
+        depth_ret = max(depth_left, depth_right)
+
         return {'Kind': 'Seq',
                 'Left': left,
                 'Right': right
-                }
+                }, depth_ret + 1
 
 
-class ExpressionGenerator():
+class CmdGen:
 
-    def gen(self, expr=None, expr_count=0,
-            expr_count_max=randint(1, MAX_EXPRESSIONS_PER_EXPRESSION)):
-        """
-        Return an expression. Even count of expressions within an expression is
-        impossible according to the grammar used in the paper. In this case
-        the next higher odd count of expressions within an expression is
-        selected.
-        """
-        if expr_count >= expr_count_max:
-            return expr, expr_count
+    def gen(self, depth):
+        if depth == 0:
+            return AssignCmd().gen(depth)
 
-        if expr_count == 0:
-            if expr_count_max == 1:
-                expr, count = self._gen_literal()
-            else:
-                expr, count = self._gen_simpl_expr()
-            expr_count += count
-        else:
-            if (expr_count + 1) == expr_count_max:
-                expr_next, count = self._gen_literal()
-            else:
-                expr_next, count = ExpressionGenerator().gen(None, 0,
-                                                             expr_count_max -
-                                                             expr_count - 1)
-            rnd = randint(0, 3)
-            if rnd == 0:
-                if randint(0, 1) == 0:
-                    expr = AddExpr().gen(expr, expr_next)
-                else:
-                    expr = AddExpr().gen(expr_next, expr)
-            elif rnd == 1:
-                if randint(0, 1) == 0:
-                    expr = SubExpr().gen(expr, expr_next)
-                else:
-                    expr = SubExpr().gen(expr_next, expr)
-            elif rnd == 2:
-                if randint(0, 1) == 0:
-                    expr = LessExpr().gen(expr, expr_next)
-                else:
-                    expr = LessExpr().gen(expr_next, expr)
-            else:
-                if randint(0, 1) == 0:
-                    expr = EqualExpr().gen(expr, expr_next)
-                else:
-                    expr = EqualExpr().gen(expr_next, expr)
-            expr_count += count + 1
-        expr, count = self.gen(expr, expr_count, expr_count_max)
-        return expr, count
-
-    def _gen_simpl_expr(self):
-        """
-        Return a non-recursive expression along with the count of
-        subexpressions, that is either a literal or an expression consisting of
-        two literals.
-        """
-        rnd = randint(0, 5)
-        if rnd == 0 or rnd == 1:
-            return self._gen_literal()
-        else:
-            left, cl = self._gen_literal()
-            right, cr = self._gen_literal()
-
-            if rnd == 2:
-                return AddExpr().gen(left, right), cl + cr + 1
-            elif rnd == 3:
-                return SubExpr().gen(left, right), cl + cr + 1
-            elif rnd == 4:
-                return LessExpr().gen(left, right), cl + cr + 1
-            else:
-                return EqualExpr().gen(left, right), cl + cr + 1
-
-    def _gen_literal(self):
-        if randint(0, 1) == 0:
-            return IntExpr().gen(), 1
-        else:
-            return VarExpr().gen(), 1
+        rnd = randint(0, 2)
+        if rnd == 0:
+            return WhileCmd().gen(depth)
+        elif rnd == 1:
+            return IfCmd().gen(depth)
+        elif rnd == 2:
+            return SeqCmd().gen(depth)
 
 
-class CommandGenerator():
-
-    def gen(self, cmd=None, cmd_count=0,
-            cmd_count_max=randint(1, MAX_COMMANDS_PER_COMMAND)):
-        if cmd_count >= cmd_count_max:
-            return cmd, cmd_count
-
-        if cmd_count == 0:
-            # default arguments are evaluated once when the function is defined
-            # and not each time the function is called, which is a problem if
-            # we call a function as default argument that should generate a
-            # random int. So to get e. g. expressions with a random count of
-            # subexpressions inside, we have to randomly generate the count
-            # of subexpressions and pass it to gen() each time we call it
-            expr, _ = ExpressionGenerator().gen(
-                expr_count_max=randint(1, MAX_EXPRESSIONS_PER_EXPRESSION))
-            cmd = AssignCmd().gen(VarExpr().gen(), expr)
-            cmd_count += 1
-        else:
-            if (cmd_count + 1) == cmd_count_max:
-                expr, _ = ExpressionGenerator().gen(
-                    expr_count_max=randint(1, MAX_EXPRESSIONS_PER_EXPRESSION))
-                cmd = WhileCmd().gen(expr, cmd)
-                cmd_count += 1
-            else:
-                rnd = randint(0, 2)
-                if rnd == 0:
-                    expr, _ = ExpressionGenerator().gen(
-                        expr_count_max=randint(1, MAX_EXPRESSIONS_PER_EXPRESSION))
-                    cmd = WhileCmd().gen(expr, cmd)
-                    cmd_count += 1
-                elif rnd == 1:
-                    expr, _ = ExpressionGenerator().gen(
-                        expr_count_max=randint(1, MAX_EXPRESSIONS_PER_EXPRESSION))
-                    cmd_next, count = CommandGenerator().gen(None, 0,
-                                                             cmd_count_max -
-                                                             cmd_count - 1)
-                    if randint(0, 1) == 0:
-                        cmd = IfCmd().gen(expr, cmd, cmd_next)
-                    else:
-                        cmd = IfCmd().gen(expr, cmd_next, cmd)
-                    cmd_count += count + 1
-                else:
-                    cmd_next, count = CommandGenerator().gen(None, 0,
-                                                             cmd_count_max -
-                                                             cmd_count - 1)
-                    if randint(0, 1) == 0:
-                        cmd = SeqCmd().gen(cmd, cmd_next)
-                    else:
-                        cmd = SeqCmd().gen(cmd_next, cmd)
-                    cmd_count += count + 1
-        cmd, count = self.gen(cmd, cmd_count, cmd_count_max)
-        return cmd, count
-
-
-class PhraseGenerator:
+class CommandGenerator:
 
     def gen(self):
-        if randint(0, 1) == 0:
-            ast, count = ExpressionGenerator().gen()
-            return 'expression', count, ast
-        else:
-            ast, count = CommandGenerator().gen()
-            return 'command', count, ast
+        depth = randint(0, MAX_DEPTH_COMMAND)
+        print('Generating command with depth {}'.format(depth))
+        return CmdGen().gen(depth)
+
+
+def get_rand_depth(depth):
+    if randint(0, 1) == 0:
+        return depth, randint(0, depth)
+    else:
+        return randint(0, depth), depth
 
 
 def prettyprint_singleline(ast):
@@ -384,9 +348,7 @@ def get_center(kind):
 
 
 def main():
-    _type, count, ast = PhraseGenerator().gen()
-    print('Generated {} with count {} (incl. sub {}s) as phrase\n'.format(
-        _type, count, _type,))
+    ast, depth = CommandGenerator().gen()
     pprint(ast)
     print('\n')
     print(prettyprint_singleline(ast))

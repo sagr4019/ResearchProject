@@ -1,0 +1,16 @@
+SEED: 1
+Generating command with depth 1
+{'Kind': 'Seq',
+ 'Left': {'Kind': 'Assign',
+          'Left': {'Kind': 'Var', 'Name': 'h'},
+          'Right': {'Kind': 'Var', 'Name': 'W'}},
+ 'Right': {'Kind': 'Assign',
+           'Left': {'Kind': 'Var', 'Name': 'C'},
+           'Right': {'Kind': 'Var', 'Name': 'P'}}}
+
+
+((h := W) ;  (C := P))
+
+
+h := W; 
+C := P
