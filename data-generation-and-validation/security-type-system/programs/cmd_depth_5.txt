@@ -1,71 +1,80 @@
-SEED: 19
+SEED: 5
 Generating command with depth 5
-{'Body': {'Kind': 'Seq',
-          'Left': {'Body': {'Kind': 'Seq',
-                            'Left': {'Condition': {'Kind': 'Int',
-                                                   'Value': 214456},
-                                     'Else': {'Kind': 'Assign',
-                                              'Left': {'Kind': 'Var',
-                                                       'Name': 'h'},
-                                              'Right': {'Kind': 'Less',
-                                                        'Left': {'Kind': 'Less',
-                                                                 'Left': {'Kind': 'Int',
-                                                                          'Value': -808045},
-                                                                 'Right': {'Kind': 'Int',
-                                                                           'Value': -22774}},
-                                                        'Right': {'Kind': 'Less',
-                                                                  'Left': {'Kind': 'Var',
-                                                                           'Name': 'i'},
-                                                                  'Right': {'Kind': 'Var',
-                                                                            'Name': 's'}}}},
-                                     'Kind': 'If',
-                                     'Then': {'Kind': 'Assign',
-                                              'Left': {'Kind': 'Var',
-                                                       'Name': 'C'},
-                                              'Right': {'Kind': 'Equal',
-                                                        'Left': {'Kind': 'Sub',
-                                                                 'Left': {'Kind': 'Var',
-                                                                          'Name': 'm'},
-                                                                 'Right': {'Kind': 'Int',
-                                                                           'Value': -717609}},
-                                                        'Right': {'Kind': 'Less',
-                                                                  'Left': {'Kind': 'Int',
-                                                                           'Value': -46844},
-                                                                  'Right': {'Kind': 'Var',
-                                                                            'Name': 'M'}}}}},
-                            'Right': {'Kind': 'Assign',
-                                      'Left': {'Kind': 'Var', 'Name': 'C'},
+{'Kind': 'Seq',
+ 'Left': {'Kind': 'Assign',
+          'Left': {'Kind': 'Var', 'Name': 'q'},
+          'Right': {'Kind': 'Equal',
+                    'Left': {'Kind': 'Sub',
+                             'Left': {'Kind': 'Int', 'Value': -762589},
+                             'Right': {'Kind': 'Int', 'Value': -220292}},
+                    'Right': {'Kind': 'Less',
+                              'Left': {'Kind': 'Int', 'Value': 140350},
+                              'Right': {'Kind': 'Int', 'Value': -786144}}}},
+ 'Right': {'Kind': 'Seq',
+           'Left': {'Kind': 'Seq',
+                    'Left': {'Condition': {'Kind': 'Var', 'Name': 'q'},
+                             'Else': {'Kind': 'Assign',
+                                      'Left': {'Kind': 'Var', 'Name': 'k'},
                                       'Right': {'Kind': 'Equal',
+                                                'Left': {'Kind': 'Int',
+                                                         'Value': 973370},
+                                                'Right': {'Kind': 'Int',
+                                                          'Value': 874313}}},
+                             'Kind': 'If',
+                             'Then': {'Kind': 'Seq',
+                                      'Left': {'Kind': 'Assign',
+                                               'Left': {'Kind': 'Var',
+                                                        'Name': 'i'},
+                                               'Right': {'Kind': 'Int',
+                                                         'Value': -560738}},
+                                      'Right': {'Kind': 'Assign',
                                                 'Left': {'Kind': 'Var',
-                                                         'Name': 't'},
-                                                'Right': {'Kind': 'Var',
-                                                          'Name': 'R'}}}},
-                   'Condition': {'Kind': 'Var', 'Name': 'y'},
-                   'Kind': 'While'},
-          'Right': {'Kind': 'Assign',
-                    'Left': {'Kind': 'Var', 'Name': 'W'},
-                    'Right': {'Kind': 'Int', 'Value': -561263}}},
- 'Condition': {'Kind': 'Add',
-               'Left': {'Kind': 'Equal',
-                        'Left': {'Kind': 'Var', 'Name': 'g'},
-                        'Right': {'Kind': 'Var', 'Name': 'A'}},
-               'Right': {'Kind': 'Equal',
-                         'Left': {'Kind': 'Var', 'Name': 't'},
-                         'Right': {'Kind': 'Int', 'Value': 193783}}},
- 'Kind': 'While'}
+                                                         'Name': 'X'},
+                                                'Right': {'Kind': 'Int',
+                                                          'Value': 829572}}}},
+                    'Right': {'Condition': {'Kind': 'Add',
+                                            'Left': {'Kind': 'Int',
+                                                     'Value': 962500},
+                                            'Right': {'Kind': 'Int',
+                                                      'Value': -446746}},
+                              'Else': {'Kind': 'Assign',
+                                       'Left': {'Kind': 'Var', 'Name': 'd'},
+                                       'Right': {'Kind': 'Add',
+                                                 'Left': {'Kind': 'Int',
+                                                          'Value': 151475},
+                                                 'Right': {'Kind': 'Var',
+                                                           'Name': 'X'}}},
+                              'Kind': 'If',
+                              'Then': {'Kind': 'Assign',
+                                       'Left': {'Kind': 'Var', 'Name': 't'},
+                                       'Right': {'Kind': 'Add',
+                                                 'Left': {'Kind': 'Var',
+                                                          'Name': 'i'},
+                                                 'Right': {'Kind': 'Equal',
+                                                           'Left': {'Kind': 'Int',
+                                                                    'Value': 9189},
+                                                           'Right': {'Kind': 'Var',
+                                                                     'Name': 'X'}}}}}},
+           'Right': {'Kind': 'Assign',
+                     'Left': {'Kind': 'Var', 'Name': 'y'},
+                     'Right': {'Kind': 'Add',
+                               'Left': {'Kind': 'Int', 'Value': 308022},
+                               'Right': {'Kind': 'Sub',
+                                         'Left': {'Kind': 'Var', 'Name': 'd'},
+                                         'Right': {'Kind': 'Var',
+                                                   'Name': 'X'}}}}}}
 
 
-while ((g == A) + (t == 193783)) do {(while y do {(if 214456 then {(C := ((m - -717609) == (-46844 < M)))} else {(h := ((-808045 < -22774) < (i < s)))} ;  (C := (t == R)))} ;  (W := -561263))}
-
-
-while ((g == A) + (t == 193783)) do {
-    while y do {
-        if 214456 then {
-            C := ((m - -717609) == (-46844 < M))
-        } else {
-            h := ((-808045 < -22774) < (i < s))
-        }; 
-        C := (t == R)
-    }; 
-    W := -561263
-}
+q := ((-762589 - -220292) == (140350 < -786144)); 
+if q then {
+    i := -560738; 
+    X := 829572
+} else {
+    k := (973370 == 874313)
+}; 
+if (962500 + -446746) then {
+    t := (i + (9189 == X))
+} else {
+    d := (151475 + X)
+}; 
+y := (308022 + (d - X))

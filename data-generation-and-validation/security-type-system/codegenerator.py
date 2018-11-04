@@ -19,9 +19,10 @@ TAB_SIZE = '    '
 # ENABLE_SEED = False
 ENABLE_SEED = True
 
+vars_assigned = set()
 
 if ENABLE_SEED:
-    SEED = 14
+    SEED = 9
     random.seed(SEED)
     print('SEED: {}'.format(SEED))
 
@@ -42,15 +43,20 @@ class IntExpr:
 
 class VarExpr:
 
-    def gen(self):
+    def gen(self, only_assigned):
         """
         Return AST representation for variables.
         The value for key 'Name' is a randomly generated string with the
         length as defined in the constant IDENTIFIER_LENGTH.
         """
+        if only_assigned:
+            global vars_assigned
+            var = random.sample(vars_assigned, 1)[0]
+        else:
+            var = ''.join(random.choice(string.ascii_letters)
+                          for _ in range(IDENTIFIER_LENGTH))
         return {'Kind': 'Var',
-                'Name': ''.join(random.choice(string.ascii_letters)
-                                for _ in range(IDENTIFIER_LENGTH))
+                'Name': var
                 }, 1
 
 
@@ -60,16 +66,16 @@ class LiteralExpr:
         if randint(0, 1) == 0:
             return IntExpr().gen()
         else:
-            return VarExpr().gen()
+            return VarExpr().gen(True)
 
 
 class AddExpr:
 
-    def gen(self, depth):
+    def gen(self, depth, no_vars):
         depth_left, depth_right = get_rand_depth(depth - 1)
 
-        left, depth_left = ExprGen().gen(depth_left)
-        right, depth_right = ExprGen().gen(depth_right)
+        left, depth_left = ExprGen().gen(depth_left, no_vars)
+        right, depth_right = ExprGen().gen(depth_right, no_vars)
         depth_ret = max(depth_left, depth_right)
 
         return {'Kind': 'Add',
@@ -80,11 +86,11 @@ class AddExpr:
 
 class SubExpr:
 
-    def gen(self, depth):
+    def gen(self, depth, no_vars):
         depth_left, depth_right = get_rand_depth(depth - 1)
 
-        left, depth_left = ExprGen().gen(depth_left)
-        right, depth_right = ExprGen().gen(depth_right)
+        left, depth_left = ExprGen().gen(depth_left, no_vars)
+        right, depth_right = ExprGen().gen(depth_right, no_vars)
         depth_ret = max(depth_left, depth_right)
 
         return {'Kind': 'Sub',
@@ -95,11 +101,11 @@ class SubExpr:
 
 class EqualExpr:
 
-    def gen(self, depth):
+    def gen(self, depth, no_vars):
         depth_left, depth_right = get_rand_depth(depth - 1)
 
-        left, depth_left = ExprGen().gen(depth_left)
-        right, depth_right = ExprGen().gen(depth_right)
+        left, depth_left = ExprGen().gen(depth_left, no_vars)
+        right, depth_right = ExprGen().gen(depth_right, no_vars)
         depth_ret = max(depth_left, depth_right)
 
         return {'Kind': 'Equal',
@@ -110,11 +116,11 @@ class EqualExpr:
 
 class LessExpr:
 
-    def gen(self, depth):
+    def gen(self, depth, no_vars):
         depth_left, depth_right = get_rand_depth(depth - 1)
 
-        left, depth_left = ExprGen().gen(depth_left)
-        right, depth_right = ExprGen().gen(depth_right)
+        left, depth_left = ExprGen().gen(depth_left, no_vars)
+        right, depth_right = ExprGen().gen(depth_right, no_vars)
         depth_ret = max(depth_left, depth_right)
 
         return {'Kind': 'Less',
@@ -125,39 +131,62 @@ class LessExpr:
 
 class ExprGen:
 
-    def gen(self, depth):
+    def gen(self, depth, no_vars=False):
         if depth == 0:
-            return LiteralExpr().gen()
+            if no_vars:
+                return IntExpr().gen()
+            else:
+                return LiteralExpr().gen()
 
         rnd = randint(0, 3)
         if rnd == 0:
-            return AddExpr().gen(depth)
+            return AddExpr().gen(depth, no_vars)
         elif rnd == 1:
-            return SubExpr().gen(depth)
+            return SubExpr().gen(depth, no_vars)
         elif rnd == 2:
-            return EqualExpr().gen(depth)
+            return EqualExpr().gen(depth, no_vars)
         elif rnd == 3:
-            return LessExpr().gen(depth)
+            return LessExpr().gen(depth, no_vars)
 
 
 class ExpressionGenerator:
 
-    def gen(self):
+    def gen(self, no_vars=False):
         depth = randint(0, MAX_DEPTH_EXPRESSION)
         # print('Generating expression with depth {}'.format(depth))
-        return ExprGen().gen(depth)
+        return ExprGen().gen(depth, no_vars)
 
 
 class AssignCmd:
 
-    def gen(self, depth):
-        left, _ = VarExpr().gen()
-        right, _ = ExpressionGenerator().gen()
+    def gen(self, depth, only_assigned=False, no_vars=False):
+        global vars_assigned
+        left, _ = VarExpr().gen(only_assigned)
+        right, _ = ExpressionGenerator().gen(no_vars)
+        vars_assigned.add(left['Name'])
 
         return {'Kind': 'Assign',
                 'Left': left,
                 'Right': right,
                 }, 0
+
+
+class SeqCmd:
+
+    def gen(self, depth, pre_assign=False):
+        if pre_assign:
+            left, depth_left = AssignCmd().gen(depth, no_vars=True)
+            right, depth_right = CmdGen().gen(depth - 1)
+        else:
+            depth_left, depth_right = get_rand_depth(depth - 1)
+            left, depth_left = CmdGen().gen(depth_left)
+            right, depth_right = CmdGen().gen(depth_right)
+        depth_ret = max(depth_left, depth_right)
+
+        return {'Kind': 'Seq',
+                'Left': left,
+                'Right': right
+                }, depth_ret + 1
 
 
 class WhileCmd:
@@ -190,24 +219,11 @@ class IfCmd:
                 }, depth_ret + 1
 
 
-class SeqCmd:
-
-    def gen(self, depth):
-        depth_left, depth_right = get_rand_depth(depth - 1)
-
-        left, depth_left = CmdGen().gen(depth_left)
-        right, depth_right = CmdGen().gen(depth_right)
-        depth_ret = max(depth_left, depth_right)
-
-        return {'Kind': 'Seq',
-                'Left': left,
-                'Right': right
-                }, depth_ret + 1
-
-
 class CmdGen:
 
-    def gen(self, depth):
+    def gen(self, depth, pre_assign=False):
+        if pre_assign:
+            return SeqCmd().gen(depth, pre_assign)
         if depth == 0:
             return AssignCmd().gen(depth)
 
@@ -217,15 +233,15 @@ class CmdGen:
         elif rnd == 1:
             return IfCmd().gen(depth)
         elif rnd == 2:
-            return SeqCmd().gen(depth)
+            return SeqCmd().gen(depth,)
 
 
 class CommandGenerator:
 
     def gen(self):
-        depth = randint(0, MAX_DEPTH_COMMAND)
+        depth = randint(1, MAX_DEPTH_COMMAND)
         print('Generating command with depth {}'.format(depth))
-        return CmdGen().gen(depth)
+        return CmdGen().gen(depth, pre_assign=True)
 
 
 def get_rand_depth(depth):
@@ -351,8 +367,8 @@ def main():
     ast, depth = CommandGenerator().gen()
     pprint(ast)
     print('\n')
-    print(prettyprint_singleline(ast))
-    print('\n')
+    # print(prettyprint_singleline(ast))
+    # print('\n')
     print(prettyprint_multiline_indented(ast))
 
 

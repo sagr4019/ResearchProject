@@ -1,43 +1,39 @@
-SEED: 9
+SEED: 7
 Generating command with depth 3
 {'Kind': 'Seq',
- 'Left': {'Body': {'Kind': 'Assign',
-                   'Left': {'Kind': 'Var', 'Name': 'G'},
-                   'Right': {'Kind': 'Add',
-                             'Left': {'Kind': 'Var', 'Name': 'k'},
-                             'Right': {'Kind': 'Var', 'Name': 'U'}}},
-          'Condition': {'Kind': 'Int', 'Value': -290479},
-          'Kind': 'While'},
- 'Right': {'Condition': {'Kind': 'Int', 'Value': -500852},
-           'Else': {'Kind': 'Assign',
-                    'Left': {'Kind': 'Var', 'Name': 'a'},
-                    'Right': {'Kind': 'Add',
-                              'Left': {'Kind': 'Int', 'Value': -950752},
-                              'Right': {'Kind': 'Int', 'Value': -109286}}},
-           'Kind': 'If',
-           'Then': {'Body': {'Kind': 'Assign',
-                             'Left': {'Kind': 'Var', 'Name': 'v'},
-                             'Right': {'Kind': 'Int', 'Value': 486463}},
+ 'Left': {'Kind': 'Assign',
+          'Left': {'Kind': 'Var', 'Name': 'j'},
+          'Right': {'Kind': 'Add',
+                    'Left': {'Kind': 'Int', 'Value': -233094},
+                    'Right': {'Kind': 'Int', 'Value': 222196}}},
+ 'Right': {'Body': {'Body': {'Kind': 'Assign',
+                             'Left': {'Kind': 'Var', 'Name': 't'},
+                             'Right': {'Kind': 'Sub',
+                                       'Left': {'Kind': 'Equal',
+                                                'Left': {'Kind': 'Int',
+                                                         'Value': 298158},
+                                                'Right': {'Kind': 'Int',
+                                                          'Value': 41057}},
+                                       'Right': {'Kind': 'Var', 'Name': 'j'}}},
                     'Condition': {'Kind': 'Add',
-                                  'Left': {'Kind': 'Var', 'Name': 'n'},
+                                  'Left': {'Kind': 'Int', 'Value': -902309},
                                   'Right': {'Kind': 'Sub',
-                                            'Left': {'Kind': 'Var',
-                                                     'Name': 'n'},
-                                            'Right': {'Kind': 'Var',
-                                                      'Name': 'r'}}},
-                    'Kind': 'While'}}}
+                                            'Left': {'Kind': 'Int',
+                                                     'Value': 133901},
+                                            'Right': {'Kind': 'Int',
+                                                      'Value': 197293}}},
+                    'Kind': 'While'},
+           'Condition': {'Kind': 'Sub',
+                         'Left': {'Kind': 'Less',
+                                  'Left': {'Kind': 'Int', 'Value': -809761},
+                                  'Right': {'Kind': 'Var', 'Name': 'j'}},
+                         'Right': {'Kind': 'Int', 'Value': 986947}},
+           'Kind': 'While'}}
 
 
-(while -290479 do {(G := (k + U))} ;  if -500852 then {while (n + (n - r)) do {(v := 486463)}} else {(a := (-950752 + -109286))})
-
-
-while -290479 do {
-    G := (k + U)
-}; 
-if -500852 then {
-    while (n + (n - r)) do {
-        v := 486463
+j := (-233094 + 222196); 
+while ((-809761 < j) - 986947) do {
+    while (-902309 + (133901 - 197293)) do {
+        t := ((298158 == 41057) - j)
     }
-} else {
-    a := (-950752 + -109286)
 }
