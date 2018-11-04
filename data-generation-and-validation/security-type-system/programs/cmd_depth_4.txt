@@ -22,7 +22,7 @@ Generating command with depth 4
                                         'Left': {'Kind': 'Var', 'Name': 'Y'},
                                         'Right': {'Kind': 'Add',
                                                   'Left': {'Kind': 'Var',
-                                                           'Name': 'N'},
+                                                           'Name': 'h'},
                                                   'Right': {'Kind': 'Var',
                                                             'Name': 's'}}}}},
            'Condition': {'Kind': 'Less',
@@ -37,5 +37,5 @@ while (527130 < N) do {
         h := 623635
     }; 
     s := 521917; 
-    Y := (N + s)
+    Y := (h + s)
 }

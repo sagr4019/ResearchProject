@@ -22,7 +22,7 @@ ENABLE_SEED = True
 vars_assigned = set()
 
 if ENABLE_SEED:
-    SEED = 9
+    SEED = 5
     random.seed(SEED)
     print('SEED: {}'.format(SEED))
 
@@ -46,8 +46,9 @@ class VarExpr:
     def gen(self, only_assigned):
         """
         Return AST representation for variables.
-        The value for key 'Name' is a randomly generated string with the
-        length as defined in the constant IDENTIFIER_LENGTH.
+        Depending on bool only_assigned, a variable is randomly chosen from the
+        set vars_assigned or a variable is generated randomly with the length equal
+        to IDENTIFIER_LENGTH, consisting of lowercase and/or uppercase letters.
         """
         if only_assigned:
             global vars_assigned
@@ -66,7 +67,7 @@ class LiteralExpr:
         if randint(0, 1) == 0:
             return IntExpr().gen()
         else:
-            return VarExpr().gen(True)
+            return VarExpr().gen(only_assigned=True)
 
 
 class AddExpr:
@@ -233,7 +234,7 @@ class CmdGen:
         elif rnd == 1:
             return IfCmd().gen(depth)
         elif rnd == 2:
-            return SeqCmd().gen(depth,)
+            return SeqCmd().gen(depth)
 
 
 class CommandGenerator:

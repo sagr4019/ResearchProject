@@ -43,26 +43,26 @@ Generating command with depth 5
                                                  'Left': {'Kind': 'Int',
                                                           'Value': 151475},
                                                  'Right': {'Kind': 'Var',
-                                                           'Name': 'X'}}},
+                                                           'Name': 'i'}}},
                               'Kind': 'If',
                               'Then': {'Kind': 'Assign',
                                        'Left': {'Kind': 'Var', 'Name': 't'},
                                        'Right': {'Kind': 'Add',
                                                  'Left': {'Kind': 'Var',
-                                                          'Name': 'i'},
+                                                          'Name': 'k'},
                                                  'Right': {'Kind': 'Equal',
                                                            'Left': {'Kind': 'Int',
                                                                     'Value': 9189},
                                                            'Right': {'Kind': 'Var',
-                                                                     'Name': 'X'}}}}}},
+                                                                     'Name': 'i'}}}}}},
            'Right': {'Kind': 'Assign',
                      'Left': {'Kind': 'Var', 'Name': 'y'},
                      'Right': {'Kind': 'Add',
                                'Left': {'Kind': 'Int', 'Value': 308022},
                                'Right': {'Kind': 'Sub',
-                                         'Left': {'Kind': 'Var', 'Name': 'd'},
+                                         'Left': {'Kind': 'Var', 'Name': 'k'},
                                          'Right': {'Kind': 'Var',
-                                                   'Name': 'X'}}}}}}
+                                                   'Name': 'd'}}}}}}
 
 
 q := ((-762589 - -220292) == (140350 < -786144)); 
@@ -73,8 +73,8 @@ if q then {
     k := (973370 == 874313)
 }; 
 if (962500 + -446746) then {
-    t := (i + (9189 == X))
+    t := (k + (9189 == i))
 } else {
-    d := (151475 + X)
+    d := (151475 + i)
 }; 
-y := (308022 + (d - X))
+y := (308022 + (k - d))
