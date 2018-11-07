@@ -14,6 +14,7 @@ MAX_DEPTH_EXPRESSION = 2
 MAX_DEPTH_COMMAND = 5
 
 
+RESERVED_KEYWORDS = ['if', 'then', 'else', 'while', 'do']
 TAB_SIZE = '    '
 
 # ENABLE_SEED = False
@@ -56,6 +57,10 @@ class VarExpr:
         else:
             var = ''.join(random.choice(string.ascii_letters)
                           for _ in range(IDENTIFIER_LENGTH))
+            while (var.lower() in RESERVED_KEYWORDS):
+                var = ''.join(random.choice(string.ascii_letters)
+                              for _ in range(IDENTIFIER_LENGTH))
+
         return {'Kind': 'Var',
                 'Name': var
                 }, 1
