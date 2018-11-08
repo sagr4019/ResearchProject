@@ -1,14 +1,15 @@
 import random
 import string
 import sys
+import check_security
 from random import randint
 from pprint import pprint
 
-sys.setrecursionlimit(5000)
+sys.setrecursionlimit(50000)
 
 INT_START_RANGE = -999999
 INT_END_RANGE = 999999
-IDENTIFIER_LENGTH = 1
+IDENTIFIER_LENGTH = 3
 
 MAX_DEPTH_EXPRESSION = 2
 MAX_DEPTH_COMMAND = 5
@@ -20,7 +21,7 @@ TAB_SIZE = '    '
 # ENABLE_SEED = False
 ENABLE_SEED = True
 
-vars_assigned = set()
+vars_ast_assigned = []
 
 if ENABLE_SEED:
     SEED = 5
@@ -44,26 +45,27 @@ class IntExpr:
 
 class VarExpr:
 
-    def gen(self, only_assigned):
+    def gen(self):
         """
         Return AST representation for variables.
         Depending on bool only_assigned, a variable is randomly chosen from the
-        set vars_assigned or a variable is generated randomly with the length equal
+        set vars_ast_assigned or a variable is generated randomly with the length equal
         to IDENTIFIER_LENGTH, consisting of lowercase and/or uppercase letters.
         """
-        if only_assigned:
-            global vars_assigned
-            var = random.sample(vars_assigned, 1)[0]
-        else:
+        global vars_ast_assigned
+        var = ''.join(random.choice(string.ascii_letters)
+                      for _ in range(IDENTIFIER_LENGTH))
+        while (var.lower() in RESERVED_KEYWORDS):
             var = ''.join(random.choice(string.ascii_letters)
                           for _ in range(IDENTIFIER_LENGTH))
-            while (var.lower() in RESERVED_KEYWORDS):
-                var = ''.join(random.choice(string.ascii_letters)
-                              for _ in range(IDENTIFIER_LENGTH))
 
-        return {'Kind': 'Var',
-                'Name': var
-                }, 1
+        ast = {'Kind': 'Var',
+               'Name': var
+               }
+        if var not in vars_ast_assigned:
+            vars_ast_assigned.append(ast)
+
+        return ast, 1
 
 
 class LiteralExpr:
@@ -72,16 +74,24 @@ class LiteralExpr:
         if randint(0, 1) == 0:
             return IntExpr().gen()
         else:
-            return VarExpr().gen(only_assigned=True)
+            return VarExpr().gen()
+
+
+class NullExpr:
+
+    def gen(self):
+        return {'Kind': 'Null',
+                'Value': 'Null'
+                }, 1
 
 
 class AddExpr:
 
-    def gen(self, depth, no_vars):
+    def gen(self, depth):
         depth_left, depth_right = get_rand_depth(depth - 1)
 
-        left, depth_left = ExprGen().gen(depth_left, no_vars)
-        right, depth_right = ExprGen().gen(depth_right, no_vars)
+        left, depth_left = ExprGen().gen(depth_left)
+        right, depth_right = ExprGen().gen(depth_right)
         depth_ret = max(depth_left, depth_right)
 
         return {'Kind': 'Add',
@@ -92,11 +102,11 @@ class AddExpr:
 
 class SubExpr:
 
-    def gen(self, depth, no_vars):
+    def gen(self, depth):
         depth_left, depth_right = get_rand_depth(depth - 1)
 
-        left, depth_left = ExprGen().gen(depth_left, no_vars)
-        right, depth_right = ExprGen().gen(depth_right, no_vars)
+        left, depth_left = ExprGen().gen(depth_left)
+        right, depth_right = ExprGen().gen(depth_right)
         depth_ret = max(depth_left, depth_right)
 
         return {'Kind': 'Sub',
@@ -107,11 +117,11 @@ class SubExpr:
 
 class EqualExpr:
 
-    def gen(self, depth, no_vars):
+    def gen(self, depth):
         depth_left, depth_right = get_rand_depth(depth - 1)
 
-        left, depth_left = ExprGen().gen(depth_left, no_vars)
-        right, depth_right = ExprGen().gen(depth_right, no_vars)
+        left, depth_left = ExprGen().gen(depth_left)
+        right, depth_right = ExprGen().gen(depth_right)
         depth_ret = max(depth_left, depth_right)
 
         return {'Kind': 'Equal',
@@ -122,11 +132,11 @@ class EqualExpr:
 
 class LessExpr:
 
-    def gen(self, depth, no_vars):
+    def gen(self, depth):
         depth_left, depth_right = get_rand_depth(depth - 1)
 
-        left, depth_left = ExprGen().gen(depth_left, no_vars)
-        right, depth_right = ExprGen().gen(depth_right, no_vars)
+        left, depth_left = ExprGen().gen(depth_left)
+        right, depth_right = ExprGen().gen(depth_right)
         depth_ret = max(depth_left, depth_right)
 
         return {'Kind': 'Less',
@@ -137,62 +147,66 @@ class LessExpr:
 
 class ExprGen:
 
-    def gen(self, depth, no_vars=False):
+    def gen(self, depth):
         if depth == 0:
-            if no_vars:
-                return IntExpr().gen()
-            else:
-                return LiteralExpr().gen()
+            return LiteralExpr().gen()
 
         rnd = randint(0, 3)
         if rnd == 0:
-            return AddExpr().gen(depth, no_vars)
+            return AddExpr().gen(depth)
         elif rnd == 1:
-            return SubExpr().gen(depth, no_vars)
+            return SubExpr().gen(depth)
         elif rnd == 2:
-            return EqualExpr().gen(depth, no_vars)
+            return EqualExpr().gen(depth)
         elif rnd == 3:
-            return LessExpr().gen(depth, no_vars)
+            return LessExpr().gen(depth)
 
 
 class ExpressionGenerator:
 
-    def gen(self, no_vars=False):
+    def gen(self):
         depth = randint(0, MAX_DEPTH_EXPRESSION)
         # print('Generating expression with depth {}'.format(depth))
-        return ExprGen().gen(depth, no_vars)
+        return ExprGen().gen(depth)
 
 
 class AssignCmd:
 
-    def gen(self, depth, only_assigned=False, no_vars=False):
-        global vars_assigned
-        left, _ = VarExpr().gen(only_assigned)
-        right, _ = ExpressionGenerator().gen(no_vars)
-        vars_assigned.add(left['Name'])
+    def gen(self, depth):
+        left, _ = VarExpr().gen()
+        right, _ = ExpressionGenerator().gen()
 
         return {'Kind': 'Assign',
                 'Left': left,
                 'Right': right,
                 }, 0
 
+    def gen_null_assign(self, left):
+        null_expr, _ = NullExpr().gen()
+        return {'Kind': 'Assign',
+                'Left': left,
+                'Right': null_expr,
+                }, 0
+
 
 class SeqCmd:
 
-    def gen(self, depth, pre_assign=False):
-        if pre_assign:
-            left, depth_left = AssignCmd().gen(depth, no_vars=True)
-            right, depth_right = CmdGen().gen(depth - 1)
-        else:
-            depth_left, depth_right = get_rand_depth(depth - 1)
-            left, depth_left = CmdGen().gen(depth_left)
-            right, depth_right = CmdGen().gen(depth_right)
+    def gen(self, depth):
+        depth_left, depth_right = get_rand_depth(depth - 1)
+        left, depth_left = CmdGen().gen(depth_left)
+        right, depth_right = CmdGen().gen(depth_right)
         depth_ret = max(depth_left, depth_right)
 
         return {'Kind': 'Seq',
                 'Left': left,
                 'Right': right
                 }, depth_ret + 1
+
+    def gen_pre_seq(self, left, right, depth):
+        return {'Kind': 'Seq',
+                'Left': left,
+                'Right': right
+                }, depth + 1
 
 
 class WhileCmd:
@@ -227,9 +241,7 @@ class IfCmd:
 
 class CmdGen:
 
-    def gen(self, depth, pre_assign=False):
-        if pre_assign:
-            return SeqCmd().gen(depth, pre_assign)
+    def gen(self, depth):
         if depth == 0:
             return AssignCmd().gen(depth)
 
@@ -245,9 +257,24 @@ class CmdGen:
 class CommandGenerator:
 
     def gen(self):
+        global vars_ast_assigned
+        vars_ast_assigned = []
         depth = randint(1, MAX_DEPTH_COMMAND)
         print('Generating command with depth {}'.format(depth))
-        return CmdGen().gen(depth, pre_assign=True)
+        ast, depth = CmdGen().gen(depth)
+
+        # preassign all vars with NullExpr
+        identifier_storage = []
+        for i in range(len(vars_ast_assigned)):
+            identifier_storage.append({
+                "Identifier": vars_ast_assigned[i]['Name'],
+                "Security": "L"
+            })
+            left, depth_left = AssignCmd().gen_null_assign(vars_ast_assigned[i])
+            ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
+
+        print('Depth after preassignments added {}\n'.format(depth))
+        return ast, depth, identifier_storage
 
 
 def get_rand_depth(depth):
@@ -274,6 +301,8 @@ def prettyprint_singleline(ast):
             code += str(ast['Value'])
         elif ast['Kind'] == 'Var':
             code += str(ast['Name'])
+        elif ast['Kind'] == 'Null':
+            code += str(ast['Value'])
         else:
             code += "({} {} {})".format(
                 prettyprint_singleline(ast['Left']),
@@ -338,6 +367,8 @@ def prettyprint_multiline_indented(ast, level=0):
             code += str(ast['Value'])
         elif ast['Kind'] == 'Var':
             code += str(ast['Name'])
+        elif ast['Kind'] == 'Null':
+            code += str(ast['Value'])
         else:
             raise RuntimeError("Unknown kind {}".format(ast['Kind']))
     return code
@@ -370,8 +401,9 @@ def get_center(kind):
 
 
 def main():
-    ast, depth = CommandGenerator().gen()
-    pprint(ast)
+    ast, depth, identifier_storage = CommandGenerator().gen()
+
+    print(check_security.security(ast, identifier_storage))
     print('\n')
     # print(prettyprint_singleline(ast))
     # print('\n')
