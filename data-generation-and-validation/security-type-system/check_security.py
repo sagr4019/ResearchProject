@@ -29,7 +29,7 @@ def security(node, identifierStorage):
         _, val_class = security(node.get("Right"), identifierStorage)
         return (id_class >= val_class), max(id_class, val_class)
     elif key == "Var":
-        return True, get_class(node.get("Value"), identifierStorage)
+        return True, get_class(node.get("Name"), identifierStorage)
     elif key == "While":
         _, g_class = security(node.get("Condition"), identifierStorage)
         cmd_valid, cmd_class = security(node.get("Body"), identifierStorage)

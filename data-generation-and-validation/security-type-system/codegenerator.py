@@ -12,14 +12,14 @@ INT_END_RANGE = 999999
 IDENTIFIER_LENGTH = 3
 
 MAX_DEPTH_EXPRESSION = 2
-MAX_DEPTH_COMMAND = 5
+MAX_DEPTH_COMMAND = 30
 
 
 RESERVED_KEYWORDS = ['if', 'then', 'else', 'while', 'do']
 TAB_SIZE = '    '
 
-# ENABLE_SEED = False
-ENABLE_SEED = True
+ENABLE_SEED = False
+# ENABLE_SEED = True
 
 vars_ast_assigned = []
 
@@ -268,7 +268,7 @@ class CommandGenerator:
         for i in range(len(vars_ast_assigned)):
             identifier_storage.append({
                 "Identifier": vars_ast_assigned[i]['Name'],
-                "Security": "L"
+                "Security": random.choice(['H', 'L'])
             })
             left, depth_left = AssignCmd().gen_null_assign(vars_ast_assigned[i])
             ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
@@ -403,11 +403,12 @@ def get_center(kind):
 def main():
     ast, depth, identifier_storage = CommandGenerator().gen()
 
+    # print(identifier_storage)
     print(check_security.security(ast, identifier_storage))
-    print('\n')
+    # print('\n')
     # print(prettyprint_singleline(ast))
     # print('\n')
-    print(prettyprint_multiline_indented(ast))
+    # print(prettyprint_multiline_indented(ast))
 
 
 if __name__ == "__main__":
