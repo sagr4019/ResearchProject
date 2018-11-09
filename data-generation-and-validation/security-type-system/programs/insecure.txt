@@ -1,0 +1,195 @@
+E. g. in line 143, Iq on the left side of the assignment has the security class L, whereas qFhv from the right side has the security class H.
+SEED: 272306
+Generated command with depth 69
+
+Identifier together with their security classes
+[{'Identifier': 'tI', 'Security': 'H'},
+ {'Identifier': 'xbZtI', 'Security': 'L'},
+ {'Identifier': 'Tq', 'Security': 'H'},
+ {'Identifier': 'ZOR', 'Security': 'H'},
+ {'Identifier': 'SDLbl', 'Security': 'H'},
+ {'Identifier': 'NVR', 'Security': 'L'},
+ {'Identifier': 'xh', 'Security': 'L'},
+ {'Identifier': 'ouRs', 'Security': 'L'},
+ {'Identifier': 'dfoTX', 'Security': 'H'},
+ {'Identifier': 'cF', 'Security': 'L'},
+ {'Identifier': 'aHr', 'Security': 'L'},
+ {'Identifier': 'tqO', 'Security': 'H'},
+ {'Identifier': 'Vn', 'Security': 'L'},
+ {'Identifier': 'aY', 'Security': 'H'},
+ {'Identifier': 'VDeLu', 'Security': 'L'},
+ {'Identifier': 'bp', 'Security': 'L'},
+ {'Identifier': 'qd', 'Security': 'H'},
+ {'Identifier': 'VqthV', 'Security': 'H'},
+ {'Identifier': 'fZw', 'Security': 'L'},
+ {'Identifier': 'Iq', 'Security': 'L'},
+ {'Identifier': 'qFhv', 'Security': 'H'},
+ {'Identifier': 'oAIx', 'Security': 'L'},
+ {'Identifier': 'y', 'Security': 'H'},
+ {'Identifier': 'gnf', 'Security': 'L'},
+ {'Identifier': 'yhrg', 'Security': 'H'},
+ {'Identifier': 'ceYDk', 'Security': 'H'},
+ {'Identifier': 'm', 'Security': 'H'},
+ {'Identifier': 'ahp', 'Security': 'H'},
+ {'Identifier': 'OJDGu', 'Security': 'H'},
+ {'Identifier': 'Sc', 'Security': 'L'},
+ {'Identifier': 'YqvY', 'Security': 'L'},
+ {'Identifier': 'tyBz', 'Security': 'H'},
+ {'Identifier': 'Z', 'Security': 'H'},
+ {'Identifier': 'XdBUa', 'Security': 'H'},
+ {'Identifier': 'Tw', 'Security': 'H'},
+ {'Identifier': 'fvfrs', 'Security': 'H'},
+ {'Identifier': 'oOtJ', 'Security': 'L'},
+ {'Identifier': 'qwz', 'Security': 'L'},
+ {'Identifier': 'iTA', 'Security': 'H'},
+ {'Identifier': 'OXomo', 'Security': 'H'},
+ {'Identifier': 'HaGZ', 'Security': 'L'},
+ {'Identifier': 'u', 'Security': 'H'},
+ {'Identifier': 'ycw', 'Security': 'L'},
+ {'Identifier': 'Y', 'Security': 'L'},
+ {'Identifier': 'W', 'Security': 'L'},
+ {'Identifier': 'YSYB', 'Security': 'H'},
+ {'Identifier': 'Txv', 'Security': 'H'},
+ {'Identifier': 'cxE', 'Security': 'L'},
+ {'Identifier': 'qkJh', 'Security': 'H'},
+ {'Identifier': 'nKjz', 'Security': 'L'},
+ {'Identifier': 'Mo', 'Security': 'H'},
+ {'Identifier': 'RjRn', 'Security': 'L'},
+ {'Identifier': 'FQHV', 'Security': 'H'},
+ {'Identifier': 'AYzZ', 'Security': 'L'},
+ {'Identifier': 'kp', 'Security': 'L'},
+ {'Identifier': 'IMSwj', 'Security': 'H'},
+ {'Identifier': 'ZDfB', 'Security': 'H'},
+ {'Identifier': 'rJbN', 'Security': 'L'},
+ {'Identifier': 'ZjT', 'Security': 'L'},
+ {'Identifier': 'eLX', 'Security': 'H'}]
+
+
+eLX := Null; 
+ZjT := Null; 
+rJbN := Null; 
+ZDfB := Null; 
+IMSwj := Null; 
+kp := Null; 
+AYzZ := Null; 
+FQHV := Null; 
+RjRn := Null; 
+Mo := Null; 
+nKjz := Null; 
+qkJh := Null; 
+cxE := Null; 
+Txv := Null; 
+YSYB := Null; 
+W := Null; 
+Y := Null; 
+ycw := Null; 
+u := Null; 
+HaGZ := Null; 
+OXomo := Null; 
+iTA := Null; 
+qwz := Null; 
+tI := Null; 
+oOtJ := Null; 
+xbZtI := Null; 
+fvfrs := Null; 
+Tw := Null; 
+XdBUa := Null; 
+Z := Null; 
+tyBz := Null; 
+YqvY := Null; 
+Sc := Null; 
+OJDGu := Null; 
+ahp := Null; 
+m := Null; 
+ceYDk := Null; 
+yhrg := Null; 
+gnf := Null; 
+y := Null; 
+oAIx := Null; 
+qFhv := Null; 
+Iq := Null; 
+fZw := Null; 
+VqthV := Null; 
+qd := Null; 
+bp := Null; 
+VDeLu := Null; 
+aY := Null; 
+Vn := Null; 
+tqO := Null; 
+aHr := Null; 
+cF := Null; 
+dfoTX := Null; 
+ouRs := Null; 
+xh := Null; 
+NVR := Null; 
+SDLbl := Null; 
+ZOR := Null; 
+Tq := Null; 
+if 785653 then {
+    Tq := ZOR
+} else {
+    if ((SDLbl + -102113) == (NVR < 443336)) then {
+        while (-789190 + (-758703 - xh)) do {
+            while ((ouRs < dfoTX) + (-640207 < cF)) do {
+                while ((aHr + 349306) == (tqO == Vn)) do {
+                    if (-291996 < (-32780 + -176172)) then {
+                        while (aY + (-647302 == VDeLu)) do {
+                            bp := qd
+                        }
+                    } else {
+                        VqthV := (fZw < 217785)
+                    }; 
+                    if 560403 then {
+                        Iq := ((qFhv == oAIx) == (-988029 + -680696))
+                    } else {
+                        y := (943531 < gnf)
+                    }
+                }
+            }
+        }
+    } else {
+        if (-746604 < yhrg) then {
+            if (ceYDk == 501071) then {
+                m := (-638694 - (832934 - 705718))
+            } else {
+                if (ahp - -376919) then {
+                    OJDGu := (Sc - 601223)
+                } else {
+                    if -64260 then {
+                        while (-517933 == (232121 == YqvY)) do {
+                            tyBz := Z
+                        }
+                    } else {
+                        while (XdBUa < (180517 < -93356)) do {
+                            Tw := fvfrs
+                        }
+                    }; 
+                    xbZtI := (oOtJ + tI); 
+                    qwz := (821346 == iTA)
+                }; 
+                while OXomo do {
+                    HaGZ := u
+                }
+            }
+        } else {
+            while (ycw - -162557) do {
+                if ((Y + -338905) == (W - YSYB)) then {
+                    if ((Txv == 144270) + (cxE < qkJh)) then {
+                        nKjz := (126040 == -181489)
+                    } else {
+                        Mo := (-634317 + (62189 + -58298))
+                    }
+                } else {
+                    if (RjRn + 636222) then {
+                        FQHV := (AYzZ - 882514)
+                    } else {
+                        kp := ((IMSwj + ZDfB) - rJbN)
+                    }
+                }
+            }; 
+            ZjT := eLX
+        }
+    }
+}
+
+program is insecure

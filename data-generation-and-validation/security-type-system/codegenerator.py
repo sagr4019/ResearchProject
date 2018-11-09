@@ -5,26 +5,27 @@ import check_security
 from random import randint
 from pprint import pprint
 
-sys.setrecursionlimit(50000)
+sys.setrecursionlimit(500000)
 
 INT_START_RANGE = -999999
 INT_END_RANGE = 999999
-IDENTIFIER_LENGTH = 3
+IDENTIFIER_LENGTH = 5
 
 MAX_DEPTH_EXPRESSION = 2
-MAX_DEPTH_COMMAND = 30
+MAX_DEPTH_COMMAND = 15
 
 
 RESERVED_KEYWORDS = ['if', 'then', 'else', 'while', 'do']
 TAB_SIZE = '    '
 
-ENABLE_SEED = False
-# ENABLE_SEED = True
+# ENABLE_SEED = False
+ENABLE_SEED = True
 
-vars_ast_assigned = []
+all_vars_asts = []
+ass_vars_l_r = []
 
 if ENABLE_SEED:
-    SEED = 5
+    SEED = 272306
     random.seed(SEED)
     print('SEED: {}'.format(SEED))
 
@@ -48,22 +49,21 @@ class VarExpr:
     def gen(self):
         """
         Return AST representation for variables.
-        Depending on bool only_assigned, a variable is randomly chosen from the
-        set vars_ast_assigned or a variable is generated randomly with the length equal
-        to IDENTIFIER_LENGTH, consisting of lowercase and/or uppercase letters.
+        A variable is generated randomly with a random length with a maximum of
+        IDENTIFIER_LENGTH, consisting of lowercase and/or uppercase letters.
         """
-        global vars_ast_assigned
+        global all_vars_asts
         var = ''.join(random.choice(string.ascii_letters)
-                      for _ in range(IDENTIFIER_LENGTH))
+                      for _ in range(randint(1, IDENTIFIER_LENGTH)))
         while (var.lower() in RESERVED_KEYWORDS):
             var = ''.join(random.choice(string.ascii_letters)
-                          for _ in range(IDENTIFIER_LENGTH))
+                          for _ in range(randint(1, IDENTIFIER_LENGTH)))
 
         ast = {'Kind': 'Var',
                'Name': var
                }
-        if var not in vars_ast_assigned:
-            vars_ast_assigned.append(ast)
+        if var not in all_vars_asts:
+            all_vars_asts.append(ast)
 
         return ast, 1
 
@@ -173,8 +173,31 @@ class ExpressionGenerator:
 class AssignCmd:
 
     def gen(self, depth):
+        global ass_vars_l_r
         left, _ = VarExpr().gen()
         right, _ = ExpressionGenerator().gen()
+
+        # find all vars used on the right side that are not equal to the
+        # left side
+        right_vars = find_vars(ast=right, vars=[], left_var_name=left['Name'])
+        if right_vars is not None:
+            # search ass_vars_l_r for left var to figure out if it has already
+            # been assigned and try to append new right vars to it's rightvars
+            # list
+            left_var_found = False
+            for i in range(len(ass_vars_l_r)):
+                if ass_vars_l_r[i]['Name'] == left['Name']:
+                    left_var_found = True
+                    for e in right_vars:
+                        if e not in ass_vars_l_r[i]['RightVars']:
+                            ass_vars_l_r[i]['RightVars'].append(e)
+
+            if not left_var_found and len(right_vars) > 0:
+                # left var has not yet been assigned, create a new list entry
+                ass_vars_l_r.append({
+                    'Name': left['Name'],
+                    'RightVars': right_vars
+                })
 
         return {'Kind': 'Assign',
                 'Left': left,
@@ -187,6 +210,37 @@ class AssignCmd:
                 'Left': left,
                 'Right': null_expr,
                 }, 0
+
+
+def find_vars(ast, vars, left_var_name):
+    """
+    Return names of vars from ast for each var that has not the same name as
+    the given argument left_var_name, which is the left side of an assignment
+    """
+    kind = ast.get("Kind")
+
+    if kind == 'Var':
+        if ast.get("Name") not in vars and ast.get("Name") != left_var_name:
+            vars.append(ast.get("Name"))
+        return vars
+    elif kind == 'If':
+        return find_vars(ast.get("Else"),
+                         find_vars(ast.get("Then"),
+                                   vars,
+                                   left_var_name),
+                         left_var_name)
+    elif kind == 'While':
+        return find_vars(ast.get("Body"),
+                         vars,
+                         left_var_name)
+    elif kind != 'Int':
+        return find_vars(ast.get("Left"),
+                         find_vars(ast.get("Right"),
+                                   vars,
+                                   left_var_name),
+                         left_var_name)
+    else:
+        return vars
 
 
 class SeqCmd:
@@ -256,25 +310,65 @@ class CmdGen:
 
 class CommandGenerator:
 
-    def gen(self):
-        global vars_ast_assigned
-        vars_ast_assigned = []
+    def gen(self, gen_secure):
+        global all_vars_asts
+        all_vars_asts = []
         depth = randint(1, MAX_DEPTH_COMMAND)
-        print('Generating command with depth {}'.format(depth))
         ast, depth = CmdGen().gen(depth)
 
-        # preassign all vars with NullExpr
         identifier_storage = []
-        for i in range(len(vars_ast_assigned)):
-            identifier_storage.append({
-                "Identifier": vars_ast_assigned[i]['Name'],
-                "Security": random.choice(['H', 'L'])
-            })
-            left, depth_left = AssignCmd().gen_null_assign(vars_ast_assigned[i])
+        if not gen_secure:
+            # if there are assignments which use vars on the right side
+            if len(ass_vars_l_r) > 0:
+                # choose one or a random amount of assignments which should be
+                # marked as insecure (left var L, at least one right var H)
+                no_of_insec_ass = 1
+                # no_of_insec_ass = randint(1, len(ass_vars_l_r))
+                assigns = random.sample(ass_vars_l_r, no_of_insec_ass)
+                for e in assigns:
+                    # choose one or a random amount of vars from the right side
+                    # and set each of them as H
+                    no_of_r_vars = 1
+                    # no_of_r_vars = randint(1, len(e['RightVars']))
+                    r_vars = random.sample(e['RightVars'], no_of_r_vars)
+                    for ee in r_vars:
+                        # mark var from right as H, e. g.  ( ... := ... x ...)
+                        identifier_storage.append({
+                            "Identifier": ee,
+                            "Security": "H"
+                        })
+                    # mark var from left as L, e. g.  ( x := ...)
+                    identifier_storage.append({
+                        "Identifier": e['Name'],
+                        "Security": "L"
+                    })
+        for e in all_vars_asts:
+            if not in_identifier_storage(e['Name'], identifier_storage):
+                # if var is not in identifier_storage, add it
+                # with a random security class
+                identifier_storage.append({
+                    "Identifier": e['Name'],
+                    "Security": random.choice(['H', 'L'])
+                })
+
+            # preassign var with NullExpr
+            left, depth_left = AssignCmd().gen_null_assign(e)
             ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
 
-        print('Depth after preassignments added {}\n'.format(depth))
-        return ast, depth, identifier_storage
+        sec_valid, _ = check_security.security(ast, identifier_storage)
+
+        if sec_valid != gen_secure:
+            return CommandGenerator().gen(gen_secure=gen_secure)
+        else:
+            print('Generated command with depth {}'.format(depth))
+            return ast, depth, identifier_storage, sec_valid
+
+
+def in_identifier_storage(var, identifier_storage):
+    for e in identifier_storage:
+        if var == e['Identifier']:
+            return True
+    return False
 
 
 def get_rand_depth(depth):
@@ -401,14 +495,16 @@ def get_center(kind):
 
 
 def main():
-    ast, depth, identifier_storage = CommandGenerator().gen()
-
-    # print(identifier_storage)
-    print(check_security.security(ast, identifier_storage))
-    # print('\n')
-    # print(prettyprint_singleline(ast))
-    # print('\n')
-    # print(prettyprint_multiline_indented(ast))
+    gen_secure_code = True
+    ast, depth, identifier_storage, secure = CommandGenerator().gen(gen_secure_code)
+    print('\nIdentifier together with their security classes')
+    pprint(identifier_storage)
+    print('\n')
+    print(prettyprint_multiline_indented(ast))
+    if secure:
+        print('\nprogram is secure')
+    else:
+        print('\nprogram is insecure')
 
 
 if __name__ == "__main__":
