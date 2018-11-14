@@ -16,7 +16,7 @@ MAX_DEPTH_COMMAND = 15
 
 
 RESERVED_KEYWORDS = ['if', 'then', 'else', 'while', 'do']
-TAB_SIZE = '    '
+TAB_SIZE = 4
 
 # ENABLE_SEED = False
 ENABLE_SEED = True
@@ -380,27 +380,26 @@ def get_rand_depth(depth):
 
 def prettyprint_singleline(ast):
     """Return AST as human readable single-line string with bracketing"""
-    code = ''
     if 'Kind' in ast:
         if ast['Kind'] == 'If':
-            code += "if {} then {{{}}} else {{{}}}".format(
+            code = "if {} then {{{}}} else {{{}}}".format(
                 prettyprint_singleline(ast['Condition']),
                 prettyprint_singleline(ast['Then']),
                 prettyprint_singleline(ast['Else']))
         elif ast['Kind'] == 'While':
-            code += "while {} do {{{}}}".format(
+            code = "while {} do {{{}}}".format(
                 prettyprint_singleline(ast['Condition']),
                 prettyprint_singleline(ast['Body']))
         elif ast['Kind'] == 'Int':
-            code += str(ast['Value'])
+            code = str(ast['Value'])
         elif ast['Kind'] == 'Var':
-            code += str(ast['Name'])
+            code = str(ast['Name'])
         elif ast['Kind'] == 'Null':
-            code += str(ast['Value'])
+            code = str(ast['Value'])
         else:
-            code += "({} {} {})".format(
+            code = "({} {} {})".format(
                 prettyprint_singleline(ast['Left']),
-                get_center(ast['Kind']),
+                get_operator_symbol(ast['Kind']),
                 prettyprint_singleline(ast['Right']))
     return code
 
@@ -410,10 +409,9 @@ def prettyprint_multiline_indented(ast, level=0):
     Return AST as human readable multi-line string with bracketing and
     indentation
     """
-    code = ''
     if 'Kind' in ast:
         if ast['Kind'] == 'If':
-            code += "{}if {} then {{\n{}\n{}}} else {{\n{}\n{}}}".format(
+            code = "{}if {} then {{\n{}\n{}}} else {{\n{}\n{}}}".format(
                 get_tabs(level),
                 prettyprint_multiline_indented(ast['Condition'], level),
                 prettyprint_multiline_indented(ast['Then'], level + 1),
@@ -421,48 +419,48 @@ def prettyprint_multiline_indented(ast, level=0):
                 prettyprint_multiline_indented(ast['Else'], level + 1),
                 get_tabs(level))
         elif ast['Kind'] == 'While':
-            code += "{}while {} do {{\n{}\n{}}}".format(
+            code = "{}while {} do {{\n{}\n{}}}".format(
                 get_tabs(level),
                 prettyprint_multiline_indented(ast['Condition'], level),
                 prettyprint_multiline_indented(ast['Body'], level + 1),
                 get_tabs(level))
         elif ast['Kind'] == 'Assign':
-            code += "{}{} {} {}".format(
+            code = "{}{} {} {}".format(
                 get_tabs(level),
                 prettyprint_multiline_indented(ast['Left'], level),
-                get_center(ast['Kind']),
+                get_operator_symbol(ast['Kind']),
                 prettyprint_multiline_indented(ast['Right'], level))
         elif ast['Kind'] == 'Seq':
-            code += "{}{}\n{}".format(
+            code = "{}{}\n{}".format(
                 prettyprint_multiline_indented(ast['Left'], level),
-                get_center(ast['Kind']),
+                get_operator_symbol(ast['Kind']),
                 prettyprint_multiline_indented(ast['Right'], level))
         elif ast['Kind'] == 'Add':
-            code += "({} {} {})".format(
+            code = "({} {} {})".format(
                 prettyprint_multiline_indented(ast['Left'], level),
-                get_center(ast['Kind']),
+                get_operator_symbol(ast['Kind']),
                 prettyprint_multiline_indented(ast['Right'], level))
         elif ast['Kind'] == 'Sub':
-            code += "({} {} {})".format(
+            code = "({} {} {})".format(
                 prettyprint_multiline_indented(ast['Left'], level),
-                get_center(ast['Kind']),
+                get_operator_symbol(ast['Kind']),
                 prettyprint_multiline_indented(ast['Right'], level))
         elif ast['Kind'] == 'Less':
-            code += "({} {} {})".format(
+            code = "({} {} {})".format(
                 prettyprint_multiline_indented(ast['Left'], level),
-                get_center(ast['Kind']),
+                get_operator_symbol(ast['Kind']),
                 prettyprint_multiline_indented(ast['Right'], level))
         elif ast['Kind'] == 'Equal':
-            code += "({} {} {})".format(
+            code = "({} {} {})".format(
                 prettyprint_multiline_indented(ast['Left'], level),
-                get_center(ast['Kind']),
+                get_operator_symbol(ast['Kind']),
                 prettyprint_multiline_indented(ast['Right'], level))
         elif ast['Kind'] == 'Int':
-            code += str(ast['Value'])
+            code = str(ast['Value'])
         elif ast['Kind'] == 'Var':
-            code += str(ast['Name'])
+            code = str(ast['Name'])
         elif ast['Kind'] == 'Null':
-            code += str(ast['Value'])
+            code = str(ast['Value'])
         else:
             raise RuntimeError("Unknown kind {}".format(ast['Kind']))
     return code
@@ -470,13 +468,10 @@ def prettyprint_multiline_indented(ast, level=0):
 
 def get_tabs(level):
     """Return tab string for the given level"""
-    tabs = ''
-    for i in range(level):
-        tabs += TAB_SIZE
-    return tabs
+    return ' ' * TAB_SIZE * level
 
 
-def get_center(kind):
+def get_operator_symbol(kind):
     """Return the symbol(s) associated with each kind"""
     if kind == 'Assign':
         return ':='
