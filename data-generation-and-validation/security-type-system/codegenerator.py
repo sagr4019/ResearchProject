@@ -150,16 +150,8 @@ class ExprGen:
     def gen(self, depth):
         if depth == 0:
             return LiteralExpr().gen()
-
-        rnd = randint(0, 3)
-        if rnd == 0:
-            return AddExpr().gen(depth)
-        elif rnd == 1:
-            return SubExpr().gen(depth)
-        elif rnd == 2:
-            return EqualExpr().gen(depth)
-        elif rnd == 3:
-            return LessExpr().gen(depth)
+        else:
+            return one_of([AddExpr(), SubExpr(), EqualExpr(), LessExpr()]).gen(depth)
 
 
 class ExpressionGenerator:
@@ -298,14 +290,8 @@ class CmdGen:
     def gen(self, depth):
         if depth == 0:
             return AssignCmd().gen(depth)
-
-        rnd = randint(0, 2)
-        if rnd == 0:
-            return WhileCmd().gen(depth)
-        elif rnd == 1:
-            return IfCmd().gen(depth)
-        elif rnd == 2:
-            return SeqCmd().gen(depth)
+        else:
+            return one_of([WhileCmd(), IfCmd(), SeqCmd()]).gen(depth)
 
 
 class CommandGenerator:
@@ -376,6 +362,11 @@ def get_rand_depth(depth):
         return depth, randint(0, depth)
     else:
         return randint(0, depth), depth
+
+
+def one_of(choices):
+    rnd = randint(0, len(choices) - 1)
+    return choices[rnd]
 
 
 def prettyprint_singleline(ast):
