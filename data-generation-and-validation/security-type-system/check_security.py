@@ -1,77 +1,119 @@
-def get_class(identifier, identifierStorage):  # converts a string of a security class into an int
+def get_label_from_environment(identifier, environment):
     securityClass = None
 
-    for e in identifierStorage:
-        if e["Identifier"] == identifier:
-            securityClass = e["Security"]
+    for key in environment.keys():
+        if key == identifier:
+            securityClass = environment[key]
 
-    # debug - print identifier if not found
-    # if securityClass == None:
-    #    print(identifier)
+    return securityClass
 
+
+def convert_label_to_int(securityClass):
     if securityClass == "H":
         return 1
     else:
         return 0
 
-# returns if the given node is valid towards its security class and the security class itself
+
+# check security rules from "secure type system"
+def check_rules(node, environment):
+    # get the type of the current node
+    key = node.get("Kind")
+
+    if key == "Int" or key == "Null":
+        # return "best fit" type "L"
+        return "L"
 
 
-def security(node, identifierStorage):
-    key = node.get("Kind")  # get the type of the current node
-
-    if key == "Seq":
-        valid1, class1 = security(node.get("Left"), identifierStorage)
-        valid2, class2 = security(node.get("Right"), identifierStorage)
-        return (valid1 and valid2), max(class1, class2)
-    elif key == "Assign":
-        _, id_class = security(node.get("Left"), identifierStorage)
-        _, val_class = security(node.get("Right"), identifierStorage)
-        return (id_class >= val_class), max(id_class, val_class)
     elif key == "Var":
-        return True, get_class(node.get("Name"), identifierStorage)
-    elif key == "While":
-        _, g_class = security(node.get("Condition"), identifierStorage)
-        cmd_valid, cmd_class = security(node.get("Body"), identifierStorage)
-        return (cmd_valid and g_class >= cmd_class), max(g_class, cmd_class)
-    elif key == "Int":
-        return True, 0
-    elif key == "Null":
-        return True, 0
-    elif key == "If":
-        _, g_class = security(node.get("Condition"), identifierStorage)
-        valid1, class1 = security(node.get("Then"), identifierStorage)
-        valid2, class2 = security(node.get("Else"), identifierStorage)
-        return (valid1 and valid2 and g_class >= class1 and g_class >= class2), max(g_class, class1, class2)
+        # return security class from environment
+        return get_label_from_environment(node.get("Name"), environment)
+
+
+    # arithmetic operation
     elif key == "Equal" or key == "Less" or key == "Add" or key == "Sub":
-        _, class1 = security(node.get("Left"), identifierStorage)
-        _, class2 = security(node.get("Right"), identifierStorage)
-        return True, max(class1, class2)
+        secType1 = check_rules(node.get("Left"), environment)
+        secType2 = check_rules(node.get("Right"), environment)
+
+        # check if none-types exists -> not valid
+        if secType1 == None or secType2 == None:
+            return None
+
+        # valid - return bestfit
+        return "L"
+
+
+    elif key == "Assign":
+        secType1 = check_rules(node.get("Left"), environment)
+        secType2 = check_rules(node.get("Right"), environment)
+
+        # check if none-types exists -> not valid
+        if secType1 == None or secType2 == None:
+            return None
+
+        # valid - return bestfit as cmd
+        if convert_label_to_int(secType2) >= convert_label_to_int(secType1):
+            return "H"
+
+        # else -> not valid
+        return None
+
+
+    elif key == "While":
+        secType1 = check_rules(node.get("Condition"), environment)
+        secType2 = check_rules(node.get("Body"), environment)
+
+        # check if none-types exists -> not valid
+        if secType1 == None or secType2 == None:
+            return None
+
+        # valid - return bestfit as cmd
+        if convert_label_to_int(secType2) >= convert_label_to_int(secType1):
+            return "H"
+
+        # else -> not valid
+        return None
+
+
+    elif key == "If":
+        secType1 = check_rules(node.get("Condition"), environment)
+        secType2 = check_rules(node.get("Then"), environment)
+        secType3 = check_rules(node.get("Else"), environment)
+
+        # check if none-types exists -> not valid
+        if secType1 == None or secType2 == None or secType3 == None:
+            return None
+
+        # valid - return bestfit as cmd
+        if convert_label_to_int(secType2) >= convert_label_to_int(secType1) and convert_label_to_int(secType3) >= convert_label_to_int(secType1):
+            return "H"
+
+        # else -> not valid
+        return None
+
+
+    # compose commands
+    elif key == "Seq":
+        secType1 = check_rules(node.get("Left"), environment)
+        secType2 = check_rules(node.get("Right"), environment)
+
+        # check if none-types exists -> not valid
+        if secType1 == None or secType2 == None:
+            return None
+
+        # valid - return bestfit as cmd
+        return "H"
+
+
     else:
-        return True, 0
+        # unknown kind - not valid
+        return None
 
 
 def main():
 
     # Code Example:
     #
-    # vni := Null;
-    # Mwq := Null;
-    # MIz := Null;
-    # tlZ := Null;
-    # fnv := Null;
-    # scB := Null;
-    # gLV := Null;
-    # cTl := Null;
-    # zbJ := Null;
-    # bVw := Null;
-    # Tld := Null;
-    # wtE := Null;
-    # vtM := Null;
-    # Akj := Null;
-    # mIR := Null;
-    # lXy := Null;
-    # pyI := Null;
     # if ((-220292 - pyI) == (-144045 + lXy)) then {
     #     while ((-652173 + -393283) < mIR) do {
     #         if Akj then {
@@ -88,25 +130,26 @@ def main():
     #     Mwq := (681213 < vni)
     # }
 
-    # pre-define identifierStorage
-    identifierStorage = [{'Identifier': 'pyI', 'Security': 'L'},
-                         {'Identifier': 'lXy', 'Security': 'L'},
-                         {'Identifier': 'mIR', 'Security': 'L'},
-                         {'Identifier': 'Akj', 'Security': 'L'},
-                         {'Identifier': 'vtM', 'Security': 'L'},
-                         {'Identifier': 'wtE', 'Security': 'L'},
-                         {'Identifier': 'Tld', 'Security': 'L'},
-                         {'Identifier': 'bVw', 'Security': 'L'},
-                         {'Identifier': 'zbJ', 'Security': 'L'},
-                         {'Identifier': 'cTl', 'Security': 'L'},
-                         {'Identifier': 'gLV', 'Security': 'L'},
-                         {'Identifier': 'scB', 'Security': 'L'},
-                         {'Identifier': 'fnv', 'Security': 'L'},
-                         {'Identifier': 'tlZ', 'Security': 'L'},
-                         {'Identifier': 'MIz', 'Security': 'L'},
-                         {'Identifier': 'Mwq', 'Security': 'L'},
-                         {'Identifier': 'vni', 'Security': 'L'}]
-    newExample = {'Kind': 'Seq',
+    # pre-define environment
+    environment = {'pyI': 'L',
+                     'lXy': 'L',
+                     'mIR': 'L',
+                     'Akj': 'L',
+                     'vtM': 'L',
+                     'wtE': 'L',
+                     'Tld': 'L',
+                     'bVw': 'L',
+                     'zbJ': 'L',
+                     'cTl': 'L',
+                     'gLV': 'L',
+                     'scB': 'L',
+                     'fnv': 'L',
+                     'tlZ': 'L',
+                     'MIz': 'L',
+                     'Mwq': 'L',
+                     'vni': 'L'}
+
+    codeExample = {'Kind': 'Seq',
                   'Left': {'Kind': 'Assign',
                            'Left': {'Kind': 'Var', 'Name': 'vni'},
                            'Right': {'Kind': 'Null', 'Value': 'Null'}},
@@ -280,48 +323,12 @@ def main():
                                                                                                                                                                                                                              'Name': 'mIR'}},
                                                                                                                                                                                                      'Kind': 'While'}}}}}}}}}}}}}}}}}}}
 
-    print(security(newExample, identifierStorage))
+    secType = check_rules(codeExample, environment)
 
-    # rewrite identifierStorage
-    # identifierStorage = [{"Identifier": "U", "Security": "L"}, {"Identifier": "Q", "Security": "L"}, {"Identifier": "Z", "Security": "L"}, {"Identifier": "N", "Security": "L"}, {"Identifier": "V", "Security": "L"}, {"Identifier": "v", "Security": "L"}, {"Identifier": "H", "Security": "L"}, {"Identifier": "d", "Security": "L"}, {"Identifier": "q", "Security": "L"}]
-
-    # (while (-20806) do {(if (-314201) then {(U := 638624)} else {(Q := 762253)} ;  (Z := -831119))} ;  (N := ((v < (((d == (431958 + V)) < H) - -73817)) == q)))
-    # testExample = {"Kind": "Concat",
-    #                "Left": {"Condition": {"Kind": "Int", "Value": -20806},
-    #                         "Do": {"Kind": "Concat",
-    #                                "Left": {"Condition": {"Kind": "Int", "Value": -314201},
-    #                                         "Else": {"Kind": "Assign",
-    #                                                  "Left": {"Kind": "Var", "Value": "Q"},
-    #                                                  "Right": {"Kind": "Int", "Value": 762253}},
-    #                                         "Kind": "If",
-    #                                         "Then": {"Kind": "Assign",
-    #                                                  "Left": {"Kind": "Var", "Value": "U"},
-    #                                                  "Right": {"Kind": "Int", "Value": 638624}}},
-    #                                "Right": {"Kind": "Assign",
-    #                                          "Left": {"Kind": "Var", "Value": "Z"},
-    #                                          "Right": {"Kind": "Int", "Value": -831119}}},
-    #                         "Kind": "While"},
-    #                "Right": {"Kind": "Assign",
-    #                          "Left": {"Kind": "Var", "Value": "N"},
-    #                          "Right": {"Kind": "Equal",
-    #                                    "Left": {"Kind": "Less",
-    #                                             "Left": {"Kind": "Var", "Value": "v"},
-    #                                             "Right": {"Kind": "Sub",
-    #                                                       "Left": {"Kind": "Less",
-    #                                                                "Left": {"Kind": "Equal",
-    #                                                                         "Left": {"Kind": "Var",
-    #                                                                                  "Value": "d"},
-    #                                                                         "Right": {"Kind": "Add",
-    #                                                                                   "Left": {"Kind": "Int",
-    #                                                                                            "Value": 431958},
-    #                                                                                   "Right": {"Kind": "Var",
-    #                                                                                             "Value": "V"}}},
-    #                                                                "Right": {"Kind": "Var",
-    #                                                                          "Value": "H"}},
-    #                                                       "Right": {"Kind": "Int",
-    #                                                                 "Value": -73817}}},
-    #                                    "Right": {"Kind": "Var", "Value": "q"}}}}
-    # print(security(testExample, identifierStorage))
+    if secType == None:
+        print("Invalid")
+    else:
+        print("Valid")
 
 if __name__ == "__main__":
     main()
