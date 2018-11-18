@@ -3,7 +3,6 @@ import string
 import sys
 import check_security
 from random import randint
-from pprint import pprint
 
 sys.setrecursionlimit(500000)
 
@@ -77,12 +76,12 @@ class LiteralExpr:
             return VarExpr().gen()
 
 
-class NullExpr:
+class SecLabelExpr():
 
-    def gen(self):
-        return {'Kind': 'Null',
-                'Value': 'Null'
-                }, 1
+    def gen(self, label):
+        return {'Kind': 'SecLabel',
+                'Label': label
+                }
 
 
 class AddExpr:
@@ -162,6 +161,14 @@ class ExpressionGenerator:
         return ExprGen().gen(depth)
 
 
+class DeclareCmd:
+
+    def gen(self, label, var):
+        return {'Kind': 'Declare',
+                'Command': '{} {}'.format(label, var)
+                }, 1
+
+
 class AssignCmd:
 
     def gen(self, depth):
@@ -194,13 +201,6 @@ class AssignCmd:
         return {'Kind': 'Assign',
                 'Left': left,
                 'Right': right,
-                }, 0
-
-    def gen_null_assign(self, left):
-        null_expr, _ = NullExpr().gen()
-        return {'Kind': 'Assign',
-                'Left': left,
-                'Right': null_expr,
                 }, 0
 
 
@@ -302,7 +302,7 @@ class CommandGenerator:
         depth = randint(1, MAX_DEPTH_COMMAND)
         ast, depth = CmdGen().gen(depth)
 
-        identifier_storage = []
+        environment = dict()
         if not gen_secure:
             # if there are assignments which use vars on the right side
             if len(ass_vars_l_r) > 0:
@@ -319,42 +319,28 @@ class CommandGenerator:
                     r_vars = random.sample(e['RightVars'], no_of_r_vars)
                     for ee in r_vars:
                         # mark var from right as H, e. g.  ( ... := ... x ...)
-                        identifier_storage.append({
-                            "Identifier": ee,
-                            "Security": "H"
-                        })
+                        environment[ee] = 'H'
+
                     # mark var from left as L, e. g.  ( x := ...)
-                    identifier_storage.append({
-                        "Identifier": e['Name'],
-                        "Security": "L"
-                    })
+                    environment[e['Name']] = 'L'
+
         for e in all_vars_asts:
-            if not in_identifier_storage(e['Name'], identifier_storage):
-                # if var is not in identifier_storage, add it
-                # with a random security class
-                identifier_storage.append({
-                    "Identifier": e['Name'],
-                    "Security": random.choice(['H', 'L'])
-                })
+            if not e['Name'] in environment:
+                # if var is not in environment, add it
+                # with a random security label
+                sec_label = random.choice(['H', 'L'])
+                environment[e['Name']] = sec_label
 
-            # preassign var with NullExpr
-            left, depth_left = AssignCmd().gen_null_assign(e)
-            ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
+                left, depth_left = DeclareCmd().gen(sec_label, e['Name'])
+                ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
 
-        sec_valid, _ = check_security.security(ast, identifier_storage)
+        sec_valid, _ = check_security.check_rules(ast, environment)
 
         if sec_valid != gen_secure:
             return CommandGenerator().gen(gen_secure=gen_secure)
         else:
             print('Generated command with depth {}'.format(depth))
-            return ast, depth, identifier_storage, sec_valid
-
-
-def in_identifier_storage(var, identifier_storage):
-    for e in identifier_storage:
-        if var == e['Identifier']:
-            return True
-    return False
+            return ast, depth, environment, sec_valid
 
 
 def get_rand_depth(depth):
@@ -385,8 +371,8 @@ def prettyprint_singleline(ast):
             code = str(ast['Value'])
         elif ast['Kind'] == 'Var':
             code = str(ast['Name'])
-        elif ast['Kind'] == 'Null':
-            code = str(ast['Value'])
+        elif ast['Kind'] == 'Declare':
+            code = str(ast['Command'])
         else:
             code = "({} {} {})".format(
                 prettyprint_singleline(ast['Left']),
@@ -450,8 +436,8 @@ def prettyprint_multiline_indented(ast, level=0):
             code = str(ast['Value'])
         elif ast['Kind'] == 'Var':
             code = str(ast['Name'])
-        elif ast['Kind'] == 'Null':
-            code = str(ast['Value'])
+        elif ast['Kind'] == 'Declare':
+            code = str(ast['Command'])
         else:
             raise RuntimeError("Unknown kind {}".format(ast['Kind']))
     return code
@@ -481,16 +467,10 @@ def get_operator_symbol(kind):
 
 
 def main():
-    gen_secure_code = True
-    ast, depth, identifier_storage, secure = CommandGenerator().gen(gen_secure_code)
-    print('\nIdentifier together with their security classes')
-    pprint(identifier_storage)
-    print('\n')
+    gen_secure_program = True
+    ast, depth, _, secure = CommandGenerator().gen(gen_secure_program)
+    print('Generated {} program:\n'.format('secure' if secure else 'insecure'))
     print(prettyprint_multiline_indented(ast))
-    if secure:
-        print('\nprogram is secure')
-    else:
-        print('\nprogram is insecure')
 
 
 if __name__ == "__main__":
