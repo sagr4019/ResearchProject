@@ -30,9 +30,11 @@ def check_rules(node, environment):
         return get_label_from_environment(node.get("Name"), environment)
 
 
-    # @Salvos: I don't think that this is correct, but to work with my code i had to introduce the key Declare...
     elif key == "Declare":
-        return get_label_from_environment(node.get("Var"), environment)
+        # add or update entry in dict
+        environment[node.get("Var")] = node.get("Label")
+        # prevent "None"-Type Error by returning an inconsequenctial label "L" or "H"
+        return "L"
 
 
     # arithmetic operation
@@ -117,223 +119,56 @@ def check_rules(node, environment):
 
 def main():
 
-    # Code Example:
+    # Valid Example
+    # Code Example for Seed "272306"
     #
-    # if ((-220292 - pyI) == (-144045 + lXy)) then {
-    #     while ((-652173 + -393283) < mIR) do {
-    #         if Akj then {
-    #             vtM := (wtE + (Tld == bVw))
-    #         } else {
-    #             zbJ := (cTl == -750395)
-    #         };
-    #         while (gLV == scB) do {
-    #             fnv := ((tlZ == 314507) == (510220 - -830218))
-    #         };
-    #         MIz := 553064
-    #     }
-    # } else {
-    #     Mwq := (681213 < vni)
+    # L C;
+    # H eQX;
+    # L c;
+    # L u;
+    # H FW;
+    # H fTkA;
+    # while ((fTkA < 162642) - (FW + u)) do {
+    #     c := (eQX - C)
     # }
 
-    # pre-define environment
-    environment = {'pyI': 'L',
-                     'lXy': 'L',
-                     'mIR': 'L',
-                     'Akj': 'L',
-                     'vtM': 'L',
-                     'wtE': 'L',
-                     'Tld': 'L',
-                     'bVw': 'L',
-                     'zbJ': 'L',
-                     'cTl': 'L',
-                     'gLV': 'L',
-                     'scB': 'L',
-                     'fnv': 'L',
-                     'tlZ': 'L',
-                     'MIz': 'L',
-                     'Mwq': 'L',
-                     'vni': 'L'}
+    environment1 = {}
 
-    codeExample = {'Kind': 'Seq',
-                  'Left': {'Kind': 'Assign',
-                           'Left': {'Kind': 'Var', 'Name': 'vni'},
-                           'Right': {'Kind': 'Null', 'Value': 'Null'}},
-                  'Right': {'Kind': 'Seq',
-                            'Left': {'Kind': 'Assign',
-                                     'Left': {'Kind': 'Var', 'Name': 'Mwq'},
-                                     'Right': {'Kind': 'Null', 'Value': 'Null'}},
-                            'Right': {'Kind': 'Seq',
-                                      'Left': {'Kind': 'Assign',
-                                               'Left': {'Kind': 'Var', 'Name': 'MIz'},
-                                               'Right': {'Kind': 'Null', 'Value': 'Null'}},
-                                      'Right': {'Kind': 'Seq',
-                                                'Left': {'Kind': 'Assign',
-                                                         'Left': {'Kind': 'Var', 'Name': 'tlZ'},
-                                                         'Right': {'Kind': 'Null',
-                                                                   'Value': 'Null'}},
-                                                'Right': {'Kind': 'Seq',
-                                                          'Left': {'Kind': 'Assign',
-                                                                   'Left': {'Kind': 'Var',
-                                                                            'Name': 'fnv'},
-                                                                   'Right': {'Kind': 'Null',
-                                                                             'Value': 'Null'}},
-                                                          'Right': {'Kind': 'Seq',
-                                                                    'Left': {'Kind': 'Assign',
-                                                                             'Left': {'Kind': 'Var',
-                                                                                      'Name': 'scB'},
-                                                                             'Right': {'Kind': 'Null',
-                                                                                       'Value': 'Null'}},
-                                                                    'Right': {'Kind': 'Seq',
-                                                                              'Left': {'Kind': 'Assign',
-                                                                                       'Left': {'Kind': 'Var',
-                                                                                                'Name': 'gLV'},
-                                                                                       'Right': {'Kind': 'Null',
-                                                                                                 'Value': 'Null'}},
-                                                                              'Right': {'Kind': 'Seq',
-                                                                                        'Left': {'Kind': 'Assign',
-                                                                                                 'Left': {'Kind': 'Var',
-                                                                                                          'Name': 'cTl'},
-                                                                                                 'Right': {'Kind': 'Null',
-                                                                                                           'Value': 'Null'}},
-                                                                                        'Right': {'Kind': 'Seq',
-                                                                                                  'Left': {'Kind': 'Assign',
-                                                                                                           'Left': {'Kind': 'Var',
-                                                                                                                    'Name': 'zbJ'},
-                                                                                                           'Right': {'Kind': 'Null',
-                                                                                                                     'Value': 'Null'}},
-                                                                                                  'Right': {'Kind': 'Seq',
-                                                                                                            'Left': {'Kind': 'Assign',
-                                                                                                                     'Left': {'Kind': 'Var',
-                                                                                                                              'Name': 'bVw'},
-                                                                                                                     'Right': {'Kind': 'Null',
-                                                                                                                               'Value': 'Null'}},
-                                                                                                            'Right': {'Kind': 'Seq',
-                                                                                                                      'Left': {'Kind': 'Assign',
-                                                                                                                               'Left': {'Kind': 'Var',
-                                                                                                                                        'Name': 'Tld'},
-                                                                                                                               'Right': {'Kind': 'Null',
-                                                                                                                                         'Value': 'Null'}},
-                                                                                                                      'Right': {'Kind': 'Seq',
-                                                                                                                                'Left': {'Kind': 'Assign',
-                                                                                                                                         'Left': {'Kind': 'Var',
-                                                                                                                                                  'Name': 'wtE'},
-                                                                                                                                         'Right': {'Kind': 'Null',
-                                                                                                                                                   'Value': 'Null'}},
-                                                                                                                                'Right': {'Kind': 'Seq',
-                                                                                                                                          'Left': {'Kind': 'Assign',
-                                                                                                                                                   'Left': {'Kind': 'Var',
-                                                                                                                                                            'Name': 'vtM'},
-                                                                                                                                                   'Right': {'Kind': 'Null',
-                                                                                                                                                             'Value': 'Null'}},
-                                                                                                                                          'Right': {'Kind': 'Seq',
-                                                                                                                                                    'Left': {'Kind': 'Assign',
-                                                                                                                                                             'Left': {'Kind': 'Var',
-                                                                                                                                                                      'Name': 'Akj'},
-                                                                                                                                                             'Right': {'Kind': 'Null',
-                                                                                                                                                                       'Value': 'Null'}},
-                                                                                                                                                    'Right': {'Kind': 'Seq',
-                                                                                                                                                              'Left': {'Kind': 'Assign',
-                                                                                                                                                                       'Left': {'Kind': 'Var',
-                                                                                                                                                                                'Name': 'mIR'},
-                                                                                                                                                                       'Right': {'Kind': 'Null',
-                                                                                                                                                                                 'Value': 'Null'}},
-                                                                                                                                                              'Right': {'Kind': 'Seq',
-                                                                                                                                                                        'Left': {'Kind': 'Assign',
-                                                                                                                                                                                 'Left': {'Kind': 'Var',
-                                                                                                                                                                                          'Name': 'lXy'},
-                                                                                                                                                                                 'Right': {'Kind': 'Null',
-                                                                                                                                                                                           'Value': 'Null'}},
-                                                                                                                                                                        'Right': {'Kind': 'Seq',
-                                                                                                                                                                                  'Left': {'Kind': 'Assign',
-                                                                                                                                                                                           'Left': {'Kind': 'Var',
-                                                                                                                                                                                                    'Name': 'pyI'},
-                                                                                                                                                                                           'Right': {'Kind': 'Null',
-                                                                                                                                                                                                     'Value': 'Null'}},
-                                                                                                                                                                                  'Right': {'Condition': {'Kind': 'Equal',
-                                                                                                                                                                                                          'Left': {'Kind': 'Sub',
-                                                                                                                                                                                                                   'Left': {'Kind': 'Int',
-                                                                                                                                                                                                                            'Value': -220292},
-                                                                                                                                                                                                                   'Right': {'Kind': 'Var',
-                                                                                                                                                                                                                             'Name': 'pyI'}},
-                                                                                                                                                                                                          'Right': {'Kind': 'Add',
-                                                                                                                                                                                                                    'Left': {'Kind': 'Int',
-                                                                                                                                                                                                                             'Value': -144045},
-                                                                                                                                                                                                                    'Right': {'Kind': 'Var',
-                                                                                                                                                                                                                              'Name': 'lXy'}}},
-                                                                                                                                                                                            'Else': {'Kind': 'Assign',
-                                                                                                                                                                                                     'Left': {'Kind': 'Var',
-                                                                                                                                                                                                              'Name': 'Mwq'},
-                                                                                                                                                                                                     'Right': {'Kind': 'Less',
-                                                                                                                                                                                                               'Left': {'Kind': 'Int',
-                                                                                                                                                                                                                        'Value': 681213},
-                                                                                                                                                                                                               'Right': {'Kind': 'Var',
-                                                                                                                                                                                                                         'Name': 'vni'}}},
-                                                                                                                                                                                            'Kind': 'If',
-                                                                                                                                                                                            'Then': {'Body': {'Kind': 'Seq',
-                                                                                                                                                                                                              'Left': {'Kind': 'Seq',
-                                                                                                                                                                                                                       'Left': {'Condition': {'Kind': 'Var',
-                                                                                                                                                                                                                                              'Name': 'Akj'},
-                                                                                                                                                                                                                                'Else': {'Kind': 'Assign',
-                                                                                                                                                                                                                                         'Left': {'Kind': 'Var',
-                                                                                                                                                                                                                                                  'Name': 'zbJ'},
-                                                                                                                                                                                                                                         'Right': {'Kind': 'Equal',
-                                                                                                                                                                                                                                                   'Left': {'Kind': 'Var',
-                                                                                                                                                                                                                                                            'Name': 'cTl'},
-                                                                                                                                                                                                                                                   'Right': {'Kind': 'Int',
-                                                                                                                                                                                                                                                             'Value': -750395}}},
-                                                                                                                                                                                                                                'Kind': 'If',
-                                                                                                                                                                                                                                'Then': {'Kind': 'Assign',
-                                                                                                                                                                                                                                         'Left': {'Kind': 'Var',
-                                                                                                                                                                                                                                                  'Name': 'vtM'},
-                                                                                                                                                                                                                                         'Right': {'Kind': 'Add',
-                                                                                                                                                                                                                                                   'Left': {'Kind': 'Var',
-                                                                                                                                                                                                                                                            'Name': 'wtE'},
-                                                                                                                                                                                                                                                   'Right': {'Kind': 'Equal',
-                                                                                                                                                                                                                                                             'Left': {'Kind': 'Var',
-                                                                                                                                                                                                                                                                      'Name': 'Tld'},
-                                                                                                                                                                                                                                                             'Right': {'Kind': 'Var',
-                                                                                                                                                                                                                                                                       'Name': 'bVw'}}}}},
-                                                                                                                                                                                                                       'Right': {'Body': {'Kind': 'Assign',
-                                                                                                                                                                                                                                          'Left': {'Kind': 'Var',
-                                                                                                                                                                                                                                                   'Name': 'fnv'},
-                                                                                                                                                                                                                                          'Right': {'Kind': 'Equal',
-                                                                                                                                                                                                                                                    'Left': {'Kind': 'Equal',
-                                                                                                                                                                                                                                                             'Left': {'Kind': 'Var',
-                                                                                                                                                                                                                                                                      'Name': 'tlZ'},
-                                                                                                                                                                                                                                                             'Right': {'Kind': 'Int',
-                                                                                                                                                                                                                                                                       'Value': 314507}},
-                                                                                                                                                                                                                                                    'Right': {'Kind': 'Sub',
-                                                                                                                                                                                                                                                              'Left': {'Kind': 'Int',
-                                                                                                                                                                                                                                                                       'Value': 510220},
-                                                                                                                                                                                                                                                              'Right': {'Kind': 'Int',
-                                                                                                                                                                                                                                                                        'Value': -830218}}}},
-                                                                                                                                                                                                                                 'Condition': {'Kind': 'Equal',
-                                                                                                                                                                                                                                               'Left': {'Kind': 'Var',
-                                                                                                                                                                                                                                                        'Name': 'gLV'},
-                                                                                                                                                                                                                                               'Right': {'Kind': 'Var',
-                                                                                                                                                                                                                                                         'Name': 'scB'}},
-                                                                                                                                                                                                                                 'Kind': 'While'}},
-                                                                                                                                                                                                              'Right': {'Kind': 'Assign',
-                                                                                                                                                                                                                        'Left': {'Kind': 'Var',
-                                                                                                                                                                                                                                 'Name': 'MIz'},
-                                                                                                                                                                                                                        'Right': {'Kind': 'Int',
-                                                                                                                                                                                                                                  'Value': 553064}}},
-                                                                                                                                                                                                     'Condition': {'Kind': 'Less',
-                                                                                                                                                                                                                   'Left': {'Kind': 'Add',
-                                                                                                                                                                                                                            'Left': {'Kind': 'Int',
-                                                                                                                                                                                                                                     'Value': -652173},
-                                                                                                                                                                                                                            'Right': {'Kind': 'Int',
-                                                                                                                                                                                                                                      'Value': -393283}},
-                                                                                                                                                                                                                   'Right': {'Kind': 'Var',
-                                                                                                                                                                                                                             'Name': 'mIR'}},
-                                                                                                                                                                                                     'Kind': 'While'}}}}}}}}}}}}}}}}}}}
+    codeExample1 = {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'C'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'eQX'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'c'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'u'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'FW'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'fTkA'}, 'Right': {'Kind': 'While', 'Condition': {'Kind': 'Sub', 'Left': {'Kind': 'Less', 'Left': {'Kind': 'Var', 'Name': 'fTkA'}, 'Right': {'Kind': 'Int', 'Value': 162642}}, 'Right': {'Kind': 'Add', 'Left': {'Kind': 'Var', 'Name': 'FW'}, 'Right': {'Kind': 'Var', 'Name': 'u'}}}, 'Body': {'Kind': 'Assign', 'Left': {'Kind': 'Var', 'Name': 'c'}, 'Right': {'Kind': 'Sub', 'Left': {'Kind': 'Var', 'Name': 'eQX'}, 'Right': {'Kind': 'Var', 'Name': 'C'}}}}}}}}}}
 
-    secType = check_rules(codeExample, environment)
+    secType1 = check_rules(codeExample1, environment1)
 
-    if secType == None:
-        print("Invalid")
+    if secType1 == None:
+        print("First Example is invalid")
     else:
-        print("Valid")
+        print("First Example is valid")
+
+
+    # Invalid Example
+    # Code Example for Seed "272306"
+    #
+    # L C;
+    # H eQX;
+    # H c;          <-- Change security label from L to H (Insecure)
+    # L u;
+    # H FW;
+    # H fTkA;
+    # while ((fTkA < 162642) - (FW + u)) do {
+    #     c := (eQX - C)
+    # }
+
+    environment2 = {}
+
+    codeExample2 = {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'C'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'eQX'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'c'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'u'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'FW'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'fTkA'}, 'Right': {'Kind': 'While', 'Condition': {'Kind': 'Sub', 'Left': {'Kind': 'Less', 'Left': {'Kind': 'Var', 'Name': 'fTkA'}, 'Right': {'Kind': 'Int', 'Value': 162642}}, 'Right': {'Kind': 'Add', 'Left': {'Kind': 'Var', 'Name': 'FW'}, 'Right': {'Kind': 'Var', 'Name': 'u'}}}, 'Body': {'Kind': 'Assign', 'Left': {'Kind': 'Var', 'Name': 'c'}, 'Right': {'Kind': 'Sub', 'Left': {'Kind': 'Var', 'Name': 'eQX'}, 'Right': {'Kind': 'Var', 'Name': 'C'}}}}}}}}}}
+
+    secType2 = check_rules(codeExample2, environment2)
+
+    if secType2 == None:
+        print("Second Example is invalid")
+    else:
+        print("Second Example is valid")
+
+
 
 if __name__ == "__main__":
     main()
