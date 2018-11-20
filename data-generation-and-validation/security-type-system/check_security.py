@@ -20,7 +20,7 @@ def check_rules(node, environment):
     # get the type of the current node
     key = node.get("Kind")
 
-    if key == "Int" or key == "Null":
+    if key == "Int":
         # return "best fit" type "L"
         return "L"
 
@@ -28,6 +28,11 @@ def check_rules(node, environment):
     elif key == "Var":
         # return security class from environment
         return get_label_from_environment(node.get("Name"), environment)
+
+
+    # @Salvos: I don't think that this is correct, but to work with my code i had to introduce the key Declare...
+    elif key == "Declare":
+        return get_label_from_environment(node.get("Var"), environment)
 
 
     # arithmetic operation

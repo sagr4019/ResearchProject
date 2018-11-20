@@ -76,14 +76,6 @@ class LiteralExpr:
             return VarExpr().gen()
 
 
-class SecLabelExpr():
-
-    def gen(self, label):
-        return {'Kind': 'SecLabel',
-                'Label': label
-                }
-
-
 class AddExpr:
 
     def gen(self, depth):
@@ -165,7 +157,8 @@ class DeclareCmd:
 
     def gen(self, label, var):
         return {'Kind': 'Declare',
-                'Command': '{} {}'.format(label, var)
+                'Label': label,
+                'Var': var
                 }, 1
 
 
@@ -296,14 +289,14 @@ class CmdGen:
 
 class CommandGenerator:
 
-    def gen(self, gen_secure):
+    def gen(self, gen_valid):
         global all_vars_asts
         all_vars_asts = []
         depth = randint(1, MAX_DEPTH_COMMAND)
         ast, depth = CmdGen().gen(depth)
 
         environment = dict()
-        if not gen_secure:
+        if not gen_valid:
             # if there are assignments which use vars on the right side
             if len(ass_vars_l_r) > 0:
                 # choose one or a random amount of assignments which should be
@@ -328,19 +321,21 @@ class CommandGenerator:
             if not e['Name'] in environment:
                 # if var is not in environment, add it
                 # with a random security label
-                sec_label = random.choice(['H', 'L'])
-                environment[e['Name']] = sec_label
+                label = random.choice(['H', 'L'])
+                environment[e['Name']] = label
 
-                left, depth_left = DeclareCmd().gen(sec_label, e['Name'])
+                left, depth_left = DeclareCmd().gen(label, e['Name'])
                 ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
 
-        sec_valid, _ = check_security.check_rules(ast, environment)
+        sec_type = check_security.check_rules(ast, environment)
 
-        if sec_valid != gen_secure:
-            return CommandGenerator().gen(gen_secure=gen_secure)
+        if gen_valid and sec_type is None:
+            return CommandGenerator().gen(gen_valid=gen_valid)
+        elif not gen_valid and sec_type is not None:
+            return CommandGenerator().gen(gen_valid=gen_valid)
         else:
             print('Generated command with depth {}'.format(depth))
-            return ast, depth, environment, sec_valid
+            return ast, depth, environment, label
 
 
 def get_rand_depth(depth):
@@ -372,7 +367,7 @@ def prettyprint_singleline(ast):
         elif ast['Kind'] == 'Var':
             code = str(ast['Name'])
         elif ast['Kind'] == 'Declare':
-            code = str(ast['Command'])
+            code = "{} {}".format(ast['Label'], ast['Var'])
         else:
             code = "({} {} {})".format(
                 prettyprint_singleline(ast['Left']),
@@ -437,7 +432,7 @@ def prettyprint_multiline_indented(ast, level=0):
         elif ast['Kind'] == 'Var':
             code = str(ast['Name'])
         elif ast['Kind'] == 'Declare':
-            code = str(ast['Command'])
+            code = "{} {}".format(ast['Label'], ast['Var'])
         else:
             raise RuntimeError("Unknown kind {}".format(ast['Kind']))
     return code
@@ -467,9 +462,9 @@ def get_operator_symbol(kind):
 
 
 def main():
-    gen_secure_program = True
-    ast, depth, _, secure = CommandGenerator().gen(gen_secure_program)
-    print('Generated {} program:\n'.format('secure' if secure else 'insecure'))
+    gen_valid_program = True
+    ast, depth, _, label = CommandGenerator().gen(gen_valid_program)
+    print('Generated {} program:\n'.format('valid' if label else 'invalid'))
     print(prettyprint_multiline_indented(ast))
 
 
