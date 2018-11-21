@@ -297,45 +297,43 @@ class CommandGenerator:
 
         environment = dict()
         if not gen_valid:
-            # if there are assignments which use vars on the right side
             if len(ass_vars_l_r) > 0:
-                # choose one or a random amount of assignments which should be
-                # marked as insecure (left var L, at least one right var H)
+                # if there are assignments which use vars on the right side
+                # choose one assignment which should be marked as insecure
+                # (left var L, at one right var H)
                 no_of_insec_ass = 1
                 # no_of_insec_ass = randint(1, len(ass_vars_l_r))
                 assigns = random.sample(ass_vars_l_r, no_of_insec_ass)
                 for e in assigns:
-                    # choose one or a random amount of vars from the right side
-                    # and set each of them as H
+                    # choose one random var from the right side ( ... := ... x ...)
                     no_of_r_vars = 1
                     # no_of_r_vars = randint(1, len(e['RightVars']))
                     r_vars = random.sample(e['RightVars'], no_of_r_vars)
                     for ee in r_vars:
-                        # mark var from right as H, e. g.  ( ... := ... x ...)
+                        # set it's label as H
                         environment[ee] = 'H'
 
-                    # mark var from left as L, e. g.  ( x := ...)
+                    # set label for var from left as L, e. g. ( x := ...)
                     environment[e['Name']] = 'L'
 
         for e in all_vars_asts:
             if not e['Name'] in environment:
-                # if var is not in environment, add it
-                # with a random security label
                 label = random.choice(['H', 'L'])
-                environment[e['Name']] = label
+            else:
+                label = environment[e['Name']]
 
-                left, depth_left = DeclareCmd().gen(label, e['Name'])
-                ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
+            left, depth_left = DeclareCmd().gen(label, e['Name'])
+            ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
 
-        sec_type = check_security.check_rules(ast, environment)
+        sec_type = check_security.check_security(ast)
 
         if gen_valid and sec_type is None:
             return CommandGenerator().gen(gen_valid=gen_valid)
         elif not gen_valid and sec_type is not None:
             return CommandGenerator().gen(gen_valid=gen_valid)
         else:
-            print('Generated command with depth {}'.format(depth))
-            return ast, depth, environment, label
+            # print('Generated command with depth {}'.format(depth))
+            return ast, depth, sec_type
 
 
 def get_rand_depth(depth):
@@ -463,8 +461,8 @@ def get_operator_symbol(kind):
 
 def main():
     gen_valid_program = True
-    ast, depth, _, label = CommandGenerator().gen(gen_valid_program)
-    print('Generated {} program:\n'.format('valid' if label else 'invalid'))
+    ast, _, sec_type = CommandGenerator().gen(gen_valid_program)
+    print('Generated {} program:\n'.format('valid' if sec_type else 'invalid'))
     print(prettyprint_multiline_indented(ast))
 
 
