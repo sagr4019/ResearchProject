@@ -5,8 +5,8 @@
 \documentclass[runningheads]{llncs}
 %
 \usepackage{graphicx}
-\usepackage{semantic}
 \usepackage{amsmath}
+\usepackage{semantic}
 \usepackage{syntax}
 \usepackage{comment}
 % Used for displaying a sample figure. If possible, figure files should
@@ -51,8 +51,8 @@ The abstract should briefly summarize the contents of the paper in
 %I think this is the easiest solution for a BNF
 \begin{alignat*}{3}
 &(phrases) &&p ::= e \mI c\\
-&(expressions)\hspace{1em} &&e ::= x \mI l \mI n \mI e+\'{e} \mI e-\'{e} \mI e=\'{e} \mI e<\'{e}\\
-&(commands) &&c ::= e:= \'{e} \mI c;\'{c} \mI \text{if e then c else \'{c}} \mI \text{while e do c}
+&(expressions)\hspace{1em} &&e ::= x \mI l \mI n \mI e+e' \mI e-e' \mI e=e' \mI e<e'\\
+&(commands) &&c ::= e:= e' \mI c;c' \mI \text{if $e$ then $c$ else $c'$} \mI \text{while $e$ do $c$}
 \end{alignat*}
 
 %solution with the syntax package
