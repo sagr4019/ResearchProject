@@ -2,23 +2,29 @@ import random
 import string
 import sys
 import check_security
+import os
+import time
+import json
 from random import randint
 
 sys.setrecursionlimit(500000)
 
 INT_START_RANGE = -999999
 INT_END_RANGE = 999999
-IDENTIFIER_LENGTH = 5
+IDENTIFIER_LENGTH = 1
 
 MAX_DEPTH_EXPRESSION = 2
 MAX_DEPTH_COMMAND = 15
+
+PROGRAMS_TO_GENERATE_VALID = 2
+PROGRAMS_TO_GENERATE_INVALID = 2
 
 
 RESERVED_KEYWORDS = ['if', 'then', 'else', 'while', 'do']
 TAB_SIZE = 4
 
-# ENABLE_SEED = False
-ENABLE_SEED = True
+ENABLE_SEED = False
+# ENABLE_SEED = True
 
 all_vars_asts = []
 ass_vars_l_r = []
@@ -70,10 +76,18 @@ class VarExpr:
 class LiteralExpr:
 
     def gen(self):
-        if randint(0, 1) == 0:
-            return IntExpr().gen()
-        else:
-            return VarExpr().gen()
+        return frequency([[1, VarExpr()], [10, IntExpr()]]).gen()
+
+
+def frequency(choices):
+    maxint = 0
+    for e in range(0, len(choices) - 1):
+        maxint = max(choices[e][0], choices[e + 1][0])
+
+    rnd = randint(1, maxint)
+    for e in choices:
+        if rnd <= e[0]:
+            return e[1]
 
 
 class AddExpr:
@@ -442,7 +456,6 @@ def get_tabs(level):
 
 
 def get_operator_symbol(kind):
-    """Return the symbol(s) associated with each kind"""
     if kind == 'Assign':
         return ':='
     elif kind == 'Seq':
@@ -459,11 +472,29 @@ def get_operator_symbol(kind):
         raise RuntimeError("Unknown kind {}".format(kind))
 
 
+def store(ast, dir):
+    path_current = os.path.dirname(os.path.realpath(__file__))
+    ts = time.time()
+    path = path_current + '/' + dir + '/' + str(ts) + '.code'
+    with open(path, 'a') as out:
+        out.write(json.dumps(ast))
+
+
 def main():
-    gen_valid_program = True
-    ast, _, sec_type = CommandGenerator().gen(gen_valid_program)
-    print('Generated {} program:\n'.format('valid' if sec_type else 'invalid'))
-    print(prettyprint_multiline_indented(ast))
+    for i in range(PROGRAMS_TO_GENERATE_VALID):
+        ast, _, sec_type = CommandGenerator().gen(True)
+        dir_out = 'programs/valid'
+        print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
+                                                    dir_out))
+        # print(prettyprint_multiline_indented(ast))
+        store(ast, dir_out)
+    for i in range(PROGRAMS_TO_GENERATE_INVALID):
+        ast, _, sec_type = CommandGenerator().gen(False)
+        dir_out = 'programs/invalid'
+        print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
+                                                    dir_out))
+        # print(prettyprint_multiline_indented(ast))
+        store(ast, dir_out)
 
 
 if __name__ == "__main__":
