@@ -1,0 +1,1 @@
+{"Right": {"Body": {"Right": {"Kind": "Int", "Value": -319051}, "Kind": "Assign", "Left": {"Name": "c", "Kind": "Var"}}, "Condition": {"Kind": "Int", "Value": -849823}, "Kind": "While"}, "Kind": "Seq", "Left": {"Label": "H", "Kind": "Declare", "Var": "c"}}

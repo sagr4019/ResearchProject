@@ -486,7 +486,7 @@ def main():
         dir_out = 'programs/valid'
         print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
                                                     dir_out))
-        # print(prettyprint_multiline_indented(ast))
+        print(prettyprint_multiline_indented(ast))
         store(ast, dir_out)
     for i in range(PROGRAMS_TO_GENERATE_INVALID):
         ast, _, sec_type = CommandGenerator().gen(False)
