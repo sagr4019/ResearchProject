@@ -50,20 +50,29 @@ The abstract should briefly summarize the contents of the paper in
 \section{Language Grammar}
 %I think this is the easiest solution for a BNF
 \begin{alignat*}{3}
-&(phrases) &&p ::= e \mI c\\
-&(expressions)\hspace{1em} &&e ::= x \mI l \mI n \mI e+e' \mI e-e' \mI e=e' \mI e<e'\\
-&(commands) &&c ::= e:= e' \mI c;c' \mI \text{if $e$ then $c$ else $c'$} \mI \text{while $e$ do $c$}
+&(integer)      \quad &&int ::= \verb/[0-9]+/\\
+&(variable)     \quad &&var ::= \verb/[a-zA-Z]+/\\
+&(label)        \quad &&lbl ::= \text{L} \mI \text{H}\\
+&(literal)      \quad &&lit ::= int \mI var\\
+&(expression)   \quad &&exp ::= lit \mI exp + exp' \mI exp - exp' \mI exp = exp' \mI exp < exp'\\
+&(declaration)  \quad &&dec ::= lbl \, var; \; dec \mI \text{""}\\
+&(command)      \quad &&cmd ::= cmd; \, cmd\\
+&&& \mI  var := exp\\
+&&& \mI  \text{while $exp$ do $cmd$}\\
+&&& \mI  \text{if $exp$ then $cmd$ else $cmd'$}\\
+&(program)      \quad &&prg ::= dec \, cmd
 \end{alignat*}
 
+
 %solution with the syntax package
-\begin{grammar}\centering
-<phrases>     p ::= e | c
+%\begin{grammar}\centering
+%<phrases>     p ::= e | c
 
-<expressions> e ::= x | l | n | e + e' | e - e' | e= e' | e \le e'
+%<expressions> e ::= x | l | n | e + e' | e - e' | e= e' | e \le e'
 
-<commands>    c ::= e := e' | c ; c' | if e then c else c' | while e do c
+%<commands>    c ::= e := e' | c ; c' | if e then c else c' | while e do c
 
-\end{grammar}
+%\end{grammar}
 %this is good for the semantic rules
 \vspace{1cm}
 \inference*[phrases]
