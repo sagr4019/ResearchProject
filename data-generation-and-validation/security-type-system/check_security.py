@@ -48,6 +48,9 @@ def check_rules(node, environment):
         if secType1 == None or secType2 == None:
             return None
 
+        if secType1 != secType2:
+            return None
+
         # valid - return bestfit
         return "L"
 
@@ -119,19 +122,19 @@ def main():
     # Valid Example
     # Code Example for Seed "272306"
     #
-    # L C;
+    # H C;
     # H eQX;
     # L c;
     # L u;
-    # H FW;
-    # H fTkA;
+    # L FW;
+    # L fTkA;
     # while ((fTkA < 162642) - (FW + u)) do {
     #     c := (eQX - C)
     # }
 
     environment1 = {}
 
-    codeExample1 = {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'C'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'eQX'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'c'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'u'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'FW'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'fTkA'}, 'Right': {'Kind': 'While', 'Condition': {'Kind': 'Sub', 'Left': {'Kind': 'Less', 'Left': {'Kind': 'Var', 'Name': 'fTkA'}, 'Right': {'Kind': 'Int', 'Value': 162642}}, 'Right': {'Kind': 'Add', 'Left': {'Kind': 'Var', 'Name': 'FW'}, 'Right': {'Kind': 'Var', 'Name': 'u'}}}, 'Body': {'Kind': 'Assign', 'Left': {'Kind': 'Var', 'Name': 'c'}, 'Right': {'Kind': 'Sub', 'Left': {'Kind': 'Var', 'Name': 'eQX'}, 'Right': {'Kind': 'Var', 'Name': 'C'}}}}}}}}}}
+    codeExample1 = {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'C'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'eQX'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'c'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'u'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'FW'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'fTkA'}, 'Right': {'Kind': 'While', 'Condition': {'Kind': 'Sub', 'Left': {'Kind': 'Less', 'Left': {'Kind': 'Var', 'Name': 'fTkA'}, 'Right': {'Kind': 'Int', 'Value': 162642}}, 'Right': {'Kind': 'Add', 'Left': {'Kind': 'Var', 'Name': 'FW'}, 'Right': {'Kind': 'Var', 'Name': 'u'}}}, 'Body': {'Kind': 'Assign', 'Left': {'Kind': 'Var', 'Name': 'c'}, 'Right': {'Kind': 'Sub', 'Left': {'Kind': 'Var', 'Name': 'eQX'}, 'Right': {'Kind': 'Var', 'Name': 'C'}}}}}}}}}}
 
     secType1 = check_rules(codeExample1, environment1)
 
@@ -140,22 +143,22 @@ def main():
     else:
         print("First Example is valid")
 
-    # Invalid Example
+    # Invalid Example with two invalid parts
     # Code Example for Seed "272306"
     #
-    # L C;
-    # H eQX;
-    # H c;          <-- Change security label from L to H (Insecure)
+    # H C;
+    # H eQX;        <-- Change security label from H to L
+    # L c;
     # L u;
-    # H FW;
-    # H fTkA;
+    # L FW;
+    # L fTkA;       <-- Change security label from L to T
     # while ((fTkA < 162642) - (FW + u)) do {
     #     c := (eQX - C)
     # }
 
     environment2 = {}
 
-    codeExample2 = {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'C'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'eQX'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'c'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'u'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'FW'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'fTkA'}, 'Right': {'Kind': 'While', 'Condition': {'Kind': 'Sub', 'Left': {'Kind': 'Less', 'Left': {'Kind': 'Var', 'Name': 'fTkA'}, 'Right': {'Kind': 'Int', 'Value': 162642}}, 'Right': {'Kind': 'Add', 'Left': {'Kind': 'Var', 'Name': 'FW'}, 'Right': {'Kind': 'Var', 'Name': 'u'}}}, 'Body': {'Kind': 'Assign', 'Left': {'Kind': 'Var', 'Name': 'c'}, 'Right': {'Kind': 'Sub', 'Left': {'Kind': 'Var', 'Name': 'eQX'}, 'Right': {'Kind': 'Var', 'Name': 'C'}}}}}}}}}}
+    codeExample2 = {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'C'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'eQX'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'c'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'u'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'L', 'Var': 'FW'}, 'Right': {'Kind': 'Seq', 'Left': {'Kind': 'Declare', 'Label': 'H', 'Var': 'fTkA'}, 'Right': {'Kind': 'While', 'Condition': {'Kind': 'Sub', 'Left': {'Kind': 'Less', 'Left': {'Kind': 'Var', 'Name': 'fTkA'}, 'Right': {'Kind': 'Int', 'Value': 162642}}, 'Right': {'Kind': 'Add', 'Left': {'Kind': 'Var', 'Name': 'FW'}, 'Right': {'Kind': 'Var', 'Name': 'u'}}}, 'Body': {'Kind': 'Assign', 'Left': {'Kind': 'Var', 'Name': 'c'}, 'Right': {'Kind': 'Sub', 'Left': {'Kind': 'Var', 'Name': 'eQX'}, 'Right': {'Kind': 'Var', 'Name': 'C'}}}}}}}}}}
 
     secType2 = check_rules(codeExample2, environment2)
 
