@@ -1,3 +1,8 @@
+import sys
+sys.path.append('../../data-generation-and-validation/security-type-system')
+from codegenerator import get_operator_symbol
+
+
 class Tokenizer:
 
     def parse(self, root, tokens=[]):
@@ -31,24 +36,7 @@ class Tokenizer:
             else:
                 tokens.append('(')
                 self.parse(root['Left'], tokens)
-                tokens.append(self.get_operator_symbol(root['Kind']))
+                tokens.append(get_operator_symbol(root['Kind']))
                 self.parse(root['Right'], tokens)
                 tokens.append(')')
         return tokens
-
-    def get_operator_symbol(self, kind):
-        """Return operator symbol from kind"""
-        if kind == 'Assign':
-            return ':='
-        elif kind == 'Seq':
-            return '; '
-        elif kind == 'Add':
-            return '+'
-        elif kind == 'Sub':
-            return '-'
-        elif kind == 'Equal':
-            return '=='
-        elif kind == 'Less':
-            return '<'
-        else:
-            raise RuntimeError("Unknown kind {}".format(kind))
