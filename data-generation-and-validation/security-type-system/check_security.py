@@ -34,10 +34,16 @@ def check_rules(node, environment):
         return get_label_from_environment(node.get("Name"), environment)
 
     elif key == "Declare":
-        # add or update entry in dict
-        environment[node.get("Var")] = node.get("Label")
-        # prevent "None"-Type Error by returning an inconsequenctial label "L" or "H"
-        return "L"
+        try:
+           key = environment[node.get("Var")]
+           # key exists in dict
+           # print("[Error] Duplicate declaration of '" + node.get("Var") + "'")
+           return None
+
+        except KeyError:
+           # add entry in dict
+           environment[node.get("Var")] = node.get("Label")
+           return "L"
 
     # arithmetic operation
     elif key == "Equal" or key == "Less" or key == "Add" or key == "Sub":
@@ -168,16 +174,16 @@ def main():
         print("Second Example is valid")
 
     # third example, obviously invalid
-    # L u; 
-    # H D; 
-    # L r; 
-    # L t; 
-    # L s; 
-    # L D; 
+    # L u;
+    # H D;
+    # L r;
+    # L t;
+    # L s;
+    # L D;
     # if ((572624 == 286491) + -14247) then {
-    #     D := 853109; 
-    #     s := ((-597500 == -882673) - (-772568 + -708854)); 
-    #     t := 105894; 
+    #     D := 853109;
+    #     s := ((-597500 == -882673) - (-772568 + -708854));
+    #     t := 105894;
     #     r := (D == -139009)
     # } else {
     #     u := (611637 - 93416)
