@@ -23,14 +23,13 @@ PROGRAMS_TO_GENERATE_INVALID = 2
 RESERVED_KEYWORDS = ['if', 'then', 'else', 'while', 'do']
 TAB_SIZE = 4
 
-ENABLE_SEED = False
-# ENABLE_SEED = True
+ENABLE_SEED = True
 
 all_vars_asts = []
 ass_vars_l_r = []
 
 if ENABLE_SEED:
-    SEED = 272306
+    SEED = 123456789
     random.seed(SEED)
     print('SEED: {}'.format(SEED))
 
@@ -67,7 +66,7 @@ class VarExpr:
         ast = {'Kind': 'Var',
                'Name': var
                }
-        if var not in all_vars_asts:
+        if ast not in all_vars_asts:
             all_vars_asts.append(ast)
 
         return ast, 1
@@ -333,6 +332,7 @@ class CommandGenerator:
         for e in all_vars_asts:
             if not e['Name'] in environment:
                 label = random.choice(['H', 'L'])
+                # label = 'L'
             else:
                 label = environment[e['Name']]
 
@@ -472,10 +472,10 @@ def get_operator_symbol(kind):
         raise RuntimeError("Unknown kind {}".format(kind))
 
 
-def store(ast, dir):
+def store(ast, dir, id):
     path_current = os.path.dirname(os.path.realpath(__file__))
-    ts = time.time()
-    path = path_current + '/' + dir + '/' + str(ts) + '.code'
+    fname = '{} - {}.txt'.format(SEED, id)
+    path = path_current + '/' + dir + '/' + fname
     with open(path, 'a') as out:
         out.write(json.dumps(ast))
 
@@ -487,14 +487,14 @@ def main():
         print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
                                                     dir_out))
         print(prettyprint_multiline_indented(ast))
-        store(ast, dir_out)
+        store(ast, dir_out, i)
     for i in range(PROGRAMS_TO_GENERATE_INVALID):
         ast, _, sec_type = CommandGenerator().gen(False)
         dir_out = 'programs/invalid'
         print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
                                                     dir_out))
-        # print(prettyprint_multiline_indented(ast))
-        store(ast, dir_out)
+        print(prettyprint_multiline_indented(ast))
+        store(ast, dir_out, i)
 
 
 if __name__ == "__main__":
