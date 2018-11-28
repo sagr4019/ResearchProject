@@ -2,7 +2,7 @@ import json
 import os
 import glob
 import errno
-from Tokenizer import Tokenizer
+from tokenizer import Tokenizer
 import numpy as np
 import keras
 from keras.utils import to_categorical
@@ -19,6 +19,7 @@ TOKEN2VEC = {
 
 MAX_LENGTH = 10000
 
+
 def load_programs(ttype):
     """
     Load and return programs (asts) by type (valid/invalid) as a list of dicts
@@ -34,7 +35,7 @@ def load_programs(ttype):
             try:
                 with open(name) as f:
                     ast = json.loads(f.read())
-                    tokens = Tokenizer().parse(ast)
+                    tokens = Tokenizer().tokenize(ast)
                     asts_and_tokens.append({
                         'ast': ast,
                         'tokens': tokens
@@ -43,6 +44,7 @@ def load_programs(ttype):
                 if exc.errno != errno.EISDIR:  # ignore if dir
                     raise
     return asts_and_tokens
+
 
 def token_to_vec(tokens, length):
     result = np.zeros(length)
@@ -65,6 +67,9 @@ def main():
     print("Loading programs")
     valid = load_programs("valid")
     invalid = load_programs("invalid")
+
+    print(invalid)
+    return True
 
     x_valid = np.zeros((len(valid), MAX_LENGTH))
     x_invalid = np.zeros((len(invalid), MAX_LENGTH))
@@ -90,10 +95,9 @@ def main():
     print("Creating model...")
 
     optimizer = keras.optimizers.Adam()
-    validator = models.LSTMValidator(MAX_LENGTH, len(TOKEN2VEC)+1, optimizer)
+    validator = models.LSTMValidator(MAX_LENGTH, len(TOKEN2VEC) + 1, optimizer)
 
-    validator.fit(x,y, batch_size=batch_size, epochs=epochs, verbose=1)
-
+    validator.fit(x, y, batch_size=batch_size, epochs=epochs, verbose=1)
 
 
 if __name__ == "__main__":

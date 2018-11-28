@@ -11,17 +11,17 @@ class Tokenizer:
             kind = root['Kind']
             if kind == 'While':
                 tokens.append('while')
-                self.parse(root['Condition'], tokens)
+                self.tokenize(root['Condition'], tokens)
                 # tokens.extend(['do', '{'])
-                self.parse(root['Body'], tokens)
+                self.tokenize(root['Body'], tokens)
                 # tokens.append('}')
             elif kind == 'If':
                 tokens.append('if')
-                self.parse(root['Condition'], tokens)
+                self.tokenize(root['Condition'], tokens)
                 # tokens.extend(['then', '{'])
-                self.parse(root['Then'], tokens)
+                self.tokenize(root['Then'], tokens)
                 # tokens.extend(['}', 'else', '{'])
-                self.parse(root['Else'], tokens)
+                self.tokenize(root['Else'], tokens)
                 # tokens.append('}')
             elif kind == 'Declare':
                 tokens.extend([root['Label'], root['Var']])
@@ -30,13 +30,13 @@ class Tokenizer:
             elif kind == 'Var':
                 tokens.append(root['Name'])
             elif kind == 'Seq':
-                self.parse(root['Left'], tokens)
+                self.tokenize(root['Left'], tokens)
                 tokens.append(';')  # without space
-                self.parse(root['Right'], tokens)
+                self.tokenize(root['Right'], tokens)
             else:
                 # tokens.append('(')
-                self.parse(root['Left'], tokens)
+                self.tokenize(root['Left'], tokens)
                 tokens.append(get_operator_symbol(root['Kind']))
-                self.parse(root['Right'], tokens)
+                self.tokenize(root['Right'], tokens)
                 # tokens.append(')')
         return tokens
