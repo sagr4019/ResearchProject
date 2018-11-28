@@ -68,9 +68,6 @@ def main():
     valid = load_programs("valid")
     invalid = load_programs("invalid")
 
-    print(invalid)
-    return True
-
     x_valid = np.zeros((len(valid), MAX_LENGTH))
     x_invalid = np.zeros((len(invalid), MAX_LENGTH))
 

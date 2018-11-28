@@ -3,7 +3,6 @@ import string
 import sys
 import check_security
 import os
-import time
 import json
 from random import randint
 
@@ -484,16 +483,16 @@ def main():
     for i in range(PROGRAMS_TO_GENERATE_VALID):
         ast, _, sec_type = CommandGenerator().gen(True)
         dir_out = 'programs/valid'
-        print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
-                                                    dir_out))
-        print(prettyprint_multiline_indented(ast))
+        # print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
+        # dir_out))
+        # print(prettyprint_multiline_indented(ast))
         store(ast, dir_out, i)
     for i in range(PROGRAMS_TO_GENERATE_INVALID):
         ast, _, sec_type = CommandGenerator().gen(False)
         dir_out = 'programs/invalid'
-        print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
-                                                    dir_out))
-        print(prettyprint_multiline_indented(ast))
+        # print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
+        # dir_out))
+        # print(prettyprint_multiline_indented(ast))
         store(ast, dir_out, i)
 
 
