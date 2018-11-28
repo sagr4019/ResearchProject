@@ -5,24 +5,24 @@ from codegenerator import get_operator_symbol
 
 class Tokenizer:
 
-    def parse(self, root, tokens=[]):
+    def tokenize(self, root, tokens=[]):
         """Return token sequence from ast"""
         if root:
             kind = root['Kind']
             if kind == 'While':
                 tokens.append('while')
                 self.parse(root['Condition'], tokens)
-                #tokens.extend(['do', '{'])
+                # tokens.extend(['do', '{'])
                 self.parse(root['Body'], tokens)
-                #tokens.append('}')
+                # tokens.append('}')
             elif kind == 'If':
                 tokens.append('if')
                 self.parse(root['Condition'], tokens)
-                #tokens.extend(['then', '{'])
+                # tokens.extend(['then', '{'])
                 self.parse(root['Then'], tokens)
-                #tokens.extend(['}', 'else', '{'])
+                # tokens.extend(['}', 'else', '{'])
                 self.parse(root['Else'], tokens)
-                #tokens.append('}')
+                # tokens.append('}')
             elif kind == 'Declare':
                 tokens.extend([root['Label'], root['Var']])
             elif kind == 'Int':
@@ -34,9 +34,9 @@ class Tokenizer:
                 tokens.append(';')  # without space
                 self.parse(root['Right'], tokens)
             else:
-                #tokens.append('(')
+                # tokens.append('(')
                 self.parse(root['Left'], tokens)
                 tokens.append(get_operator_symbol(root['Kind']))
                 self.parse(root['Right'], tokens)
-                #tokens.append(')')
+                # tokens.append(')')
         return tokens
