@@ -78,14 +78,23 @@ class LiteralExpr:
 
 
 def frequency(choices):
-    maxint = 0
-    for e in range(0, len(choices) - 1):
-        maxint = max(choices[e][0], choices[e + 1][0])
-
-    rnd = randint(1, maxint)
+    sum_of_dist = 0
+    idx = 0
+    no_of_values = 0
+    dist = {}
     for e in choices:
-        if rnd <= e[0]:
-            return e[1]
+        sum_of_dist += e[0]
+
+    # build a distribution dictionary
+    for i in range(sum_of_dist):
+        if choices[idx][0] == no_of_values:
+            idx += 1
+            no_of_values = 0
+        dist[i] = choices[idx][1]
+        no_of_values += 1
+
+    rnd = randint(0, sum_of_dist - 1)
+    return dist[rnd]
 
 
 class AddExpr:
@@ -475,7 +484,7 @@ def store(ast, dir, id):
     path_current = os.path.dirname(os.path.realpath(__file__))
     fname = '{} - {}.txt'.format(SEED, id)
     path = path_current + '/' + dir + '/' + fname
-    with open(path, 'a') as out:
+    with open(path, 'w') as out:
         out.write(json.dumps(ast))
 
 
