@@ -5,8 +5,10 @@ from codegenerator import get_operator_symbol
 
 class Tokenizer:
 
-    def tokenize(self, root, tokens=[]):
+    def tokenize(self, root, tokens=None):
         """Return token sequence from ast"""
+        if tokens == None:
+            tokens = []
         if root:
             kind = root['Kind']
             if kind == 'While':
