@@ -1,12 +1,12 @@
 # Codegenerator
 
-The codegenerator randomly generates programs that are valid or invalid according to our rules. Programs are stored as Abstract syntax trees (ASTs) in txt files at `programs/valid` or `programs/invalid`.
+The codegenerator randomly generates programs that are valid or invalid according to our rules. Programs are stored as abstract syntax trees (ASTs) in txt files at `programs/valid` or `programs/invalid`.
 
 The codegenerator has been developed in Python (3) using Python 3.5.
 
 ## Configuration
 
-The following configuration options can be changed from line 11 to line 20 within the code: 
+The following configuration options can be changed from [line 11 to line 20](https://github.com/sagr4019/ResearchProject/blob/8242152eca564ee144eb37827932278d4b252fd5/data-generation-and-validation/security-type-system/codegenerator.py#L11-L20) within the code: 
 
 `PROGRAMS_TO_GENERATE_VALID` – Amount of valid programs to be generated
 
@@ -24,6 +24,12 @@ The following configuration options can be changed from line 11 to line 20 withi
 
 `TAB_SIZE` – Size of blank characters used for indentation in prettyprinting
 
+`SEED` – The seed can be changed as desired.
+
 ## Running the program
 
-Execute `python codegenerator.py` to generate programs.
+Please execute the following line to generate programs.
+
+```python
+python codegenerator.py
+```
