@@ -1,4 +1,5 @@
 import json
+import argparse
 import os
 import glob
 import errno
@@ -60,14 +61,22 @@ def token_to_vec(tokens, length):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", required=True, help="Files to save the trained weights to")
+    parser.add_argument("--length", required=True, type=int, help="Maximum length of tokenized programs")
+    args = parser.parse_args()
+
     epochs = 100
     batch_size = 64
-    max_length = 100
+    max_length = args.length
     test_ratio = 0.1
 
     print("Loading programs")
     valid = load_programs("valid")
     invalid = load_programs("invalid")
+
+    print("Valid count: ", len(valid))
+    print("Invalid count: ", len(invalid))
 
     print("Filtering too large programs...")
 
@@ -129,7 +138,7 @@ def main():
 
     print("Training...")
 
-    filepath = "models\lstm1-{epoch:02d}--{val_acc:.4f}.hdf5"
+    filepath = args.model+"-{epoch:02d}--{val_acc:.4f}.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
     callbacks_list = [checkpoint]
 
