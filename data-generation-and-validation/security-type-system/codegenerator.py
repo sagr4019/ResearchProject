@@ -8,29 +8,20 @@ from random import randint
 
 sys.setrecursionlimit(500000)
 
-INT_START_RANGE = -999999
-INT_END_RANGE = 999999
-IDENTIFIER_LENGTH = 1
+PROGRAMS_TO_GENERATE_VALID = 20
+PROGRAMS_TO_GENERATE_INVALID = 20
+ENABLE_PRINTING = True
 
+INT_RANGE_START = -999999
+INT_RANGE_END = 999999
+MAX_LENGTH_IDENTIFIER = 1
 MAX_DEPTH_EXPRESSION = 2
-MAX_DEPTH_COMMAND = 15
-
-PROGRAMS_TO_GENERATE_VALID = 2
-PROGRAMS_TO_GENERATE_INVALID = 2
-
-
-RESERVED_KEYWORDS = ['if', 'then', 'else', 'while', 'do']
+MAX_DEPTH_COMMAND = 3
+RESERVED_KEYWORDS = ('if', 'then', 'else', 'while', 'do')
 TAB_SIZE = 4
 
-ENABLE_SEED = True
-
-all_vars_asts = []
-ass_vars_l_r = []
-
-if ENABLE_SEED:
-    SEED = 123456789
-    random.seed(SEED)
-    print('SEED: {}'.format(SEED))
+SEED = 123456789
+random.seed(SEED)
 
 
 class IntExpr:
@@ -39,11 +30,11 @@ class IntExpr:
         """
         Return AST representation for integers.
         The value for the key 'Value' is a randomly generated integer.
-        The value range is defined in the constants INT_START_RANGE and
-        INT_END_RANGE.
+        The value range is defined in the constants INT_RANGE_START and
+        INT_RANGE_END.
         """
         return {'Kind': 'Int',
-                'Value': randint(INT_START_RANGE, INT_END_RANGE)
+                'Value': randint(INT_RANGE_START, INT_RANGE_END)
                 }, 1
 
 
@@ -53,59 +44,35 @@ class VarExpr:
         """
         Return AST representation for variables.
         A variable is generated randomly with a random length with a maximum of
-        IDENTIFIER_LENGTH, consisting of lowercase and/or uppercase letters.
+        MAX_LENGTH_IDENTIFIER, consisting of lowercase and/or uppercase letters.
         """
-        global all_vars_asts
-        var = ''.join(random.choice(string.ascii_letters)
-                      for _ in range(randint(1, IDENTIFIER_LENGTH)))
-        while (var.lower() in RESERVED_KEYWORDS):
-            var = ''.join(random.choice(string.ascii_letters)
-                          for _ in range(randint(1, IDENTIFIER_LENGTH)))
-
         ast = {'Kind': 'Var',
-               'Name': var
+               'Name': self.gen_var()
                }
-        if ast not in all_vars_asts:
-            all_vars_asts.append(ast)
-
         return ast, 1
+
+    def gen_var(self):
+        var = ''.join(map(lambda x: random.choice(string.ascii_letters),
+                          range(randint(1, MAX_LENGTH_IDENTIFIER))))
+        while (var.lower() in RESERVED_KEYWORDS):
+            var = self.gen_var()
+        return var
 
 
 class LiteralExpr:
 
     def gen(self):
-        return frequency([[1, VarExpr()], [10, IntExpr()]]).gen()
-
-
-def frequency(choices):
-    sum_of_dist = 0
-    idx = 0
-    no_of_values = 0
-    dist = {}
-    for e in choices:
-        sum_of_dist += e[0]
-
-    # build a distribution dictionary
-    for i in range(sum_of_dist):
-        if choices[idx][0] == no_of_values:
-            idx += 1
-            no_of_values = 0
-        dist[i] = choices[idx][1]
-        no_of_values += 1
-
-    rnd = randint(0, sum_of_dist - 1)
-    return dist[rnd]
+        return frequency(((1, VarExpr()), (3, IntExpr()))).gen()
 
 
 class AddExpr:
 
     def gen(self, depth):
         depth_left, depth_right = get_rand_depth(depth - 1)
-
         left, depth_left = ExprGen().gen(depth_left)
         right, depth_right = ExprGen().gen(depth_right)
-        depth_ret = max(depth_left, depth_right)
 
+        depth_ret = max(depth_left, depth_right)
         return {'Kind': 'Add',
                 'Left': left,
                 'Right': right,
@@ -116,11 +83,10 @@ class SubExpr:
 
     def gen(self, depth):
         depth_left, depth_right = get_rand_depth(depth - 1)
-
         left, depth_left = ExprGen().gen(depth_left)
         right, depth_right = ExprGen().gen(depth_right)
-        depth_ret = max(depth_left, depth_right)
 
+        depth_ret = max(depth_left, depth_right)
         return {'Kind': 'Sub',
                 'Left': left,
                 'Right': right,
@@ -131,11 +97,10 @@ class EqualExpr:
 
     def gen(self, depth):
         depth_left, depth_right = get_rand_depth(depth - 1)
-
         left, depth_left = ExprGen().gen(depth_left)
         right, depth_right = ExprGen().gen(depth_right)
-        depth_ret = max(depth_left, depth_right)
 
+        depth_ret = max(depth_left, depth_right)
         return {'Kind': 'Equal',
                 'Left': left,
                 'Right': right,
@@ -146,11 +111,10 @@ class LessExpr:
 
     def gen(self, depth):
         depth_left, depth_right = get_rand_depth(depth - 1)
-
         left, depth_left = ExprGen().gen(depth_left)
         right, depth_right = ExprGen().gen(depth_right)
-        depth_ret = max(depth_left, depth_right)
 
+        depth_ret = max(depth_left, depth_right)
         return {'Kind': 'Less',
                 'Left': left,
                 'Right': right,
@@ -163,15 +127,13 @@ class ExprGen:
         if depth == 0:
             return LiteralExpr().gen()
         else:
-            return one_of([AddExpr(), SubExpr(), EqualExpr(), LessExpr()]).gen(depth)
+            return one_of((AddExpr(), SubExpr(), EqualExpr(), LessExpr())).gen(depth)
 
 
 class ExpressionGenerator:
 
     def gen(self):
-        depth = randint(0, MAX_DEPTH_EXPRESSION)
-        # print('Generating expression with depth {}'.format(depth))
-        return ExprGen().gen(depth)
+        return ExprGen().gen(randint(0, MAX_DEPTH_EXPRESSION))
 
 
 class DeclareCmd:
@@ -186,31 +148,8 @@ class DeclareCmd:
 class AssignCmd:
 
     def gen(self, depth):
-        global ass_vars_l_r
         left, _ = VarExpr().gen()
         right, _ = ExpressionGenerator().gen()
-
-        # find all vars used on the right side that are not equal to the
-        # left side
-        right_vars = find_vars(ast=right, vars=[], left_var_name=left['Name'])
-        if right_vars is not None:
-            # search ass_vars_l_r for left var to figure out if it has already
-            # been assigned and try to append new right vars to it's rightvars
-            # list
-            left_var_found = False
-            for i in range(len(ass_vars_l_r)):
-                if ass_vars_l_r[i]['Name'] == left['Name']:
-                    left_var_found = True
-                    for e in right_vars:
-                        if e not in ass_vars_l_r[i]['RightVars']:
-                            ass_vars_l_r[i]['RightVars'].append(e)
-
-            if not left_var_found and len(right_vars) > 0:
-                # left var has not yet been assigned, create a new list entry
-                ass_vars_l_r.append({
-                    'Name': left['Name'],
-                    'RightVars': right_vars
-                })
 
         return {'Kind': 'Assign',
                 'Left': left,
@@ -218,33 +157,36 @@ class AssignCmd:
                 }, 0
 
 
-def find_vars(ast, vars, left_var_name):
-    """
-    Return names of vars from ast for each var that has not the same name as
-    the given argument left_var_name, which is the left side of an assignment
-    """
+def get_vars(ast, vars=None):
+    """Return vars from assignments and conditions"""
+    if vars is None:
+        vars = []
     kind = ast.get("Kind")
-
     if kind == 'Var':
-        if ast.get("Name") not in vars and ast.get("Name") != left_var_name:
+        if ast.get("Name") not in vars:
             vars.append(ast.get("Name"))
         return vars
     elif kind == 'If':
-        return find_vars(ast.get("Else"),
-                         find_vars(ast.get("Then"),
-                                   vars,
-                                   left_var_name),
-                         left_var_name)
+        return get_vars(ast.get("Condition"),
+                        get_vars(ast.get("Else"),
+                                 get_vars(ast.get("Then"),
+                                          vars)))
     elif kind == 'While':
-        return find_vars(ast.get("Body"),
-                         vars,
-                         left_var_name)
+        return get_vars(ast.get("Condition"),
+                        get_vars(ast.get("Body"),
+                                 vars))
+    elif kind == 'Assign':
+        left = get_vars(ast.get("Left"))
+        right = get_vars(ast.get("Right"))
+        vars.append({
+            'Left': left[0],
+            'Right': right
+        })
+        return vars
     elif kind != 'Int':
-        return find_vars(ast.get("Left"),
-                         find_vars(ast.get("Right"),
-                                   vars,
-                                   left_var_name),
-                         left_var_name)
+        return get_vars(ast.get("Left"),
+                        get_vars(ast.get("Right"),
+                                 vars))
     else:
         return vars
 
@@ -255,8 +197,8 @@ class SeqCmd:
         depth_left, depth_right = get_rand_depth(depth - 1)
         left, depth_left = CmdGen().gen(depth_left)
         right, depth_right = CmdGen().gen(depth_right)
-        depth_ret = max(depth_left, depth_right)
 
+        depth_ret = max(depth_left, depth_right)
         return {'Kind': 'Seq',
                 'Left': left,
                 'Right': right
@@ -287,11 +229,10 @@ class IfCmd:
         cond, _ = ExpressionGenerator().gen()
 
         depth_then, depth_else = get_rand_depth(depth - 1)
-
         then, depth_then = CmdGen().gen(depth_then)
         _else, depth_else = CmdGen().gen(depth_else)
-        depth_ret = max(depth_then, depth_else)
 
+        depth_ret = max(depth_then, depth_else)
         return {'Kind': 'If',
                 'Condition': cond,
                 'Then': then,
@@ -305,57 +246,95 @@ class CmdGen:
         if depth == 0:
             return AssignCmd().gen(depth)
         else:
-            return one_of([WhileCmd(), IfCmd(), SeqCmd()]).gen(depth)
+            return one_of((WhileCmd(), IfCmd(), SeqCmd())).gen(depth)
 
 
 class CommandGenerator:
 
     def gen(self, gen_valid):
-        global all_vars_asts
-        all_vars_asts = []
         depth = randint(1, MAX_DEPTH_COMMAND)
         ast, depth = CmdGen().gen(depth)
 
-        environment = dict()
-        if not gen_valid:
-            if len(ass_vars_l_r) > 0:
-                # if there are assignments which use vars on the right side
-                # choose one assignment which should be marked as insecure
-                # (left var L, at one right var H)
-                no_of_insec_ass = 1
-                # no_of_insec_ass = randint(1, len(ass_vars_l_r))
-                assigns = random.sample(ass_vars_l_r, no_of_insec_ass)
-                for e in assigns:
-                    # choose one random var from the right side ( ... := ... x ...)
-                    no_of_r_vars = 1
-                    # no_of_r_vars = randint(1, len(e['RightVars']))
-                    r_vars = random.sample(e['RightVars'], no_of_r_vars)
-                    for ee in r_vars:
-                        # set it's label as H
-                        environment[ee] = 'H'
+        mixed = get_vars(ast)
+        # assignments (indices) contain left and right keys
+        assigns = list(filter(lambda i: 'Left' in mixed[i], range(len(mixed))))
+        # vars (indices) from e. g. conditions
+        vars = list(filter(lambda i: 'Left' not in mixed[i], range(len(mixed))))
+        labels = {}
+        if gen_valid:
+            for i in assigns:
+                ass = mixed[i]
+                left_var = ass['Left']
+                if left_var in labels:
+                    left_label = labels[left_var]
+                else:
+                    # if one of the right vars already set in labels,
+                    # get the label
+                    left_label = self.get_label(ass['Right'], labels)
+                    labels[left_var] = left_label
 
-                    # set label for var from left as L, e. g. ( x := ...)
-                    environment[e['Name']] = 'L'
+                for right_var in ass['Right']:
+                    if right_var not in labels:
+                        if left_label == 'H':
+                            right_label = self.rand_label()
+                        else:
+                            right_label = 'L'
+                        labels[right_var] = right_label
+            for i in vars:
+                var = mixed[i]
+                if var not in labels:
+                    labels[var] = self.rand_label()
+        else:
+            # get one assignment with at least one var right
+            idx = list(filter(lambda i: len(mixed[i]['Right']) > 0, assigns))
+            if len(idx) > 0:
+                rnd = one_of(idx)
+                left_var = mixed[rnd]['Left']
+                labels[left_var] = 'L'
 
-        for e in all_vars_asts:
-            if not e['Name'] in environment:
-                label = random.choice(['H', 'L'])
-                # label = 'L'
+                rnd2 = randint(0, len(mixed[rnd]['Right']) - 1)
+                right_var = mixed[rnd]['Right'][rnd2]
+                labels[right_var] = 'H'
+
+                # set also labels for other variables in assignments
+                for i in assigns:
+                    ass = mixed[i]
+                    left_var = ass['Left']
+                    if left_var not in labels:
+                        labels[left_var] = self.rand_label()
+
+                    for right_var in ass['Right']:
+                        if right_var not in labels:
+                            labels[right_var] = self.rand_label()
+
+                # set labels for other variables
+                for i in vars:
+                    var = mixed[i]
+                    if var not in labels:
+                        labels[var] = self.rand_label()
             else:
-                label = environment[e['Name']]
+                if ENABLE_PRINTING:
+                    print('can\'t find any assignment with at least one right var '
+                          'to set it invalid. Thus can\'t generate an invalid program. '
+                          'Generating another program...')
 
-            left, depth_left = DeclareCmd().gen(label, e['Name'])
+                return CommandGenerator().gen(gen_valid)
+
+        for var, label in labels.items():
+            left, depth_left = DeclareCmd().gen(label, var)
             ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
 
         sec_type = check_security.check_security(ast)
+        return ast, depth, sec_type
 
-        if gen_valid and sec_type is None:
-            return CommandGenerator().gen(gen_valid=gen_valid)
-        elif not gen_valid and sec_type is not None:
-            return CommandGenerator().gen(gen_valid=gen_valid)
-        else:
-            # print('Generated command with depth {}'.format(depth))
-            return ast, depth, sec_type
+    def rand_label(self):
+        return random.choice(('H', 'L'))
+
+    def get_label(self, vars, labels):
+        for var in vars:
+            if var in labels:
+                return labels[var]
+        return self.rand_label()
 
 
 def get_rand_depth(depth):
@@ -488,21 +467,49 @@ def store(ast, dir, id):
         out.write(json.dumps(ast))
 
 
+def frequency(choices):
+    sum_of_dist = sum(map(lambda x: x[0], choices))
+
+    # build a distribution dictionary
+    idx = 0
+    no_of_values = 0
+    dist = {}
+    for i in range(sum_of_dist):
+        if choices[idx][0] == no_of_values:
+            idx += 1
+            no_of_values = 0
+        dist[i] = choices[idx][1]
+        no_of_values += 1
+
+    rnd = randint(0, sum_of_dist - 1)
+    return dist[rnd]
+
+
+def gen_program_valid(i):
+    ast, _, sec_type = CommandGenerator().gen(True)
+    print('Generated {}. valid program'.format(i + 1))
+    if ENABLE_PRINTING:
+        print('securitychecker outputs {}'.format('valid' if sec_type else 'invalid'))
+        print(prettyprint_multiline_indented(ast))
+        print('\n')
+    dir_out = 'programs/valid'
+    store(ast, dir_out, i + 1)
+
+
+def gen_program_invalid(i):
+    ast, _, sec_type = CommandGenerator().gen(False)
+    print('Generated {}. invalid program'.format(i + 1))
+    if ENABLE_PRINTING:
+        print('securitychecker outputs {}'.format('valid' if sec_type else 'invalid'))
+        print(prettyprint_multiline_indented(ast))
+        print('\n')
+    dir_out = 'programs/invalid'
+    store(ast, dir_out, i + 1)
+
+
 def main():
-    for i in range(PROGRAMS_TO_GENERATE_VALID):
-        ast, _, sec_type = CommandGenerator().gen(True)
-        dir_out = 'programs/valid'
-        # print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
-        # dir_out))
-        # print(prettyprint_multiline_indented(ast))
-        store(ast, dir_out, i)
-    for i in range(PROGRAMS_TO_GENERATE_INVALID):
-        ast, _, sec_type = CommandGenerator().gen(False)
-        dir_out = 'programs/invalid'
-        # print('Generated {} program into {}'.format('valid' if sec_type else 'invalid',
-        # dir_out))
-        # print(prettyprint_multiline_indented(ast))
-        store(ast, dir_out, i)
+    list(map(gen_program_valid, range(PROGRAMS_TO_GENERATE_VALID)))
+    list(map(gen_program_invalid, range(PROGRAMS_TO_GENERATE_INVALID)))
 
 
 if __name__ == "__main__":
