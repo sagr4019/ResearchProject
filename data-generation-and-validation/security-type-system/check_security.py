@@ -34,16 +34,10 @@ def check_rules(node, environment):
         return get_label_from_environment(node.get("Name"), environment)
 
     elif key == "Declare":
-        try:
-           key = environment[node.get("Var")]
-           # key exists in dict
-           # print("[Error] Duplicate declaration of '" + node.get("Var") + "'")
-           return None
-
-        except KeyError:
-           # add entry in dict
-           environment[node.get("Var")] = node.get("Label")
-           return "L"
+        # add or update entry in dict
+        environment[node.get("Var")] = node.get("Label")
+        # prevent "None"-Type Error by returning an inconsequenctial label "L" or "H"
+        return "L"
 
     # arithmetic operation
     elif key == "Equal" or key == "Less" or key == "Add" or key == "Sub":
@@ -69,7 +63,7 @@ def check_rules(node, environment):
             return None
 
         # valid - return bestfit as cmd
-        if convert_label_to_int(secType2) >= convert_label_to_int(secType1):
+        if convert_label_to_int(secType1) >= convert_label_to_int(secType2):
             return "H"
 
         # else -> not valid
