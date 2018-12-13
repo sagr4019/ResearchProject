@@ -31,7 +31,7 @@ def main():
 
     print("Converting program...")
 
-    prog = open('programs/invalid/prog2.txt', 'r').read()
+    prog = open('programs/invalid/if-stack2.txt', 'r').read()
     ast = codeparser.parse(prog)
 
     print(codegenerator.prettyprint_multiline_indented(ast))
