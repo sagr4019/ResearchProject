@@ -1,0 +1,27 @@
+H x;
+L y;
+if (x < 10) then {
+  y := 0
+} else {
+  if (1 < 2) then {
+      y := 0
+  } else {
+      if (1 < 2) then {
+          y := 0
+      } else {
+          if (1 < 2) then {
+              y := 0
+          } else {
+              if (1 < 2) then {
+                  y := 0
+              } else {
+                  if (1 < 2) then {
+                      y := 0
+                  } else {
+                      x := 1
+                  }
+              }
+          }
+      }
+  }
+}
