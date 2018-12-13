@@ -41,13 +41,12 @@ def main():
 
     x = m.token_to_vec(tokens, args.length)
 
-    print(x)
-
     print("Testing program...")
 
     y = validator.predict(x.reshape((1, args.length)))
 
-    print(y)
+    print("Valid:", round(y[0][1] * 100, 2), "%")
+    print("Invalid", round(y[0][0] * 100, 2), "%")
 
 if __name__ == "__main__":
     main()
