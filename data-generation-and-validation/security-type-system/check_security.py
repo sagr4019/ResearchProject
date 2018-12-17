@@ -48,8 +48,8 @@ def check_rules(node, environment):
         if secType1 == None or secType2 == None:
             return None
 
-        if secType1 != secType2:
-            return None
+        if secType1 == "H" or secType2 == "H":
+            return "H"
 
         # valid - return bestfit
         return "L"
