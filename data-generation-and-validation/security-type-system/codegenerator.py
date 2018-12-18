@@ -52,7 +52,7 @@ class VarExpr:
         return ast, 1
 
     def gen_var(self):
-        var = ''.join(map(lambda x: random.choice(string.ascii_letters),
+        var = ''.join(map(lambda x: random.choice(string.ascii_lowercase),
                           range(randint(1, MAX_LENGTH_IDENTIFIER))))
         while (var.lower() in RESERVED_KEYWORDS):
             var = self.gen_var()
