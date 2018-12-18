@@ -8,16 +8,17 @@ from random import randint
 
 sys.setrecursionlimit(500000)
 
-PROGRAMS_TO_GENERATE_VALID = 20
-PROGRAMS_TO_GENERATE_INVALID = 20
-ENABLE_PRINTING = True
+PROGRAMS_TO_GENERATE_VALID = 2
+PROGRAMS_TO_GENERATE_INVALID = 2
 INT_RANGE_START = -999999
 INT_RANGE_END = 999999
 MAX_LENGTH_IDENTIFIER = 1
 MAX_DEPTH_EXPRESSION = 2
-MAX_DEPTH_COMMAND = 3
+MAX_DEPTH_COMMAND = 4
 TAB_SIZE = 4
 SEED = 123456789
+ENABLE_PRINTING = True
+ENABLE_IMPLICIT_FLOW = False
 
 RESERVED_KEYWORDS = ('if', 'then', 'else', 'while', 'do')
 random.seed(SEED)
@@ -61,7 +62,8 @@ class VarExpr:
 class LiteralExpr:
 
     def gen(self):
-        return frequency(((1, VarExpr()), (3, IntExpr()))).gen()
+        # return frequency(((1, VarExpr()), (3, IntExpr()))).gen()
+        return frequency(((3, VarExpr()), (1, IntExpr()))).gen()
 
 
 class AddExpr:
@@ -156,40 +158,6 @@ class AssignCmd:
                 }, 0
 
 
-def get_vars(ast, vars=None):
-    """Return vars from assignments and conditions"""
-    if vars is None:
-        vars = []
-    kind = ast.get("Kind")
-    if kind == 'Var':
-        if ast.get("Name") not in vars:
-            vars.append(ast.get("Name"))
-        return vars
-    elif kind == 'If':
-        return get_vars(ast.get("Condition"),
-                        get_vars(ast.get("Else"),
-                                 get_vars(ast.get("Then"),
-                                          vars)))
-    elif kind == 'While':
-        return get_vars(ast.get("Condition"),
-                        get_vars(ast.get("Body"),
-                                 vars))
-    elif kind == 'Assign':
-        left = get_vars(ast.get("Left"))
-        right = get_vars(ast.get("Right"))
-        vars.append({
-            'Left': left[0],
-            'Right': right
-        })
-        return vars
-    elif kind != 'Int':
-        return get_vars(ast.get("Left"),
-                        get_vars(ast.get("Right"),
-                                 vars))
-    else:
-        return vars
-
-
 class SeqCmd:
 
     def gen(self, depth):
@@ -250,16 +218,106 @@ class CmdGen:
 
 class CommandGenerator:
 
-    def gen(self, gen_valid):
+    def gen(self, gen_valid, implicit=False):
         depth = randint(1, MAX_DEPTH_COMMAND)
         ast, depth = CmdGen().gen(depth)
 
         mixed = get_vars(ast)
-        # assignments (indices) contain left and right keys
         assigns = list(filter(lambda i: 'Left' in mixed[i], range(len(mixed))))
-        # vars (indices) from e. g. conditions
         vars = list(filter(lambda i: 'Left' not in mixed[i], range(len(mixed))))
         labels = {}
+        if implicit:
+            labels = self.get_implicit_labels(ast, labels, gen_valid)
+            if labels is None:
+                # unable to set program invalid  based on implicit flow
+                # due to too few various variables (all conditions and left assignments equal)
+                return CommandGenerator().gen(gen_valid, implicit)
+        labels = self.get_labels(ast, labels, mixed, assigns, vars, gen_valid)
+        if labels is None:
+            # unable to find one var on the right side of an assignment to set invalid.
+            # thus can't generate an invalid program. Generate another one
+            return CommandGenerator().gen(gen_valid, implicit)
+
+        for var, label in labels.items():
+            left, depth_left = DeclareCmd().gen(label, var)
+            ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
+
+        sec_type = check_security.check_security(ast)
+        return ast, depth, sec_type
+
+    def rand_label(self):
+        return random.choice(('H', 'L'))
+
+    def get_label(self, vars, labels):
+        for var in vars:
+            if var in labels:
+                return labels[var]
+        return self.rand_label()
+
+    def get_implicit_labels(self, ast, labels, gen_valid):
+        tmp = condition_assignments(ast)
+        conds_and_assigns = []
+        [conds_and_assigns.append(e) for e in tmp if isinstance(e, dict)]
+        if not gen_valid:
+            # One variable from a condition must be H
+            # One assignment variable from this condition must be L
+            _range = set(range(len(conds_and_assigns)))
+            while _range:
+                rnd = random.choice(list(_range))
+                # remove the choosen index of the pair from the set to ensure
+                # that they are not reused
+                _range.remove(rnd)
+                # choose a random pair of condition and assignment
+                conds = conds_and_assigns[rnd]['Condition']
+                assigned = conds_and_assigns[rnd]['Assigned']
+                # choose a random condition var and assignment var
+                var_cond = random.choice(list(conds))
+                var_ass = random.choice(list(assigned))
+                if var_cond == var_ass:
+                    # cannot set different labels for the same var,
+                    # try to choose another one
+                    if len(list(conds)) == 1 and len(list(assigned)) == 1:
+                        # var used in condition and assignment are the same
+                        # and there are no other vars in both sets
+                        # do another loop run and
+                        continue
+                    if len(conds) > 1:
+                        conds.remove(var_cond)
+                        var_cond = random.choice(list(conds))
+                    else:
+                        assigned.remove(var_ass)
+                        var_ass = random.choice(list(assigned))
+                labels[var_cond] = 'H'
+                labels[var_ass] = 'L'
+                _range = set()
+            if len(labels) < 2:
+                # unable to set program invalid  based on implicit flow
+                # due to too few various variables
+                return None
+        else:
+            for e in conds_and_assigns:
+                conds = list(e['Condition'])  # all vars used in a condition
+                high_in_condition = False
+
+                for var in conds:
+                    if var in labels:
+                        label = labels[var]
+                    else:
+                        label = self.rand_label()
+                        labels[var] = label
+                    if label == 'H':
+                        high_in_condition = True
+
+                assigned = list(e['Assigned'])  # all vars of the condition branches
+                for ass in assigned:
+                    if high_in_condition:
+                        labels[ass] = 'H'
+                    elif ass not in labels:
+                        labels[ass] = self.rand_label()
+        return labels
+
+    def get_labels(self, ast, labels, mixed, assigns, vars, gen_valid):
+        # assume that they are already labels set from implicit
         if gen_valid:
             for i in assigns:
                 ass = mixed[i]
@@ -284,56 +342,152 @@ class CommandGenerator:
                 if var not in labels:
                     labels[var] = self.rand_label()
         else:
-            # get one assignment with at least one var right
-            idx = list(filter(lambda i: len(mixed[i]['Right']) > 0, assigns))
-            if len(idx) > 0:
-                rnd = one_of(idx)
-                left_var = mixed[rnd]['Left']
-                labels[left_var] = 'L'
+            # get all assignment indices with at least one var on the right side
+            one_ass_invalid = False
+            indices_ass = list(set(filter(lambda i: len(mixed[i]['Right']) > 0, assigns)))
+            while indices_ass:
+                rnd_ass_idx = random.choice(indices_ass)
+                # remove index of assignment pair to ensure
+                # that they are not reused
+                indices_ass.remove(rnd_ass_idx)
+                left_var = mixed[rnd_ass_idx]['Left']
+                # incides of all vars on the right side
+                r_vars_idx = list(set(range(len(mixed[rnd_ass_idx]['Right']))))
+                while r_vars_idx:
+                    rnd_r_var_idx = random.choice(r_vars_idx)
+                    r_vars_idx.remove(rnd_r_var_idx)
+                    right_var = mixed[rnd_ass_idx]['Right'][rnd_r_var_idx]
+                    if right_var == left_var:
+                        # cannot set different labels for the same var,
+                        # try to choose another right var
+                        continue
+                    elif left_var in labels and labels[left_var] == 'H':
+                        continue
+                    elif right_var in labels and labels[right_var] == 'L':
+                        continue
+                    else:
+                        labels[left_var] = 'L'
+                        labels[right_var] = 'H'
+                        one_ass_invalid = True
+                        r_vars_idx = set()
+                        # set also labels for other vars in assignments
+                        for i in assigns:
+                            ass = mixed[i]
+                            left_var = ass['Left']
+                            if left_var not in labels:
+                                labels[left_var] = self.rand_label()
 
-                rnd2 = randint(0, len(mixed[rnd]['Right']) - 1)
-                right_var = mixed[rnd]['Right'][rnd2]
-                labels[right_var] = 'H'
+                            for right_var in ass['Right']:
+                                if right_var not in labels:
+                                    labels[right_var] = self.rand_label()
 
-                # set also labels for other variables in assignments
-                for i in assigns:
-                    ass = mixed[i]
-                    left_var = ass['Left']
-                    if left_var not in labels:
-                        labels[left_var] = self.rand_label()
+                        # set labels for other unset vars too
+                        for i in vars:
+                            var = mixed[i]
+                            if var not in labels:
+                                labels[var] = self.rand_label()
 
-                    for right_var in ass['Right']:
-                        if right_var not in labels:
-                            labels[right_var] = self.rand_label()
+                if one_ass_invalid:
+                    indices_ass = set()
+                else:
+                    continue
+            if not one_ass_invalid:
+                # unable to find one var on the right side of an assignment to set invalid
+                # Thus can't generate an invalid program.
+                return None
+        return labels
 
-                # set labels for other variables
-                for i in vars:
-                    var = mixed[i]
-                    if var not in labels:
-                        labels[var] = self.rand_label()
-            else:
-                if ENABLE_PRINTING:
-                    print('can\'t find any assignment with at least one right var '
-                          'to set it invalid. Thus can\'t generate an invalid program. '
-                          'Generating another program...')
 
-                return CommandGenerator().gen(gen_valid)
+def condition_assignments(ast, vars=None):
+    """Return vars from assignments and conditions"""
+    if vars is None:
+        vars = []
+    kind = ast.get("Kind")
 
-        for var, label in labels.items():
-            left, depth_left = DeclareCmd().gen(label, var)
-            ast, depth = SeqCmd().gen_pre_seq(left, ast, depth_left + depth)
+    if kind == 'Var':
+        if len(vars) == 0 or not isinstance(vars[0], set):
+            vars.insert(0, set())
+        vars[0].add(ast.get("Name"))
 
-        sec_type = check_security.check_security(ast)
-        return ast, depth, sec_type
+    elif kind == 'If':
+        condition = condition_assignments(ast.get("Condition"))
+        if len(condition) > 0:
+            condition = condition[0]
 
-    def rand_label(self):
-        return random.choice(('H', 'L'))
+            _then = condition_assignments(ast.get("Then"))[0]
+            if 'Assigned' in _then:
+                _then = _then['Assigned']
 
-    def get_label(self, vars, labels):
-        for var in vars:
-            if var in labels:
-                return labels[var]
-        return self.rand_label()
+            _else = condition_assignments(ast.get("Else"))[0]
+            if 'Assigned' in _else:
+                _else = _else['Assigned']
+
+            assigned = set()
+            assigned.update(_then)
+            assigned.update(_else)
+
+            vars.append({
+                'Condition': condition,
+                'Assigned': assigned
+            })
+        return condition_assignments(ast.get("Then"),
+                                     condition_assignments(ast.get("Else"),
+                                                           vars))
+    elif kind == 'While':
+        condition = condition_assignments(ast.get("Condition"))
+        if len(condition) > 0:
+            condition = condition[0]
+
+            assigned = condition_assignments(ast.get("Body"))[0]
+            if 'Assigned' in assigned:
+                assigned = assigned['Assigned']
+
+            vars.append({
+                'Condition': condition,
+                'Assigned': assigned
+            })
+        return condition_assignments(ast.get("Body"), vars)
+    elif kind == 'Assign':
+        return condition_assignments(ast.get("Left"), vars)
+    elif kind != 'Int':
+        return condition_assignments(ast.get("Left"),
+                                     condition_assignments(ast.get("Right"),
+                                                           vars))
+    return vars
+
+
+def get_vars(ast, vars=None):
+    """Return vars from assignments and conditions"""
+    if vars is None:
+        vars = []
+    kind = ast.get("Kind")
+    if kind == 'Var':
+        if ast.get("Name") not in vars:
+            vars.append(ast.get("Name"))
+        return vars
+    elif kind == 'If':
+        return get_vars(ast.get("Condition"),
+                        get_vars(ast.get("Else"),
+                                 get_vars(ast.get("Then"),
+                                          vars)))
+    elif kind == 'While':
+        return get_vars(ast.get("Condition"),
+                        get_vars(ast.get("Body"),
+                                 vars))
+    elif kind == 'Assign':
+        left = get_vars(ast.get("Left"))
+        right = get_vars(ast.get("Right"))
+        vars.append({
+            'Left': left[0],
+            'Right': right
+        })
+        return vars
+    elif kind != 'Int':
+        return get_vars(ast.get("Left"),
+                        get_vars(ast.get("Right"),
+                                 vars))
+    else:
+        return vars
 
 
 def get_rand_depth(depth):
@@ -485,24 +639,27 @@ def frequency(choices):
 
 
 def gen_program_valid(i):
-    ast, _, sec_type = CommandGenerator().gen(True)
-    print('Generated {}. valid program'.format(i + 1))
-    if ENABLE_PRINTING:
-        print('securitychecker outputs {}'.format('valid' if sec_type else 'invalid'))
-        print(prettyprint_multiline_indented(ast))
-        print('\n')
-    dir_out = 'programs/valid'
-    store(ast, dir_out, i + 1)
+    gen_valid = True
+    implicit = ENABLE_IMPLICIT_FLOW
+    gen_program(i, gen_valid, implicit)
 
 
 def gen_program_invalid(i):
-    ast, _, sec_type = CommandGenerator().gen(False)
-    print('Generated {}. invalid program'.format(i + 1))
+    gen_valid = False
+    implicit = ENABLE_IMPLICIT_FLOW
+    gen_program(i, gen_valid, implicit)
+
+
+def gen_program(i, gen_valid, implicit):
+    ast, _, sec_type = CommandGenerator().gen(gen_valid, implicit)
+    print('Generated {}. {} program{}'.format(i + 1,
+                                              'valid' if gen_valid else 'invalid',
+                                              ' regarding implicit flow' if implicit else ''))
     if ENABLE_PRINTING:
         print('securitychecker outputs {}'.format('valid' if sec_type else 'invalid'))
         print(prettyprint_multiline_indented(ast))
         print('\n')
-    dir_out = 'programs/invalid'
+    dir_out = 'programs/{}'.format('valid' if gen_valid else 'invalid')
     store(ast, dir_out, i + 1)
 
 
