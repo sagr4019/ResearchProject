@@ -25,7 +25,7 @@ lit = int.map(lambda x: {'Kind': 'Int', 'Value': x}) | var.map(lambda x : {'Kind
 def op():
     e1 = yield exp
     yield whitespace
-    op = yield parsy.alt(*map(parsy.string,'+-=<'))
+    op = yield parsy.alt(*map(parsy.string,['+','-','==','<']))
     yield whitespace
     e2 = yield exp
     return {'Kind': kind(op), 'Left': e1, 'Right': e2}
@@ -35,7 +35,7 @@ def kind(op):
         return 'Add'
     elif op == '-':
         return 'Sub'
-    elif op == '=':
+    elif op == '==':
         return 'Equal'
     elif op == '<':
         return 'Less'
@@ -148,7 +148,7 @@ y := x"""
 def testProg3():
     return """H x;
 L y;
-if (x < 10) then {
+if (x == 10) then {
     x := y
 } else {
     y := 0
@@ -244,11 +244,11 @@ def test(prog):
 
 
 def main():
-    # test(testProg1())
-    # test(testProg2())
-    # test(testProg3())
-    # test(testProg4())
-    # test(testProg5())
+    test(testProg1())
+    test(testProg2())
+    test(testProg3())
+    test(testProg4())
+    test(testProg5())
     test(testProg7())
 
 if __name__ == '__main__':

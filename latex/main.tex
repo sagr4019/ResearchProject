@@ -53,7 +53,7 @@ The abstract should briefly summarize the contents of the paper in
 &(variable)     \quad &&var ::= \text{[a-zA-Z]+}\\
 &(label)        \quad &&lbl ::= \text{L} \mI \text{H}\\
 &(literal)      \quad &&lit ::= int \mI var\\
-&(expression)   \quad &&exp ::= lit \mI exp + exp' \mI exp - exp' \mI exp = exp' \mI exp < exp'\\
+&(expression)   \quad &&exp ::= lit \mI exp + exp' \mI exp - exp' \mI exp == exp' \mI exp < exp'\\
 &(declaration)  \quad &&dec ::= lbl \, var; \; dec \mI \text{""}\\
 &(command)      \quad &&cmd ::= cmd; \, cmd\\
 &&& \mI  var := exp\\
