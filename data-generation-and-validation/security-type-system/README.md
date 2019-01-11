@@ -30,7 +30,7 @@ The following configuration options can be changed [within the code](https://git
 
 ## Generate programs
 
-`generate_programs.py` is used for generation of programs. Adjust the script as you like. 
+The script `generate_programs.py` is used to generate programs. Adjust it as you like. 
 
 Please execute the following line to generate programs.
 
