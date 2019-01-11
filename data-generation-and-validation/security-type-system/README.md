@@ -6,7 +6,7 @@ The codegenerator has been developed in Python (3) using Python 3.6.
 
 ## Configuration
 
-The following configuration options can be changed [within the code](https://github.com/sagr4019/ResearchProject/blob/master/data-generation-and-validation/security-type-system/codegenerator.py#L11-L21):
+The following configuration options can be changed [within the code](https://github.com/sagr4019/ResearchProject/blob/master/data-generation-and-validation/security-type-system/codegenerator.py):
 
 `PROGRAMS_TO_GENERATE_VALID` – Amount of valid programs to be generated
 
