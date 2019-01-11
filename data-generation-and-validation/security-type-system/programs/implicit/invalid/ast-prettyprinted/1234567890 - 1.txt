@@ -1,0 +1,11 @@
+H l; 
+L s; 
+H y; 
+L j; 
+L m; 
+H z; 
+if z then {
+    m := (s < m)
+} else {
+    j := (s - (l + y))
+}

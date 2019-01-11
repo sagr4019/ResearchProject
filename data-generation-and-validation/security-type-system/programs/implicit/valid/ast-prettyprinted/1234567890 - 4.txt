@@ -1,0 +1,14 @@
+H m; 
+L o; 
+L l; 
+L t; 
+H w; 
+L b; 
+L q; 
+H r; 
+H g; 
+while ((g + q) + (b < r)) do {
+    while t do {
+        w := ((m + 841061) == (o == l))
+    }
+}

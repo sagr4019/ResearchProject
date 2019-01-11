@@ -1,0 +1,15 @@
+H o; 
+L w; 
+L h; 
+H u; 
+H r; 
+H x; 
+H d; 
+H f; 
+while f do {
+    x := o; 
+    x := (-612887 - w); 
+    while ((u < d) < (u + r)) do {
+        d := (-61451 < h)
+    }
+}

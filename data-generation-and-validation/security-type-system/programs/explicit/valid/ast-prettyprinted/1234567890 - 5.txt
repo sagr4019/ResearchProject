@@ -1,0 +1,7 @@
+H m; 
+H g; 
+L q; 
+H p; 
+while m do {
+    p := ((q + -61451) + (g + q))
+}

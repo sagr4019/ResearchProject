@@ -1,0 +1,11 @@
+H z; 
+L m; 
+H j; 
+H u; 
+H f; 
+H c; 
+if c then {
+    f := j
+} else {
+    u := (334109 + (z - m))
+}

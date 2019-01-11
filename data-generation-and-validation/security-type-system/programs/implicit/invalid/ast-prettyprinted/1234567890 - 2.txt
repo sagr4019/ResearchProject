@@ -1,0 +1,13 @@
+H x; 
+L v; 
+H n; 
+H s; 
+L e; 
+H l; 
+if (l < x) then {
+    n := -717691
+} else {
+    while (s == v) do {
+        e := s
+    }
+}

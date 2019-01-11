@@ -1,0 +1,27 @@
+H z; 
+H m; 
+H d; 
+H v; 
+H o; 
+L e; 
+L j; 
+H b; 
+H t; 
+H g; 
+L f; 
+j := j; 
+m := ((751995 + -335254) == (z + 905200)); 
+while -266729 do {
+    v := d
+}; 
+if e then {
+    while 883994 do {
+        t := ((j - 35706) == (-792947 - b))
+    }
+} else {
+    if j then {
+        f := (-536410 == g)
+    } else {
+        e := o
+    }
+}

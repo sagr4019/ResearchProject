@@ -8,17 +8,19 @@ from random import randint
 
 sys.setrecursionlimit(500000)
 
-PROGRAMS_TO_GENERATE_VALID = 2
-PROGRAMS_TO_GENERATE_INVALID = 2
+PROGRAMS_TO_GENERATE_VALID = 0
+PROGRAMS_TO_GENERATE_INVALID = 0
+ENABLE_IMPLICIT_FLOW = False
+STORE_PRETTYPRINTED_AST = False
+PRINT_SECURITY_OUTPUT = False
+PRINT_PATHS = True
 INT_RANGE_START = -999999
 INT_RANGE_END = 999999
 MAX_LENGTH_IDENTIFIER = 1
 MAX_DEPTH_EXPRESSION = 2
-MAX_DEPTH_COMMAND = 4
+MAX_DEPTH_COMMAND = 3
 TAB_SIZE = 4
-SEED = 123456789
-ENABLE_PRINTING = True
-ENABLE_IMPLICIT_FLOW = False
+SEED = 1234567890
 
 RESERVED_KEYWORDS = ('if', 'then', 'else', 'while', 'do')
 random.seed(SEED)
@@ -62,7 +64,6 @@ class VarExpr:
 class LiteralExpr:
 
     def gen(self):
-        # return frequency(((1, VarExpr()), (3, IntExpr()))).gen()
         return frequency(((3, VarExpr()), (1, IntExpr()))).gen()
 
 
@@ -128,7 +129,8 @@ class ExprGen:
         if depth == 0:
             return LiteralExpr().gen()
         else:
-            return one_of((AddExpr(), SubExpr(), EqualExpr(), LessExpr())).gen(depth)
+            return one_of((AddExpr(), SubExpr(),
+                           EqualExpr(), LessExpr())).gen(depth)
 
 
 class ExpressionGenerator:
@@ -219,23 +221,26 @@ class CmdGen:
 class CommandGenerator:
 
     def gen(self, gen_valid, implicit=False):
-        depth = randint(1, MAX_DEPTH_COMMAND)
+        depth = randint(0, MAX_DEPTH_COMMAND)
         ast, depth = CmdGen().gen(depth)
 
         mixed = get_vars(ast)
         assigns = list(filter(lambda i: 'Left' in mixed[i], range(len(mixed))))
-        vars = list(filter(lambda i: 'Left' not in mixed[i], range(len(mixed))))
+        vars = list(
+            filter(lambda i: 'Left' not in mixed[i], range(len(mixed))))
         labels = {}
         if implicit:
             labels = self.get_implicit_labels(ast, labels, gen_valid)
             if labels is None:
                 # unable to set program invalid  based on implicit flow
-                # due to too few various variables (all conditions and left assignments equal)
+                # due to too few various variables (all conditions and left
+                # assignments equal)
                 return CommandGenerator().gen(gen_valid, implicit)
         labels = self.get_labels(ast, labels, mixed, assigns, vars, gen_valid)
         if labels is None:
-            # unable to find one var on the right side of an assignment to set invalid.
-            # thus can't generate an invalid program. Generate another one
+            # unable to find one var on the right side of an assignment
+            # to set invalid. Thus can't generate an invalid program.
+            # Generate another one
             return CommandGenerator().gen(gen_valid, implicit)
 
         for var, label in labels.items():
@@ -308,7 +313,8 @@ class CommandGenerator:
                     if label == 'H':
                         high_in_condition = True
 
-                assigned = list(e['Assigned'])  # all vars of the condition branches
+                # all vars of the condition branches
+                assigned = list(e['Assigned'])
                 for ass in assigned:
                     if high_in_condition:
                         labels[ass] = 'H'
@@ -342,9 +348,11 @@ class CommandGenerator:
                 if var not in labels:
                     labels[var] = self.rand_label()
         else:
-            # get all assignment indices with at least one var on the right side
+            # get all assignment indices with at least one var on the right
+            # side
             one_ass_invalid = False
-            indices_ass = list(set(filter(lambda i: len(mixed[i]['Right']) > 0, assigns)))
+            indices_ass = list(
+                set(filter(lambda i: len(mixed[i]['Right']) > 0, assigns)))
             while indices_ass:
                 rnd_ass_idx = random.choice(indices_ass)
                 # remove index of assignment pair to ensure
@@ -392,8 +400,8 @@ class CommandGenerator:
                 else:
                     continue
             if not one_ass_invalid:
-                # unable to find one var on the right side of an assignment to set invalid
-                # Thus can't generate an invalid program.
+                # unable to find one var on the right side of an assignment
+                # to set invalid. Thus can't generate an invalid program.
                 return None
         return labels
 
@@ -612,12 +620,15 @@ def get_operator_symbol(kind):
         raise RuntimeError("Unknown kind {}".format(kind))
 
 
-def store(ast, dir, id):
+def store(ast, dir, id, to_json=True):
     path_current = os.path.dirname(os.path.realpath(__file__))
     fname = '{} - {}.txt'.format(SEED, id)
     path = path_current + '/' + dir + '/' + fname
     with open(path, 'w') as out:
-        out.write(json.dumps(ast))
+        if to_json:
+            out.write(json.dumps(ast))
+        else:
+            out.write(ast)
 
 
 def frequency(choices):
@@ -652,20 +663,28 @@ def gen_program_invalid(i):
 
 def gen_program(i, gen_valid, implicit):
     ast, _, sec_type = CommandGenerator().gen(gen_valid, implicit)
-    print('Generated {}. {} program{}'.format(i + 1,
-                                              'valid' if gen_valid else 'invalid',
-                                              ' regarding implicit flow' if implicit else ''))
-    if ENABLE_PRINTING:
-        print('securitychecker outputs {}'.format('valid' if sec_type else 'invalid'))
+    t_str = 'implicit' if implicit else 'explicit'
+    v_str = 'valid' if gen_valid else 'invalid'
+    dir_out = 'programs/{}/{}'.format(t_str, v_str)
+    if PRINT_SECURITY_OUTPUT:
+        print('securitychecker outputs {}'.format(
+            'valid' if sec_type else 'invalid'))
         print(prettyprint_multiline_indented(ast))
         print('\n')
-    dir_out = 'programs/{}'.format('valid' if gen_valid else 'invalid')
-    store(ast, dir_out, i + 1)
+    store(ast, dir_out + '/ast', i + 1)
+    if PRINT_PATHS:
+        print('Generated {}/ast/{} - {}.txt'.format(dir_out, SEED, i + 1))
+    if STORE_PRETTYPRINTED_AST:
+        store(prettyprint_multiline_indented(ast),
+              dir_out + '/ast-prettyprinted', i + 1, False)
+        if PRINT_PATHS:
+            print('Generated {}/ast-prettyprinted/{} - {}.txt'.format(dir_out,
+                                                                      SEED,
+                                                                      i + 1))
 
 
 def main():
-    list(map(gen_program_valid, range(PROGRAMS_TO_GENERATE_VALID)))
-    list(map(gen_program_invalid, range(PROGRAMS_TO_GENERATE_INVALID)))
+    print('please use generate_programs.py to generate programs.')
 
 
 if __name__ == "__main__":

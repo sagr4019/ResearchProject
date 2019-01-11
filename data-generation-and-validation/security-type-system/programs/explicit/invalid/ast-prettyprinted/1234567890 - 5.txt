@@ -1,0 +1,34 @@
+L b; 
+H o; 
+L n; 
+H x; 
+L m; 
+H d; 
+H q; 
+L r; 
+L c; 
+H y; 
+L i; 
+L z; 
+H k; 
+L f; 
+if (i < -51812) then {
+    if ((o < n) + -710950) then {
+        c := (495845 < r); 
+        z := (y - i)
+    } else {
+        if ((-328952 < -324503) - -784340) then {
+            f := k
+        } else {
+            f := (d < (-410552 - q))
+        }
+    }
+} else {
+    if b then {
+        while (q + c) do {
+            r := -565963
+        }
+    } else {
+        m := (x == k)
+    }
+}

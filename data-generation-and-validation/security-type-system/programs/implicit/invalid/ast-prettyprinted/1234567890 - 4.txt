@@ -1,0 +1,7 @@
+L l; 
+H f; 
+L p; 
+H q; 
+while q do {
+    p := (l < f)
+}

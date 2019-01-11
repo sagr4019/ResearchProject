@@ -1,0 +1,7 @@
+H m; 
+L s; 
+L l; 
+H y; 
+L j; 
+m := (s < m); 
+j := (s - (l + y))

@@ -1,0 +1,13 @@
+H g; 
+H e; 
+H m; 
+H s; 
+L n; 
+H z; 
+while (z + g) do {
+    if (e - 886550) then {
+        m := 889419
+    } else {
+        n := s
+    }
+}

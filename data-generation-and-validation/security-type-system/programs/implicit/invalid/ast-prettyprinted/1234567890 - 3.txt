@@ -1,0 +1,35 @@
+L x; 
+L a; 
+L k; 
+L m; 
+H p; 
+L t; 
+H n; 
+L j; 
+L y; 
+L e; 
+L i; 
+L u; 
+H g; 
+L b; 
+H z; 
+L o; 
+H v; 
+if -328952 then {
+    if z then {
+        b := ((g - u) - (v < g))
+    } else {
+        i := e
+    }
+} else {
+    if ((x == o) + (677166 - a)) then {
+        j := ((t - 780613) - (b - n)); 
+        z := y
+    } else {
+        if ((-817126 == v) + k) then {
+            o := z
+        } else {
+            p := (j == (e + m))
+        }
+    }
+}

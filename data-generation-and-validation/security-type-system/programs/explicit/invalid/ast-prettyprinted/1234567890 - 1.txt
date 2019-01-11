@@ -1,0 +1,21 @@
+H t; 
+L p; 
+L x; 
+L b; 
+L v; 
+L o; 
+L j; 
+L a; 
+L y; 
+H l; 
+L n; 
+if b then {
+    if 961999 then {
+        y := n
+    } else {
+        n := ((v < n) == (o == l)); 
+        a := ((j == 672858) == (-79301 == n))
+    }
+} else {
+    b := (t + (p == x))
+}
