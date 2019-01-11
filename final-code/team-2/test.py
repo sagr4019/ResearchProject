@@ -45,8 +45,14 @@ def main():
 
     y = validator.predict(x.reshape((1, args.length)))
 
-    print("Valid:", round(y[0][1] * 100, 2), "%")
-    print("Invalid", round(y[0][0] * 100, 2), "%")
+    validStr = str(round(y[0][1] * 100, 2))
+    invalidStr = str(round(y[0][0] * 100, 2))
+    print("Valid:  ", formatOutput(validStr, invalidStr), "%")
+    print("Invalid:", formatOutput(invalidStr, validStr), "%")
+
+def formatOutput(str, refStr):
+    return ' ' * (max(len(str), len(refStr)) - len(str)) + str
+
 
 if __name__ == "__main__":
     main()
