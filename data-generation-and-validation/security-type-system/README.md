@@ -22,11 +22,15 @@ The following configuration options can be changed [within the code](https://git
 
 `TAB_SIZE` – Size of blank characters used for indentation in prettyprinting
 
-`SEED` – The seed can be changed as desired.
+`SEED` – The seed can be changed as desired
 
-`ENABLE_PRINTING` – If True: prettyprints each generated program along with the result from the security checker
+`PRINT_SECURITY_OUTPUT` – If True: print output of security checker
 
-`ENABLE_IMPLICIT_FLOW` – If True: consider implicit flow at generation.
+`ENABLE_IMPLICIT_FLOW` – If True: consider implicit flow at generation. If False: consider explicit flow at generation
+
+`STORE_PRETTYPRINTED_AST` – If True: store also prettyprinted ast 
+
+`PRINT_PATHS` – If True: print paths of generated programs
 
 ## Generate programs
 
