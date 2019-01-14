@@ -1,13 +1,3 @@
-def get_label_from_environment(identifier, environment):
-    securityClass = None
-
-    for key in environment.keys():
-        if key == identifier:
-            securityClass = environment[key]
-
-    return securityClass
-
-
 def convert_label_to_int(securityClass):
     if securityClass == "H":
         return 1
@@ -31,7 +21,7 @@ def check_rules(node, environment):
 
     elif key == "Var":
         # return security class from environment
-        return get_label_from_environment(node.get("Name"), environment)
+        return environment.get(node.get("Name"), None);
 
     elif key == "Declare":
         # add or update entry in dict
