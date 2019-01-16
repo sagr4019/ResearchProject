@@ -12,24 +12,23 @@ import models
 
 TOKEN2VEC = {
     'L': 1, 'H': 2, ';': 3, ':=': 4, 'int': 5, '(': 6, ')': 7, 'if': 8, 'then': 9, 'else': 10, 'while': 11, 'do': 12,
-    '{': 13, '}': 14, '==': 15, '<': 16, '+': 17, '-': 18, 'a': 18, 'b': 19, 'c': 20, 'd': 21, 'e': 22, 'f': 23,
+    '{': 13, '}': 14, '==': 15, '<': 16, '+': 17, '-': 18, 'b': 19, 'c': 20, 'd': 21, 'e': 22, 'f': 23,
     'g': 24, 'h': 25, 'i': 26, 'j': 27, 'k': 28, 'l': 29, 'm': 30, 'n': 31, 'o': 32, 'p': 33, 'q': 34, 'r': 35, 's': 36,
     't': 37, 'u': 38, 'v': 39, 'w': 40, 'x': 41, 'y': 42, 'z': 43, 'A': 44, 'B': 45, 'C': 46, 'D': 47, 'E': 48, 'F': 49,
     'G': 50, 'I': 51, 'J': 52, 'K': 53, 'M': 54, 'N': 55, 'O': 56, 'P': 57, 'Q': 58, 'R': 59, 'S': 60, 'T': 61, 'U': 62,
-    'V': 63, 'W': 64, 'X': 65, 'Y': 66, 'Z': 67
+    'V': 63, 'W': 64, 'X': 65, 'Y': 66, 'Z': 67, 'a': 68
 }
 
 
-def load_programs(ttype):
+def load_programs(stype, ttype):
     """
-    Load and return programs (asts) by type (valid/invalid) as a list of dicts
+    Load and return programs (asts) by type (valid/invalid) and security rules (explicit/implicit) as a list of dicts
     with keys 'ast' and 'tokens'
     """
     asts_and_tokens = []
-    dir_programs = os.path.abspath(os.path.join(
+    dir = os.path.abspath(os.path.join(
         os.path.dirname(__file__),
-        "../../data-generation-and-validation/security-type-system/programs"))
-    dir = dir_programs + '/' + ttype
+        "../../data-generation-and-validation/security-type-system/programs" + "/" + stype + "/" + ttype + "/ast"))
     files = glob.glob(dir + '/*')
     for name in files:
             try:
@@ -72,8 +71,8 @@ def main():
     test_ratio = 0.1
 
     print("Loading programs")
-    valid = load_programs("valid")
-    invalid = load_programs("invalid")
+    valid = load_programs("implicit", "valid")
+    invalid = load_programs("implicit", "invalid")
 
     print("Valid count: ", len(valid))
     print("Invalid count: ", len(invalid))

@@ -19,19 +19,23 @@ def main():
     validator = models.LSTMValidator(args.length, len(m.TOKEN2VEC)+1, "adam")
     validator.load_weights(args.model)
 
-    '''print("Generating program...")
-    valid = True
+    '''codegenerator.SEED = 130596
+
+    valid = False
+    implicit = True
+
+    print("Generating program...")
 
     tokens = []
     ast = None
     while(len(tokens) <= 0 or len(tokens) > args.length):
-        ast, _, _ = codegenerator.CommandGenerator().gen(valid)
+        ast, _, _ = codegenerator.CommandGenerator().gen(valid, implicit)
         tokens = tokenizer.Tokenizer().tokenize(ast)
     print(codegenerator.prettyprint_multiline_indented(ast))'''
 
     print("Converting program...")
 
-    prog = open('programs/invalid/if-stack2.txt', 'r').read()
+    prog = open('programs/indirect/invalid/test3.txt', 'r').read()
     ast = codeparser.parse(prog)
 
     print(codegenerator.prettyprint_multiline_indented(ast))

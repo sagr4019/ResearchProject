@@ -1,0 +1,11 @@
+H x;
+L y;
+H z;
+H a;
+L m;
+L n;
+if (x < 2) then {
+  y := 0
+} else {
+  m := n
+}

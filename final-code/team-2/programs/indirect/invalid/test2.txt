@@ -1,0 +1,7 @@
+H x;
+L y;
+if (x < 2) then {
+  y := 0
+} else {
+  y := 2
+}
