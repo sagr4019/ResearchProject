@@ -5,13 +5,14 @@ import check_security
 import os
 import json
 from random import randint
+import pickle
 
 sys.setrecursionlimit(500000)
-
-PROGRAMS_TO_GENERATE_VALID = 0
+PROGRAMS_TO_GENERATE_VALID = 1
 PROGRAMS_TO_GENERATE_INVALID = 0
 ENABLE_IMPLICIT_FLOW = False
 STORE_PRETTYPRINTED_AST = False
+STORE_PICKLE = True
 PRINT_SECURITY_OUTPUT = False
 PRINT_PATHS = True
 INT_RANGE_START = -999999
@@ -623,7 +624,19 @@ def get_operator_symbol(kind):
 def store(ast, dir, id, to_json=True):
     path_current = os.path.dirname(os.path.realpath(__file__))
     fname = '{} - {}.txt'.format(SEED, id)
-    path = path_current + '/' + dir + '/' + fname
+    path = os.path.join(path_current,dir)
+    
+    if STORE_PICKLE:
+        p_path = os.path.join(path_current,"pickle")
+        if not os.path.isdir(p_path):
+            os.makedirs(p_path,777)
+        p_path=os.path.join(p_path,fname)
+        with open(p_path,"wb") as f:
+            pickle.dump(ast,f)
+    
+    if not os.path.isdir(path):
+        os.makedirs(path,777)
+    path=os.path.join(path,fname)
     with open(path, 'w') as out:
         if to_json:
             out.write(json.dumps(ast))
@@ -665,18 +678,18 @@ def gen_program(i, gen_valid, implicit):
     ast, _, sec_type = CommandGenerator().gen(gen_valid, implicit)
     t_str = 'implicit' if implicit else 'explicit'
     v_str = 'valid' if gen_valid else 'invalid'
-    dir_out = 'programs/{}/{}'.format(t_str, v_str)
+    dir_out = os.path.join("programs",t_str,v_str)
     if PRINT_SECURITY_OUTPUT:
         print('securitychecker outputs {}'.format(
             'valid' if sec_type else 'invalid'))
         print(prettyprint_multiline_indented(ast))
         print('\n')
-    store(ast, dir_out + '/ast', i + 1)
+    store(ast, dir_out + os.sep +'ast', i + 1)
     if PRINT_PATHS:
         print('Generated {}/ast/{} - {}.txt'.format(dir_out, SEED, i + 1))
     if STORE_PRETTYPRINTED_AST:
         store(prettyprint_multiline_indented(ast),
-              dir_out + '/ast-prettyprinted', i + 1, False)
+              dir_out + os.sep +'ast-prettyprinted', i + 1, False)
         if PRINT_PATHS:
             print('Generated {}/ast-prettyprinted/{} - {}.txt'.format(dir_out,
                                                                       SEED,
