@@ -1,0 +1,1154 @@
+
+Testing 10000 implicit invalid programs
+Max token length: 50
+Threshold percentage of incorrect classification: 50
+Loading model...
+
+
+129. program NOT correctly classified
+Number of tokens: 28
+Valid:   98.94 %
+Invalid:  1.06 %
+L b; 
+L t; 
+H x; 
+H y; 
+L d; 
+H m; 
+if (m + b) then {
+    d := y
+} else {
+    x := t
+}
+
+
+576. program NOT correctly classified
+Number of tokens: 38
+Valid:   73.78 %
+Invalid: 26.22 %
+L g; 
+H e; 
+H w; 
+H s; 
+L f; 
+L y; 
+H c; 
+while ((c < g) == e) do {
+    y := (w < c); 
+    f := (f < s)
+}
+
+
+633. program NOT correctly classified
+Number of tokens: 37
+Valid:   96.73 %
+Invalid:  3.27 %
+L y; 
+H v; 
+L u; 
+H m; 
+L q; 
+L b; 
+H c; 
+if (y < (v < c)) then {
+    q := (m + 2208)
+} else {
+    b := (604024 - u)
+}
+
+
+682. program NOT correctly classified
+Number of tokens: 29
+Valid:   93.71 %
+Invalid:  6.29 %
+H d; 
+H x; 
+H c; 
+L e; 
+H q; 
+if ((q == -634053) == (d < 936579)) then {
+    x := 998038
+} else {
+    e := c
+}
+
+
+1280. program NOT correctly classified
+Number of tokens: 39
+Valid:   99.91 %
+Invalid:  0.09 %
+H e; 
+H a; 
+H d; 
+H w; 
+L n; 
+H c; 
+while ((a - -427287) + e) do {
+    while ((903592 + 104478) - c) do {
+        while a do {
+            n := (w < (d - -22206))
+        }
+    }
+}
+
+
+1404. program NOT correctly classified
+Number of tokens: 45
+Valid:   62.43 %
+Invalid: 37.57 %
+L h; 
+L g; 
+L a; 
+H q; 
+H t; 
+H l; 
+L n; 
+H k; 
+if (k - a) then {
+    t := -429646
+} else {
+    if k then {
+        k := ((h == g) + (a - q))
+    } else {
+        n := l
+    }
+}
+
+
+1497. program NOT correctly classified
+Number of tokens: 24
+Valid:   85.08 %
+Invalid: 14.92 %
+H d; 
+H w; 
+L n; 
+H o; 
+if (o == n) then {
+    d := 607299
+} else {
+    n := (w == d)
+}
+
+
+1813. program NOT correctly classified
+Number of tokens: 29
+Valid:   99.06 %
+Invalid:  0.94 %
+L z; 
+H k; 
+H h; 
+H y; 
+L p; 
+H q; 
+while (q == z) do {
+    h := k; 
+    p := y
+}
+
+
+1850. program NOT correctly classified
+Number of tokens: 43
+Valid:   99.5 %
+Invalid:  0.5 %
+L l; 
+H a; 
+H o; 
+H w; 
+H v; 
+L d; 
+H e; 
+if ((l == -203830) - (e - a)) then {
+    w := (464809 == d)
+} else {
+    d := ((v == v) < (e < o))
+}
+
+
+2074. program NOT correctly classified
+Number of tokens: 40
+Valid:   57.35 %
+Invalid: 42.65 %
+H c; 
+H r; 
+H l; 
+H p; 
+H s; 
+L g; 
+H y; 
+l := r; 
+while (y < (-38467 - c)) do {
+    while (292277 + -575161) do {
+        g := (s == p)
+    }
+}
+
+
+2157. program NOT correctly classified
+Number of tokens: 46
+Valid:   73.2 %
+Invalid: 26.8 %
+H v; 
+H c; 
+L z; 
+L e; 
+H w; 
+H a; 
+L h; 
+H t; 
+while (z < a) do {
+    if (v == c) then {
+        w := -275888
+    } else {
+        while ((z - t) - (h + e)) do {
+            h := a
+        }
+    }
+}
+
+
+2173. program NOT correctly classified
+Number of tokens: 47
+Valid:   65.66 %
+Invalid: 34.34 %
+L s; 
+H f; 
+H n; 
+H c; 
+H p; 
+H a; 
+H d; 
+L w; 
+H v; 
+if ((w < s) == (f + v)) then {
+    w := ((d < c) + (p + a))
+} else {
+    n := w
+}
+
+
+2257. program NOT correctly classified
+Number of tokens: 35
+Valid:   94.31 %
+Invalid:  5.69 %
+H g; 
+H u; 
+H o; 
+H a; 
+H l; 
+L b; 
+H q; 
+if (q + g) then {
+    a := (o + l)
+} else {
+    b := (u + l)
+}
+
+
+2499. program NOT correctly classified
+Number of tokens: 50
+Valid:   99.18 %
+Invalid:  0.82 %
+L g; 
+L r; 
+L f; 
+L t; 
+L l; 
+H n; 
+H s; 
+L i; 
+H p; 
+r := -49400; 
+i := s; 
+while (p < (i < g)) do {
+    i := f
+}; 
+n := (t < l)
+
+
+2605. program NOT correctly classified
+Number of tokens: 41
+Valid:   91.62 %
+Invalid:  8.38 %
+H h; 
+L w; 
+L k; 
+L j; 
+L f; 
+L d; 
+H b; 
+while ((h == w) < (k < b)) do {
+    if j then {
+        d := b
+    } else {
+        f := (-75279 < (-727522 + 41291))
+    }
+}
+
+
+2705. program NOT correctly classified
+Number of tokens: 49
+Valid:   98.72 %
+Invalid:  1.28 %
+L q; 
+H w; 
+H p; 
+L o; 
+H n; 
+H h; 
+H b; 
+L r; 
+H c; 
+while (q == w) do {
+    while (p - c) do {
+        if (p + 144024) then {
+            r := b
+        } else {
+            c := ((o < n) + h)
+        }
+    }
+}
+
+
+2905. program NOT correctly classified
+Number of tokens: 40
+Valid:   97.42 %
+Invalid:  2.58 %
+H y; 
+L p; 
+H h; 
+H i; 
+H u; 
+L s; 
+H n; 
+s := u; 
+h := p; 
+while ((n - y) - -301302) do {
+    s := (i == -603358)
+}
+
+
+2972. program NOT correctly classified
+Number of tokens: 21
+Valid:   60.98 %
+Invalid: 39.02 %
+H s; 
+L w; 
+H v; 
+if (v < s) then {
+    w := (650658 < v)
+} else {
+    s := 944682
+}
+
+
+3005. program NOT correctly classified
+Number of tokens: 32
+Valid:   68.91 %
+Invalid: 31.09 %
+L u; 
+L z; 
+H r; 
+L i; 
+H p; 
+u := -301698; 
+z := (962753 + -124162); 
+while (z == p) do {
+    i := r
+}
+
+
+3017. program NOT correctly classified
+Number of tokens: 44
+Valid:   93.88 %
+Invalid:  6.12 %
+L p; 
+H k; 
+L b; 
+H h; 
+H a; 
+L m; 
+L t; 
+H c; 
+while -830985 do {
+    m := b
+}; 
+if ((t < p) == (c == k)) then {
+    m := a
+} else {
+    t := h
+}
+
+
+3102. program NOT correctly classified
+Number of tokens: 43
+Valid:   98.35 %
+Invalid:  1.65 %
+H e; 
+H o; 
+L s; 
+H x; 
+H w; 
+H g; 
+L j; 
+H m; 
+while (m == e) do {
+    s := o; 
+    w := (g + x); 
+    j := (g < 959580)
+}
+
+
+3143. program NOT correctly classified
+Number of tokens: 44
+Valid:   72.04 %
+Invalid: 27.96 %
+H m; 
+H v; 
+H z; 
+H h; 
+H a; 
+L n; 
+H x; 
+z := v; 
+h := (860492 < -665150); 
+while ((x == m) - (-439124 + m)) do {
+    n := (592347 == a)
+}
+
+
+3199. program NOT correctly classified
+Number of tokens: 31
+Valid:   98.05 %
+Invalid:  1.95 %
+L q; 
+H k; 
+H h; 
+L s; 
+H f; 
+if ((s == 578971) < f) then {
+    s := h
+} else {
+    s := (q + (-946783 < k))
+}
+
+
+3328. program NOT correctly classified
+Number of tokens: 50
+Valid:   59.53 %
+Invalid: 40.47 %
+H s; 
+L e; 
+L j; 
+H l; 
+H o; 
+H f; 
+H h; 
+L i; 
+H g; 
+while ((632369 + 820121) - (g == s)) do {
+    i := h
+}; 
+l := (e - (-154840 == j)); 
+f := o
+
+
+3438. program NOT correctly classified
+Number of tokens: 48
+Valid:   90.76 %
+Invalid:  9.24 %
+H v; 
+H t; 
+H m; 
+L i; 
+L e; 
+H d; 
+H u; 
+L b; 
+H l; 
+while ((l == v) < t) do {
+    i := (-418313 - (m - d)); 
+    b := ((u - e) < d)
+}
+
+
+3655. program NOT correctly classified
+Number of tokens: 42
+Valid:   95.12 %
+Invalid:  4.88 %
+L p; 
+H x; 
+H c; 
+H l; 
+L y; 
+H k; 
+if (-494144 - (k == y)) then {
+    x := ((931447 + -683497) == (p == 270999)); 
+    c := -117094
+} else {
+    y := (830959 - l)
+}
+
+
+3669. program NOT correctly classified
+Number of tokens: 45
+Valid:   75.15 %
+Invalid: 24.85 %
+L g; 
+L h; 
+L i; 
+L c; 
+H o; 
+H l; 
+L d; 
+H u; 
+while (g - d) do {
+    while ((173625 + h) - (i < u)) do {
+        c := -644200; 
+        d := (l == o)
+    }
+}
+
+
+3816. program NOT correctly classified
+Number of tokens: 35
+Valid:   99.03 %
+Invalid:  0.97 %
+L n; 
+L w; 
+H s; 
+H r; 
+H i; 
+L z; 
+H q; 
+if (q == z) then {
+    r := s
+} else {
+    w := n; 
+    z := i
+}
+
+
+4594. program NOT correctly classified
+Number of tokens: 45
+Valid:   53.77 %
+Invalid: 46.23 %
+H w; 
+H h; 
+H n; 
+L l; 
+H i; 
+H t; 
+L r; 
+L a; 
+H c; 
+if w then {
+    while ((h + n) < (108484 == c)) do {
+        a := i
+    }
+} else {
+    r := (l < t)
+}
+
+
+4818. program NOT correctly classified
+Number of tokens: 50
+Valid:   98.13 %
+Invalid:  1.87 %
+H b; 
+H s; 
+H e; 
+L m; 
+H f; 
+H n; 
+H y; 
+L a; 
+H q; 
+if ((s < 551519) + b) then {
+    n := (f + -577695)
+} else {
+    if (-893763 - (s == q)) then {
+        a := y
+    } else {
+        m := e
+    }
+}
+
+
+4851. program NOT correctly classified
+Number of tokens: 35
+Valid:   99.7 %
+Invalid:  0.3 %
+L c; 
+H p; 
+H g; 
+H l; 
+L w; 
+H i; 
+while (i == i) do {
+    while (c + 113070) do {
+        w := ((l < p) - (149656 - g))
+    }
+}
+
+
+4969. program NOT correctly classified
+Number of tokens: 50
+Valid:   97.2 %
+Invalid:  2.8 %
+H u; 
+H g; 
+H y; 
+H s; 
+H h; 
+L r; 
+H e; 
+if (h == (e - u)) then {
+    e := (96389 - 673892)
+} else {
+    if ((g < y) + (-444771 < s)) then {
+        r := h
+    } else {
+        h := ((s - e) + 418687)
+    }
+}
+
+
+5060. program NOT correctly classified
+Number of tokens: 47
+Valid:   79.87 %
+Invalid: 20.13 %
+L u; 
+L n; 
+L d; 
+H k; 
+H r; 
+H e; 
+L b; 
+H a; 
+while ((a == u) < (n < d)) do {
+    a := (-656144 < k); 
+    b := (e - -282330); 
+    r := 474213
+}
+
+
+5279. program NOT correctly classified
+Number of tokens: 29
+Valid:   94.27 %
+Invalid:  5.73 %
+H f; 
+L w; 
+L k; 
+H y; 
+while ((f == -264066) < (y - w)) do {
+    while ((728946 == w) + y) do {
+        k := y
+    }
+}
+
+
+5280. program NOT correctly classified
+Number of tokens: 36
+Valid:   95.73 %
+Invalid:  4.27 %
+H l; 
+L a; 
+H u; 
+H i; 
+H b; 
+L y; 
+H d; 
+while ((d < l) == (a == y)) do {
+    y := ((u + i) < b)
+}
+
+
+5311. program NOT correctly classified
+Number of tokens: 34
+Valid:   70.85 %
+Invalid: 29.15 %
+L r; 
+L c; 
+H y; 
+H b; 
+L t; 
+H j; 
+if (j + r) then {
+    y := 906824
+} else {
+    t := b; 
+    j := (204248 == c)
+}
+
+
+5325. program NOT correctly classified
+Number of tokens: 42
+Valid:   84.2 %
+Invalid: 15.8 %
+H s; 
+H d; 
+L w; 
+L q; 
+H v; 
+L p; 
+H l; 
+while ((-195203 + s) - (-129118 < l)) do {
+    p := ((v - -838670) < (d + w)); 
+    q := 807724
+}
+
+
+5453. program NOT correctly classified
+Number of tokens: 16
+Valid:   77.65 %
+Invalid: 22.35 %
+L i; 
+L p; 
+H j; 
+while (i - j) do {
+    p := j
+}
+
+
+5619. program NOT correctly classified
+Number of tokens: 29
+Valid:   99.6 %
+Invalid:  0.4 %
+H o; 
+H a; 
+H z; 
+L j; 
+H m; 
+if ((a - o) == m) then {
+    a := (-183254 - -389046)
+} else {
+    j := z
+}
+
+
+5719. program NOT correctly classified
+Number of tokens: 33
+Valid:   78.34 %
+Invalid: 21.66 %
+H j; 
+L p; 
+H g; 
+H d; 
+L e; 
+H c; 
+while (j == c) do {
+    while p do {
+        e := ((d == c) == (g < 461821))
+    }
+}
+
+
+5748. program NOT correctly classified
+Number of tokens: 20
+Valid:   84.32 %
+Invalid: 15.68 %
+H s; 
+L z; 
+H o; 
+while ((97610 - o) - z) do {
+    z := (-781825 - s)
+}
+
+
+5751. program NOT correctly classified
+Number of tokens: 37
+Valid:   97.2 %
+Invalid:  2.8 %
+H g; 
+H y; 
+H u; 
+L m; 
+H b; 
+L k; 
+H c; 
+while (g + c) do {
+    if y then {
+        c := -615016
+    } else {
+        k := ((u == b) - m)
+    }
+}
+
+
+5852. program NOT correctly classified
+Number of tokens: 23
+Valid:   72.95 %
+Invalid: 27.05 %
+H s; 
+H n; 
+L v; 
+H c; 
+while (v - c) do {
+    v := (-512641 - (s == n))
+}
+
+
+5905. program NOT correctly classified
+Number of tokens: 46
+Valid:   97.43 %
+Invalid:  2.57 %
+H s; 
+H x; 
+L z; 
+H r; 
+H w; 
+H l; 
+L y; 
+H o; 
+z := ((s < l) < x); 
+if (o == -106979) then {
+    w := (-579750 - r)
+} else {
+    y := (l - y)
+}
+
+
+6030. program NOT correctly classified
+Number of tokens: 45
+Valid:   59.92 %
+Invalid: 40.08 %
+L k; 
+H x; 
+H o; 
+L u; 
+H s; 
+H r; 
+L g; 
+H y; 
+o := x; 
+u := (29059 - y); 
+while (y + k) do {
+    g := (r - (-601912 - s))
+}
+
+
+6184. program NOT correctly classified
+Number of tokens: 43
+Valid:   95.4 %
+Invalid:  4.6 %
+H w; 
+L m; 
+H t; 
+H n; 
+H r; 
+L h; 
+H u; 
+if (w - u) then {
+    m := (h < t); 
+    n := (t + (323307 < 181408))
+} else {
+    h := (t - r)
+}
+
+
+6709. program NOT correctly classified
+Number of tokens: 28
+Valid:   57.5 %
+Invalid: 42.5 %
+H k; 
+H e; 
+H t; 
+L j; 
+H q; 
+while ((q - -978309) == k) do {
+    j := (j < (t + e))
+}
+
+
+7345. program NOT correctly classified
+Number of tokens: 39
+Valid:   99.29 %
+Invalid:  0.71 %
+L b; 
+L p; 
+H u; 
+H d; 
+L o; 
+H l; 
+o := 127878; 
+u := (u == (p - -730481)); 
+while (l - (411596 == b)) do {
+    o := d
+}
+
+
+7452. program NOT correctly classified
+Number of tokens: 30
+Valid:   87.76 %
+Invalid: 12.24 %
+H m; 
+L c; 
+H w; 
+L p; 
+H l; 
+while (l - p) do {
+    p := w; 
+    c := (570995 == (m - -423663))
+}
+
+
+7665. program NOT correctly classified
+Number of tokens: 36
+Valid:   93.3 %
+Invalid:  6.7 %
+H k; 
+L i; 
+H n; 
+H a; 
+H e; 
+L g; 
+H y; 
+while (k + i) do {
+    while y do {
+        g := ((n - e) < (a == 684803))
+    }
+}
+
+
+7699. program NOT correctly classified
+Number of tokens: 35
+Valid:   99.86 %
+Invalid:  0.14 %
+L a; 
+L h; 
+H j; 
+H x; 
+L t; 
+H b; 
+h := (-939918 + 542960); 
+while (a == b) do {
+    t := (x + (j - j))
+}
+
+
+7794. program NOT correctly classified
+Number of tokens: 50
+Valid:   77.32 %
+Invalid: 22.68 %
+L k; 
+L l; 
+H c; 
+H n; 
+H y; 
+L r; 
+L t; 
+H q; 
+if ((q + 733192) == (377909 + k)) then {
+    q := (l == c); 
+    r := ((n == n) == (y + -385879))
+} else {
+    t := -977854
+}
+
+
+8086. program NOT correctly classified
+Number of tokens: 41
+Valid:   95.84 %
+Invalid:  4.16 %
+H i; 
+H h; 
+L l; 
+L j; 
+H z; 
+H g; 
+L w; 
+H s; 
+while (s == i) do {
+    l := (-924218 < h); 
+    w := ((g - j) + z)
+}
+
+
+8273. program NOT correctly classified
+Number of tokens: 28
+Valid:   99.78 %
+Invalid:  0.22 %
+L n; 
+L t; 
+H s; 
+L h; 
+H f; 
+t := 513963; 
+while (n == f) do {
+    h := (s == 640587)
+}
+
+
+8435. program NOT correctly classified
+Number of tokens: 38
+Valid:   76.97 %
+Invalid: 23.03 %
+L k; 
+H z; 
+H j; 
+H m; 
+H b; 
+L u; 
+H q; 
+while ((k == q) < (z == j)) do {
+    u := ((991211 < b) == (m == 407428))
+}
+
+
+8544. program NOT correctly classified
+Number of tokens: 39
+Valid:   78.94 %
+Invalid: 21.06 %
+H m; 
+H w; 
+L n; 
+H r; 
+H a; 
+L g; 
+H p; 
+if (g < p) then {
+    r := (n < 948985)
+} else {
+    w := (n == m); 
+    g := a
+}
+
+
+8717. program NOT correctly classified
+Number of tokens: 42
+Valid:   95.83 %
+Invalid:  4.17 %
+H i; 
+H d; 
+H e; 
+H t; 
+H g; 
+L s; 
+L m; 
+H u; 
+if ((i < u) - (u + d)) then {
+    s := (g - (t + m))
+} else {
+    m := e
+}
+
+
+8778. program NOT correctly classified
+Number of tokens: 27
+Valid:   80.22 %
+Invalid: 19.78 %
+H n; 
+H p; 
+H x; 
+L s; 
+H b; 
+if (b + n) then {
+    s := (x - 949128)
+} else {
+    p := x
+}
+
+
+8908. program NOT correctly classified
+Number of tokens: 44
+Valid:   51.27 %
+Invalid: 48.73 %
+H o; 
+H x; 
+H f; 
+H n; 
+L i; 
+H p; 
+L d; 
+H m; 
+while ((o == m) + -112613) do {
+    if (x + f) then {
+        i := 269563
+    } else {
+        d := ((f == n) - p)
+    }
+}
+
+
+9154. program NOT correctly classified
+Number of tokens: 37
+Valid:   66.41 %
+Invalid: 33.59 %
+H p; 
+L c; 
+H r; 
+H o; 
+L a; 
+H q; 
+while ((q + a) + -876838) do {
+    a := (-245948 < o)
+}; 
+c := p; 
+r := 763728
+
+
+9440. program NOT correctly classified
+Number of tokens: 29
+Valid:   73.82 %
+Invalid: 26.18 %
+H n; 
+H j; 
+H z; 
+L i; 
+H y; 
+if (y == i) then {
+    j := ((y + n) == -712155)
+} else {
+    i := z
+}
+
+
+9499. program NOT correctly classified
+Number of tokens: 16
+Valid:   62.42 %
+Invalid: 37.58 %
+H r; 
+L w; 
+H y; 
+while (y == r) do {
+    w := r
+}
+
+
+9698. program NOT correctly classified
+Number of tokens: 47
+Valid:   89.13 %
+Invalid: 10.87 %
+L f; 
+H j; 
+H x; 
+H h; 
+H t; 
+L g; 
+L c; 
+H e; 
+x := ((j + 233551) + -446656); 
+while ((-256235 - f) - (e == x)) do {
+    c := h; 
+    g := t
+}
+
+
+9952. program NOT correctly classified
+Number of tokens: 34
+Valid:   98.18 %
+Invalid:  1.82 %
+H m; 
+H e; 
+H h; 
+H w; 
+L x; 
+H b; 
+if ((270597 < b) + (665160 == x)) then {
+    x := (h < w)
+} else {
+    e := m
+}
+
+
+64 of 10000 wrong classified

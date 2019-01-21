@@ -8,7 +8,7 @@ PROGRAMS_TO_GENERATE_INVALID = 5
 
 # True to generate implicit programs or
 # False to generate explicit programs
-c.ENABLE_IMPLICIT_FLOW = True
+c.ENABLE_IMPLICIT_FLOW = False
 
 # True if prettyprinted AST should also be stored
 c.STORE_PRETTYPRINTED_AST = True

@@ -8,15 +8,18 @@ import main as m
 import keras
 import tokenizer
 
+
 def main():
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("--model", required=True, help="Trained weight file")
-    argparser.add_argument("--length", required=True, type=int, help="Maximum length of tokenized programs")
+    argparser.add_argument("--model", required=True,
+                           help="Trained weight file")
+    argparser.add_argument("--length", required=True,
+                           type=int, help="Maximum length of tokenized programs")
     args = argparser.parse_args()
 
     print("Loading model...")
 
-    validator = models.LSTMValidator(args.length, len(m.TOKEN2VEC)+1, "adam")
+    validator = models.LSTMValidator(args.length, len(m.TOKEN2VEC) + 1, "adam")
     validator.load_weights(args.model)
 
     '''codegenerator.SEED = 130596
@@ -35,9 +38,8 @@ def main():
 
     print("Converting program...")
 
-    prog = open('programs/indirect/invalid/test3.txt', 'r').read()
+    prog = open('programs/indirect/invalid/test2.txt', 'r').read()
     ast = codeparser.parse(prog)
-
     print(codegenerator.prettyprint_multiline_indented(ast))
 
     tokens = tokenizer.Tokenizer().tokenize(ast)
@@ -53,6 +55,7 @@ def main():
     invalidStr = str(round(y[0][0] * 100, 2))
     print("Valid:  ", formatOutput(validStr, invalidStr), "%")
     print("Invalid:", formatOutput(invalidStr, validStr), "%")
+
 
 def formatOutput(str, refStr):
     return ' ' * (max(len(str), len(refStr)) - len(str)) + str
