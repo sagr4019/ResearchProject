@@ -1,7 +1,8 @@
 """Tuning hyperparameters for the cnn network."""
 
 LEARN_RATE = 0.001
-EPOCHS = 100
+#EPOCHS = 100
+EPOCHS = 10
 CHECKPOINT_EVERY = 100
 
 BATCH_SIZE = 10

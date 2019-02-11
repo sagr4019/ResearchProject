@@ -178,7 +178,7 @@ def eta_r(children, t_coef):
 
         # num_siblings is shape (batch_size x max_tree_size x 1)
         num_siblings = tf.cast(
-            tf.count_nonzero(children, axis=2, keep_dims=True),
+            tf.count_nonzero(children, axis=2, keepdims=True),
             dtype=tf.float32
         )
         # num_siblings is shape (batch_size x max_tree_size x max_children + 1)
@@ -278,7 +278,7 @@ def loss_layer(logits_node, label_size):
     labels = tf.placeholder(tf.int32, (None, label_size,))
 
     with tf.name_scope('loss_layer'):
-        cross_entropy = tf.nn.softmax_cross_entropy_with_logits(
+        cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(
             labels=labels, logits=logits_node, name='cross_entropy'
         )
 

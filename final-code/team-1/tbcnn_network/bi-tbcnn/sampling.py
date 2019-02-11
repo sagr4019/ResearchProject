@@ -35,7 +35,8 @@ def gen_samples(trees, labels, vectors, vector_lookup):
             if parent_ind > -1:
                 children[parent_ind].append(node_ind)
             
-            n = str(node['node'])
+            #n = str(node['node'])
+            n = int(node['node'])-1
             look_up_vector = vector_lookup[n]
             nodes.append(vectors[int(n)])
         # print "children list length: " + str(len(children))

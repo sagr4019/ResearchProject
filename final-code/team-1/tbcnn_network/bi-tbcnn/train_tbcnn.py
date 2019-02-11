@@ -108,7 +108,7 @@ def train_model(logdir, infile, embedfile, epochs=EPOCHS, training="True", testi
                     children_node: children,
                 }
             )
-            print(output)
+            #print(output)
             correct_labels.append(np.argmax(batch_labels))
             predictions.append(np.argmax(output))
 
@@ -119,7 +119,7 @@ def train_model(logdir, infile, embedfile, epochs=EPOCHS, training="True", testi
 
 
 def main():
-    # logdir = "bi-tbcnn/bi-tbcnn/logs/20_classes_pku_no_dependency"
+    #logdir = "bi-tbcnn/bi-tbcnn/logs/20_classes_pku_no_dependency"
     logdir = sys.argv[1]
     inputs = sys.argv[2]
     embeddings = sys.argv[3]
@@ -127,6 +127,7 @@ def main():
     testing = sys.argv[5]
 
     train_model(logdir,inputs,embeddings,EPOCHS, training, testing) 
+    #train_model("LOG","vec/new_out_trees.pkl","vec/new_out_pretrained.pkl",EPOCHS, "False", "True") 
 
 if __name__ == "__main__":
     main()

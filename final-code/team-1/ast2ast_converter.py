@@ -1,9 +1,10 @@
 import pickle
 import types
 import sys
+import os
 
 node_map={}
-
+PATH_SEPERATOR="/"
 def build_childs_for(kind,info=""):
     global node_map
     curr = types.SimpleNamespace()
@@ -12,7 +13,6 @@ def build_childs_for(kind,info=""):
     if kind not in node_map:
         node_map[kind]=len(node_map)+1
 
-    curr.kind = node_map[kind]
     #curr.kind=kind
 
     if kind == "Declare":
@@ -53,40 +53,56 @@ def build_childs_for(kind,info=""):
         curr.child.append(build_childs_for(info))
 
     else:
-        print("no special kind:",kind)
+        #print("no special kind:",kind)
         curr.kind=kind
 
     if "Left" in info:
         curr.child.append(build_childs_for(info["Left"]["Kind"],info["Left"]))
         curr.child.append(build_childs_for(info["Right"]["Kind"],info["Right"]))
     
+    curr.kind = node_map[kind]
     return curr     
 
 
 
+def build_merged_ast(data_directory):
+    result = []
+    for root,d,files in os.walk(data_directory):
+        for file in files:
+            try:
+                file_path = os.path.join(root,file)
+                splits = file_path.split(PATH_SEPERATOR)
+                label = splits[len(splits)-3]
+                with open(file_path,"rb") as f:
+                    ast_representation = pickle.load(f)
+                newAST = build_childs_for("Seq",ast_representation)
+                result.append({
+                    'tree': newAST, 'metadata': {'label': label}
+                })
+            except Exception as err:
+                print (err)
+    return result    
+
+
 def main():
-    print("Try to open file: ", sys.argv[1] )
-    with open(sys.argv[1], 'rb') as fh:
-            astobj = pickle.load(fh)
+    from_console=True
+    input_path = sys.argv[1] if from_console else "PICKLE"
+    outfile = sys.argv[2] if from_console else "merged.pkl"   
+    merged_ast = build_merged_ast(input_path)
 
-    asts=[]
-    ast={}
-    ast["tree"]=types.SimpleNamespace()
-    ast['tree'].element=build_childs_for("Seq",astobj)
+    path_current = os.path.dirname(os.path.realpath(__file__))
+    path_current = os.path.join(path_current,"vec")
+    if not os.path.isdir(path_current):
+        os.makedirs(path_current,0o777)
 
-    ast["metadata"]=types.SimpleNamespace()
-    ast["metadata"].label="invalid/valid"
+    path_current = os.path.join(path_current,outfile)
 
-    asts.append(ast)
-    print(node_map)
-    print("----------------")
-    print(asts)
-    print("----------------")
+    with open(path_current, 'wb') as file_handler:
+        pickle.dump(merged_ast, file_handler)
+    with open(path_current+"_map",'wb') as f:
+        pickle.dump(node_map,f)
 
-    print("Try to write file: ", sys.argv[2] )
-    with open(sys.argv[2], 'wb') as f:
-        pickle.dump((asts,node_map), f, pickle.HIGHEST_PROTOCOL)
-        f.close()
-    print("Sucessfully")
 if __name__ == "__main__":
     main()
+
+

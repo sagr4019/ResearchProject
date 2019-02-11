@@ -1,0 +1,6 @@
+vec/*
+pickle/*
+programs/*
+__pycache__/*
+tf_files/*
+bi-tbcnn_log/*
