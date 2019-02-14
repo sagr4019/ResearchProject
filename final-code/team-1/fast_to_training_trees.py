@@ -28,7 +28,7 @@ def parse_pickle_to_training_trees(infile,outfile):
         root = tree
         sample, size = _traverse_tree(root)
         
-        if size > 10000 or size < 50:
+        if size > 10000 or size < 10: #normal was 50
             continue
 
         roll = random.randint(0, 100)

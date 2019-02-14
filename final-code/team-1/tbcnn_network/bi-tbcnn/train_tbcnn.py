@@ -127,7 +127,8 @@ def main():
     testing = sys.argv[5]
 
     train_model(logdir,inputs,embeddings,EPOCHS, training, testing) 
-    #train_model("LOG","vec/new_out_trees.pkl","vec/new_out_pretrained.pkl",EPOCHS, "False", "True") 
+    #train_model("bi-tbcnn_tf_files","vec/trees.pkl","vec/pretrained_vectors.pkl",EPOCHS, "False", "True")
 
 if __name__ == "__main__":
     main()
+    

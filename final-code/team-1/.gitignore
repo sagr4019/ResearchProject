@@ -1,6 +1,7 @@
-vec/*
-pickle/*
-programs/*
-__pycache__/*
-tf_files/*
-bi-tbcnn_log/*
+vec/
+pickle/
+programs/
+__pycache__/
+tf_files/
+bi-tbcnn_log/
+bi-tbcnn_tf_files/
